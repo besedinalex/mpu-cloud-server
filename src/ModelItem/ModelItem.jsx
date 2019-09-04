@@ -24,27 +24,34 @@ const styles = theme => ({
 });
 
 class ModelItem extends Component {
+    constructor(props) {
+        super(props);
+
+        this.handleModelClick = this.handleModelClick.bind(this);
+    }
+
+    handleModelClick() {
+        console.log(this.props);
+        window.location.href = 'http://127.0.0.1:4000/models/' + Number(this.props.id).toString() + '?token=' + this.props.token;
+    }
+
     render() {
         const { classes } = this.props;
 
         return (
             <div>
                 <Card className={classes.card}>
-                    <CardActionArea onClick={alert}>
+                    <CardActionArea onClick={this.handleModelClick}>
                         <CardMedia
                             className={classes.media}
                             image={img}
                             title="Contemplative Reptile"
                         />
-                        <CardContent className={classes.content}>
+                        <CardContent style={{height: '100px'}} className={classes.content}>
                             <Typography gutterBottom variant="h5" component="h2">{this.props.title}</Typography>
                             <Typography variant="body2" color="textSecondary" component="p">{this.props.desc}</Typography>
                         </CardContent>
                     </CardActionArea>
-                    <CardActions>
-                        <Button size="small" color="primary">Поделиться</Button>
-                        <Button size="small" color="primary">Удалить</Button>
-                    </CardActions>
                 </Card>
             </div>
         );

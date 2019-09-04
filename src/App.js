@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import 'typeface-roboto';
 
 import SignUpView from './SignUpView'
 import SignInView from './SignInView'
 import ModelsView from './ModelsView'
+import ModelView from './ModelView'
 import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom";
 
 function PrivateRoute({ component: Component, ...rest }) {
@@ -48,7 +48,8 @@ class App extends Component {
         <div className="App">
           <Route path="/login" render={props => <SignInView onAuthenticated={this.handleAuthentication} {...props} />} />
           <Route path="/signup" render={props => <SignUpView onAuthenticated={this.handleAuthentication} {...props} />} />
-          <PrivateRoute path="/models" component={ModelsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
+          <PrivateRoute exact path="/models" component={ModelsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
+          <PrivateRoute exact path="/models/:id" component={ModelView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
         </div>
       </Router >
     );

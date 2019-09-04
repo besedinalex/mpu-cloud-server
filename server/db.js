@@ -1,10 +1,10 @@
 const mysql = require('mysql')
 
 var db = mysql.createConnection({
-    host: "localhost",
+    host: "172.17.177.237",
     port: 3307,
-    user: "root",
-    password: "",
+    user: "monty",
+    password: "some_pass",
     database: "mpu-cloud"
 });
 
@@ -59,7 +59,7 @@ exports.getModels = function (userId) {
 
 exports.addModel = function (title, desc, filepath, owner) {
     return new Promise((resolve, reject) => {
-        let query = `INSERT INTO Models (title, desc, filepath, owner) VALUES ('${title}','${desc}','${filepath}','${owner}')`;
+        let query = `INSERT INTO Models (title, \`desc\`, filepath, \`owner\`) VALUES  ('${title}','${desc}','${filepath}','${owner}')`;
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);

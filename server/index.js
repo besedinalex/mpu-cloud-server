@@ -8,9 +8,16 @@ var cors = require('cors')
 var multer = require('multer')
 var upload = multer({ storage: multer.memoryStorage() })
 const generator = require('generate-password');
+var cad2gltf = require('./cad2gltf');
+const path = require('path')
+const fs = require('fs-extra');
+var bodyParser = require('body-parser')
+var jsonParser = bodyParser.json({ limit: '50mb' })
 
 app.use(cookieParser())
 app.use(cors())
+
+app.use(express.static(__dirname + '/xeogl'))
 
 db.connect();
 
@@ -20,7 +27,6 @@ var authRequired = function (req, res, next) { // tokenRequired!!
         res.status(401).send('Unauthorized: No token provided');
     } else {
         jwt.verify(token, secret, function (err, decoded) {
-            console.log(decoded)
             if (err) {
                 res.status(401).send('Unauthorized: Invalid token');
             } else if (Date.now() >= decoded.exp * 1000) {
@@ -75,6 +81,8 @@ app.post('/models', [authRequired, upload.single('model')], (req, res) => {
     let fileNameGLTF = modelCode + '.gltf'; // Название файла
     let fullPathGLTF = path.join(cellPath, fileNameGLTF);
 
+    console.log(req.body, req.file, fullPathGLTF);
+
     cad2gltf(req.file.buffer, (gltf, err) => {
         if (err) {
             console.error(err);
@@ -88,7 +96,8 @@ app.post('/models', [authRequired, upload.single('model')], (req, res) => {
             fs.outputFileSync(fullPathGLTF, plainGLTF, { flag: 'wx' });
             fs.outputFileSync(fullPathOrig, req.file.buffer, { flag: 'wx' });
 
-            db.addModel(req.query.title, req.query.desc, fullPathGLTF, req.user_id).then(model_id => {
+            db.addModel(req.body.title, req.body.desc, fullPathGLTF.replace(/\\/g,"/"), req.user_id).then(model_id => {
+                console.log(model_id)
                 res.json({ model_id });
             })
 
@@ -97,6 +106,21 @@ app.post('/models', [authRequired, upload.single('model')], (req, res) => {
                 console.error(err);
                 res.status(500).send('Server failed!');
                 return;
+            }
+        }
+    })
+})
+
+app.set('view engine', 'ejs');
+
+app.get('/models/:id', authRequired, function (req, res) {
+    console.log(req.user_id, req.params)
+    db.getModels(req.user_id).then(models => {
+        for (let model of models) {
+            if (model.id_model == req.params.id && model.owner == req.user_id) {
+                console.log(path.parse(model.filepath))
+                let bufGLTF = fs.readFileSync(model.filepath);
+                res.render(__dirname + '/view.ejs', {model: bufGLTF});
             }
         }
     })
