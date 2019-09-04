@@ -1,70 +1,77 @@
-const mysql = require('mysql')
 
-var db = mysql.createConnection({
-    host: "172.17.177.237",
-    port: 3307,
-    user: "monty",
-    password: "some_pass",
-    database: "mpu-cloud"
+////////////////////////////
+////// Модуль для работы с БД SQLite
+////////////////////////////
+
+const sqlite3 = require('sqlite3').verbose();
+const crypto = require('./crypto.js');
+
+let db = new sqlite3.Database('data.db', (err) => {
+    if (err) {
+        return console.error(err.message);
+    }
+    console.log('Выполнено подключение к Базе Данных!');
 });
 
-exports.connect = function () {
-    db.connect(function (err) {
-        if (err) throw err;
-        console.log("База данных подключена!");
-    });
-}
-
-exports.addUser = function (name, surname, email, password) {
+exports.addUser = function (firstName, lastName, email, password) {
     return new Promise((resolve, reject) => {
-        let query = `INSERT INTO Users (name, surname, email, password) VALUES ('${name}','${surname}','${email}','${password}')`;
-        db.query(query, (err, result) => {
+        let cryptedPassword = crypto.encrypt(password);
+        let sql = `INSERT INTO Users (firstName, lastName, email, password) VALUES ('${firstName}','${lastName}','${email}','${cryptedPassword}')`;
+        db.run(sql, [], function(err) {
             if (err) {
                 reject(err);
             } else {
-                resolve(result.insertId);
+                resolve(this.lastID);
             }
         })
     })
 }
 
-exports.getUser = function (email, password) {
+exports.login = function (email, password) {
     return new Promise((resolve, reject) => {
-        let query = `SELECT * FROM Users WHERE email = '${email}' AND password = '${password}'`;
-        db.query(query, (err, result) => {
+        let cryptedPassword = crypto.encrypt(password);
+        let sql = `SELECT * FROM Users WHERE email = '${email}' AND password = '${cryptedPassword}'`;
+
+        db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);
-            } else if (result.length === 0) {
+            } else if (rows.length === 0) {
                 const err = new Error('Неверный логин или пароль');
                 reject(err);
             } else {
-                resolve(result[0]);
+                delete rows[0].email;
+                delete rows[0].password;
+                rows[0].createdTime = new Date(rows[0].createdTime);
+                resolve(rows[0]);
             }
-        })
+        });
     })
 }
 
 exports.getModels = function (userId) {
     return new Promise((resolve, reject) => {
-        let query = `SELECT * FROM Models WHERE owner = '${userId}'`;
-        db.query(query, (err, result) => {
+        let sql = `SELECT * FROM Models WHERE owner = '${userId}'`;
+        db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);
             } else {
-                resolve(result);
+                rows.forEach((row, i, arr) => {
+                    row.createdTime = new Date(row.createdTime);
+                    if (arr.length - 1 === i) resolve(rows);
+                })
             }
-        })
+        });
     })
 }
 
 exports.addModel = function (title, desc, filepath, owner) {
     return new Promise((resolve, reject) => {
-        let query = `INSERT INTO Models (title, \`desc\`, filepath, \`owner\`) VALUES  ('${title}','${desc}','${filepath}','${owner}')`;
-        db.query(query, (err, result) => {
+        let sql = `INSERT INTO Models (title, desc, filepath, owner) VALUES  ('${title}','${desc}','${filepath}','${owner}')`;
+        db.run(sql, [], function(err) {
             if (err) {
                 reject(err);
             } else {
-                resolve(result.insertId);
+                resolve(this.lastID);
             }
         })
     })

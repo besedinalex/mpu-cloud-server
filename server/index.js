@@ -1,3 +1,5 @@
+var isToolKitOn = process.argv[2] !== 'test';
+
 const db = require('./db');
 const express = require('express');
 const app = express();
@@ -8,20 +10,20 @@ var cors = require('cors')
 var multer = require('multer')
 var upload = multer({ storage: multer.memoryStorage() })
 const generator = require('generate-password');
-var cad2gltf = require('./cad2gltf');
 const path = require('path')
 const fs = require('fs-extra');
-var bodyParser = require('body-parser')
-var jsonParser = bodyParser.json({ limit: '50mb' })
+
+var cad2gltf = {};
+if (isToolKitOn) { 
+    cad2gltf = require('./cad2gltf');
+} else console.log('Test Mode without C3D Toolkit has been started!')
 
 app.use(cookieParser())
 app.use(cors())
 
 app.use(express.static(__dirname + '/xeogl'))
 
-db.connect();
-
-var authRequired = function (req, res, next) { // tokenRequired!!
+var tokenRequired = function (req, res, next) {
     const token = req.query.token;
     if (!token) {
         res.status(401).send('Unauthorized: No token provided');
@@ -39,8 +41,7 @@ var authRequired = function (req, res, next) { // tokenRequired!!
     }
 };
 
-app.get('/token', function (req, res) {
-    console.log(req.query);
+app.get('/token', function (req, res) { // Получить токен на год
     db.getUser(req.query.email, req.query.password).then(data => {
         const payload = { id: data.id_user };
         const token = jwt.sign(payload, secret, { expiresIn: '365d' });
@@ -49,8 +50,7 @@ app.get('/token', function (req, res) {
     }).catch(err => res.status(401).send(err.message));
 });
 
-app.post('/user', function (req, res) {
-    console.log(req.query);
+app.post('/user', function (req, res) { // Добавить пользователь
     db.addUser(req.query.firstName, req.query.lastName, req.query.email, req.query.password).then(userId => {
         const payload = { id: userId };
         const token = jwt.sign(payload, secret, { expiresIn: '365d' });
@@ -59,13 +59,13 @@ app.post('/user', function (req, res) {
     })
 })
 
-app.get('/models', authRequired, function (req, res) {
+app.get('/models', tokenRequired, function (req, res) {
     db.getModels(req.user_id).then(data => {
         res.json(data);
     })
 })
 
-app.post('/models', [authRequired, upload.single('model')], (req, res) => {
+app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
     if (!req.body || !req.file) {
         console.error('Bad Request. Fileds or files required!');
         res.status(500).send('Bad request!');
@@ -112,13 +112,12 @@ app.post('/models', [authRequired, upload.single('model')], (req, res) => {
 })
 
 app.set('view engine', 'ejs');
-
-app.get('/models/:id', authRequired, function (req, res) {
+app.get('/view/:id', tokenRequired, function (req, res) { // Вьювер для модели
     console.log(req.user_id, req.params)
     db.getModels(req.user_id).then(models => {
         for (let model of models) {
             if (model.id_model == req.params.id && model.owner == req.user_id) {
-                console.log(path.parse(model.filepath))
+                console.log(model.id_model);
                 let bufGLTF = fs.readFileSync(model.filepath);
                 res.render(__dirname + '/view.ejs', {model: bufGLTF});
             }
