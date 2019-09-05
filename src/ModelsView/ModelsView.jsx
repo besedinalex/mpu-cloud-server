@@ -4,6 +4,7 @@ import axios from 'axios';
 import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom";
 import ModelItem from '../ModelItem/ModelItem';
 import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import $ from "jquery";
 
 class ModelsView extends Component {
     constructor(props) {
@@ -83,6 +84,7 @@ class ModelsView extends Component {
                 this.setState(prev => ({
                     isUploaded: false, isDiaglogOpen: false, models: [res.data, ...prev.models]
                 }));
+                $('#exampleModal').modal('hide')
             })
             .catch(function (response) {
                 //handle error
@@ -177,8 +179,8 @@ class ModelsView extends Component {
 
                     <div className="container">
                         <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>
-                            <h2>Мои модели</h2>
-                            <button onClick={this.handleOpenDialog} type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                            <h3>Мои модели</h3>
+                            <button style={{height: '42px'}} onClick={this.handleOpenDialog} type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                                 Добавить
 </button>
                         </div>

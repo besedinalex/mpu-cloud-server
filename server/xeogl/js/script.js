@@ -24,12 +24,36 @@ function spoilers(curSpoiler, curBtn) {
 	}
 
 }
- 
-init();
 
+var urlParams = new URLSearchParams(window.location.search);
+var modelId = urlParams.get('id');
+var token = urlParams.get('token');
+
+$.ajax({
+	type: 'GET',
+	url: '/model/' + modelId + '?token=' + token,
+	success: function (data) {
+		gltf = data.model;
+		init();
+	},
+	error: function (err) {
+		console.error(err);
+		window.location.href = 'index.html';
+	},
+	xhr: function () {
+		var xhr = new window.XMLHttpRequest();
+		xhr.addEventListener("progress", function (evt) {
+			if (evt.lengthComputable) {
+				var percentComplete = evt.loaded / evt.total;
+				document.getElementById('completed').innerText = (percentComplete * 100).toFixed(2) + '%';
+			}
+		}, false);
+
+		return xhr;
+	}
+});
 
 function init() {
-	console.log('XeoGL start loading...', gltf)
 	model = new xeogl.GLTFModel({
 		id: model,
 		src: gltf,

@@ -19,7 +19,7 @@ class ModelItem extends Component {
 
     handleModelClick() {
         console.log(this.props);
-        window.location.href = 'http://127.0.0.1:4000/view/' + Number(this.props.id).toString() + '?token=' + this.props.token;
+        window.location.href = 'http://127.0.0.1:4000/view?id=' + Number(this.props.id).toString() + '&token=' + this.props.token;
     }
 
     handleMouseOver(e) {
@@ -35,12 +35,12 @@ class ModelItem extends Component {
 
         return (
             <tr onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
-                <td className="filename">{this.props.filename}</td>
+                <td onClick={this.handleModelClick} className="filename">{this.props.filename}</td>
                 <td className="tools" style={{ width: '120px' }}>
                     <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '4px'}} hidden={!this.state.isMouseOver}>
                         <FontAwesomeIcon onClick={this.handleModelClick} className="tool" icon={faEye} />
-                        <FontAwesomeIcon className="download" icon={faCloudDownloadAlt} />
-                        <FontAwesomeIcon className="trash" icon={faTrash} />
+                        <FontAwesomeIcon className="tool download" icon={faCloudDownloadAlt} />
+                        <FontAwesomeIcon className="tool trash" icon={faTrash} />
                     </div>
                 </td>
                 <td>{this.props.type}</td>

@@ -20,8 +20,8 @@ if (isToolKitOn) {
 
 app.use(cookieParser())
 app.use(cors())
-
-app.use(express.static(__dirname + '/xeogl'))
+console.log(__dirname + '/xeogl')
+app.use('/view', express.static(__dirname + '/xeogl'))
 
 var tokenRequired = function (req, res, next) {
     const token = req.query.token;
@@ -65,10 +65,26 @@ app.get('/models', tokenRequired, function (req, res) {
     })
 })
 
+app.delete('/model/:id', tokenRequired, (req, res) => {
+    db.removeModel(req.params.id, req.user_id)
+})
+
+app.get('/model/:id', tokenRequired, (req, res) => {
+    db.getModels(req.user_id).then(models => {
+        for (let model of models) {
+            if (model.model_id == req.params.id && model.owner == req.user_id) {
+                console.log(model)
+                let gltf = JSON.parse(fs.readFileSync(model.gltfPath));
+                res.json({ model: gltf })
+            }
+        }
+    })
+})
+
 app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
     if (!req.body || !req.file) {
         console.error('Bad Request. Fileds or files required!');
-        res.status(500).send('Bad request!');
+        res.status(500).send('Bad reqruest!');
         return;
     }
 
@@ -128,17 +144,8 @@ app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
 })
 
 app.set('view engine', 'ejs');
-app.get('/view/:id', tokenRequired, function (req, res) { // Вьювер для модели
-    console.log(req.user_id, req.params)
-    db.getModels(req.user_id).then(models => {
-        for (let model of models) {
-            if (model.id_model == req.params.id && model.owner == req.user_id) {
-                console.log(model.id_model);
-                let bufGLTF = fs.readFileSync(model.filepath);
-                res.render(__dirname + '/view.ejs', { model: bufGLTF });
-            }
-        }
-    })
+app.get('/view', tokenRequired, function (req, res) { // Вьювер для модели
+    res.render(__dirname + '/view.ejs');
 })
 
 

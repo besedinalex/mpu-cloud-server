@@ -2,16 +2,18 @@
     cursor: pointer;
 }
 
-tr:first-child {
-    border-top: none;
+tr:hover {
+    cursor: pointer;
+    background: #ecf0f1;
 }
 
 .tool {
     font-size: 1.1em;
+    color: #34495e;
 }
 
 .tool:hover {
-    color: gray
+    color: #16a085;
 }
 
 .trash:hover {
@@ -19,5 +21,5 @@ tr:first-child {
 }
 
 .download:hover {
-    color: #2980b9;
+    color: #3498db;
 }

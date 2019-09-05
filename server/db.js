@@ -74,3 +74,16 @@ exports.addModel = function (title, desc, filename, gltfPath, originalPath, size
         })
     })
 }
+
+exports.removeModel = function(modelId, ownerId) {
+    return new Promise((resolve, reject) => {
+        let sql = `DELETE FROM Models WHERE model_id = ${modelId} AND owner = ${ownerId}`;
+        db.run(sql, [], function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this.changes);
+            }
+        })
+    })
+}
