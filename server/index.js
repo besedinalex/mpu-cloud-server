@@ -65,8 +65,21 @@ app.get('/models', tokenRequired, function (req, res) {
     })
 })
 
+app.get('/model/original/:id', tokenRequired, (req, res) => {
+    db.getModels(req.user_id).then(models => {
+        for (let model of models) {
+            if (model.model_id == req.params.id && model.owner == req.user_id) {
+                console.log(model.originalPath)
+                res.download(model.originalPath, model.filename);
+            }
+        }
+    })
+})
+
 app.delete('/model/:id', tokenRequired, (req, res) => {
-    db.removeModel(req.params.id, req.user_id)
+    db.removeModel(req.params.id, req.user_id).then(deleted => {
+        res.json({ deleted });
+    })
 })
 
 app.get('/model/:id', tokenRequired, (req, res) => {

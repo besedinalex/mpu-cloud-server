@@ -25,9 +25,9 @@ class ModelsView extends Component {
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
         this.handleTitleChange = this.handleTitleChange.bind(this);
         this.handleDescChange = this.handleDescChange.bind(this);
-        this.handleUpload = this.handleUpload.bind(this)
-        this.handleFileSelection = this.handleFileSelection.bind(this)
-
+        this.handleUpload = this.handleUpload.bind(this);
+        this.handleFileSelection = this.handleFileSelection.bind(this);
+        this.handleModelRemoved = this.handleModelRemoved.bind(this);
     }
 
     componentDidMount() {
@@ -58,6 +58,16 @@ class ModelsView extends Component {
         if (this.fileInput.current.files) this.setState({ filename: this.fileInput.current.files[0].name });
     }
 
+    handleModelRemoved(data) {
+        let newModels = this.state.models.filter(model => {
+            return model.model_id !== data.id;
+        })
+        console.log(newModels)
+        this.setState(prev => ({
+            models: newModels
+        }));
+    }
+
     handleUpload() {
         this.setState({ isUploaded: true })
         console.log(this.fileInput, this.state)
@@ -80,7 +90,7 @@ class ModelsView extends Component {
             .then(res => {
                 //handle success
                 console.log(res.data);
-            
+
                 this.setState(prev => ({
                     isUploaded: false, isDiaglogOpen: false, models: [res.data, ...prev.models]
                 }));
@@ -109,7 +119,9 @@ class ModelsView extends Component {
                     filename={model.filename}
                     type={model.type}
                     sizeKB={model.sizeKB}
-                    createdTime={model.createdTime}>
+                    createdTime={model.createdTime}
+                    onModelRemoved={this.handleModelRemoved}
+                >
                 </ModelItem>
             );
         })
@@ -121,7 +133,7 @@ class ModelsView extends Component {
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Добавить модель</h5>
-                                <button  onClick={this.handleCloseDialog} type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <button onClick={this.handleCloseDialog} type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span>&times;</span>
                                 </button>
                             </div>
@@ -140,58 +152,69 @@ class ModelsView extends Component {
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <input ref={this.fileInput} class="custom-file-input" name="model" id="inputGroupFile04" type="file" required="" />
-                                                <label style={{ textAlign: 'left' }}  class="custom-file-label" for="inputGroupFile04">Выберете файл</label>
-									</div>
-
+                                            <label style={{ textAlign: 'left' }} class="custom-file-label" for="inputGroupFile04">Выберете файл</label>
                                         </div>
+
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button onClick={this.handleCloseDialog} type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                                    {this.state.isUploaded ? <button class="btn btn-primary" type="button" disabled>
-  <span style={{marginRight: '8px'}} class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-  Загрузка...
+                            </div>
+                            <div class="modal-footer">
+                                <button onClick={this.handleCloseDialog} type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                {this.state.isUploaded ? <button class="btn btn-primary" type="button" disabled>
+                                    <span style={{ marginRight: '8px' }} class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Загрузка...
 </button> : <button type="button" class="btn btn-primary" onClick={this.handleUpload}>Отправить</button>}
-                                    
-                                </div>
+
                             </div>
                         </div>
-                    </div>
-
-
-                    <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{ marginBottom: 24 + 'px' }}>
-                        <div className="container">
-                            <a className="navbar-brand" href="/">MPU Cloud</a>
-                            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
-                                <span className="navbar-toggler-icon"></span>
-                            </button>
-                            <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-                                <div className="navbar-nav">
-                                    <Link className="nav-item nav-link" to="/models">Модели</Link>
-                                    <Link className="nav-item nav-link" to="/learn">Руководства</Link>
-                                    <Link className="nav-item nav-link" to="/profile">Профиль</Link>
-
-                                </div>
-                                <span style={{ marginLeft: 'auto' }} class="navbar-text"><button type="button" onClick={this.handleLogOut} className="btn btn-link">Выход</button></span>
-                            </div>
-                        </div>
-                    </nav>
-
-                    <div className="container">
-                        <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>
-                            <h3>Мои модели</h3>
-                            <button style={{height: '42px'}} onClick={this.handleOpenDialog} type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                Добавить
-</button>
-                        </div>
-                        <table className="table">
-                            {modelCells}
-                        </table>
-
                     </div>
                 </div>
-                );
-            }
-        }
-        
+
+
+                <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{ marginBottom: 24 + 'px' }}>
+                    <div className="container">
+                        <a className="navbar-brand" href="/">MPU Cloud</a>
+                        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                            <div className="navbar-nav">
+                                <Link className="nav-item nav-link" to="/models">Модели</Link>
+                                <Link className="nav-item nav-link" to="/learn">Руководства</Link>
+                                <Link className="nav-item nav-link" to="/profile">Профиль</Link>
+
+                            </div>
+                            <span style={{ marginLeft: 'auto' }} class="navbar-text"><button type="button" onClick={this.handleLogOut} className="btn btn-link">Выход</button></span>
+                        </div>
+                    </div>
+                </nav>
+
+                <div className="container">
+                    <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>
+                        <h3>Мои модели</h3>
+                        <button style={{ height: '42px' }} onClick={this.handleOpenDialog} type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                            Добавить
+</button>
+                    </div>
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Название</th>
+                                <th scope="col"></th>
+                                <th scope="col">Тип</th>
+                                <th scope="col">Вес</th>
+                                <th scope="col">Загружено</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {modelCells}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        );
+    }
+}
+
 export default ModelsView;
