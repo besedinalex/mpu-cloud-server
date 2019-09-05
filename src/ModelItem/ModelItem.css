@@ -1,0 +1,23 @@
+.filename:hover, .tools:hover {
+    cursor: pointer;
+}
+
+tr:first-child {
+    border-top: none;
+}
+
+.tool {
+    font-size: 1.1em;
+}
+
+.tool:hover {
+    color: gray
+}
+
+.trash:hover {
+    color: #c0392b;
+}
+
+.download:hover {
+    color: #2980b9;
+}

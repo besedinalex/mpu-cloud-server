@@ -6,7 +6,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const crypto = require('./crypto.js');
 
-let db = new sqlite3.Database('data.db', (err) => {
+let db = new sqlite3.Database('server/data.db', (err) => {
     if (err) {
         return console.error(err.message);
     }
@@ -55,18 +55,16 @@ exports.getModels = function (userId) {
             if (err) {
                 reject(err);
             } else {
-                rows.forEach((row, i, arr) => {
-                    row.createdTime = new Date(row.createdTime);
-                    if (arr.length - 1 === i) resolve(rows);
-                })
+                resolve(rows);
             }
         });
     })
 }
 
-exports.addModel = function (title, desc, filepath, owner) {
+exports.addModel = function (title, desc, filename, gltfPath, originalPath, sizeKB, type, owner) {
     return new Promise((resolve, reject) => {
-        let sql = `INSERT INTO Models (title, desc, filepath, owner) VALUES  ('${title}','${desc}','${filepath}','${owner}')`;
+        let sql = `INSERT INTO Models (title, desc, filename, gltfPath, originalPath, sizeKB, type, owner) 
+        VALUES  ('${title}','${desc}', '${filename}', '${gltfPath}', '${originalPath}', '${sizeKB}', '${type}', '${owner}')`;
         db.run(sql, [], function(err) {
             if (err) {
                 reject(err);

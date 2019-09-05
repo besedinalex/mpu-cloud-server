@@ -14,7 +14,7 @@ const path = require('path')
 const fs = require('fs-extra');
 
 var cad2gltf = {};
-if (isToolKitOn) { 
+if (isToolKitOn) {
     cad2gltf = require('./cad2gltf');
 } else console.log('Test Mode without C3D Toolkit has been started!')
 
@@ -42,8 +42,8 @@ var tokenRequired = function (req, res, next) {
 };
 
 app.get('/token', function (req, res) { // Получить токен на год
-    db.getUser(req.query.email, req.query.password).then(data => {
-        const payload = { id: data.id_user };
+    db.login(req.query.email, req.query.password).then(data => {
+        const payload = { id: data.user_id };
         const token = jwt.sign(payload, secret, { expiresIn: '365d' });
         let expiresAt = Date.now() + + 365 * 24 * 60 * 60 * 1000;
         res.json({ token, expiresAt: expiresAt });
@@ -72,6 +72,8 @@ app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
         return;
     }
 
+    console.log(req.file)
+
     let modelCode = generator.generate({ length: 20, numbers: true });
     let cellPath = path.join(__dirname, 'storage', modelCode); // Путь к физической папке
 
@@ -96,9 +98,23 @@ app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
             fs.outputFileSync(fullPathGLTF, plainGLTF, { flag: 'wx' });
             fs.outputFileSync(fullPathOrig, req.file.buffer, { flag: 'wx' });
 
-            db.addModel(req.body.title, req.body.desc, fullPathGLTF.replace(/\\/g,"/"), req.user_id).then(model_id => {
-                console.log(model_id)
-                res.json({ model_id });
+            db.addModel(
+                req.body.title,
+                req.body.desc,
+                req.file.originalname,
+                fullPathGLTF.replace(/\\/g, "/"),
+                fullPathOrig.replace(/\\/g, "/"),
+                req.file.size,
+                'STEP',
+                req.user_id
+            ).then(model_id => {
+                res.json({
+                    model_id: model_id,
+                    filename: req.file.originalname,
+                    type: 'STEP',
+                    sizeKB: req.file.size,
+                    createdTime: Date.now()
+                });
             })
 
         } catch (err) {
@@ -119,7 +135,7 @@ app.get('/view/:id', tokenRequired, function (req, res) { // Вьювер для
             if (model.id_model == req.params.id && model.owner == req.user_id) {
                 console.log(model.id_model);
                 let bufGLTF = fs.readFileSync(model.filepath);
-                res.render(__dirname + '/view.ejs', {model: bufGLTF});
+                res.render(__dirname + '/view.ejs', { model: bufGLTF });
             }
         }
     })

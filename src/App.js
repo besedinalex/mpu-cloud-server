@@ -7,6 +7,9 @@ import SignInView from './SignInView'
 import ModelsView from './ModelsView'
 import ModelView from './ModelView'
 import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom";
+import 'jquery';
+import 'bootstrap/dist/js/bootstrap';
+import 'bootstrap/dist/css/bootstrap.css';
 
 function PrivateRoute({ component: Component, ...rest }) {
   return (

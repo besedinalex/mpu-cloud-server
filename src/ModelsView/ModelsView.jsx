@@ -1,41 +1,9 @@
 import React, { Component } from 'react';
 
-import ModelItem from '../ModelItem'
-import { Toolbar, Grid, Container, Fab, AppBar, Typography, Button, DialogActions, Dialog, DialogContent, DialogTitle, TextField } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import AddIcon from '@material-ui/icons/Add';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
-import CircularProgress from '@material-ui/core/CircularProgress';
-
-
-const styles = theme => ({
-    '@global': {
-        body: {
-            background: '#eceff1'
-        }
-    },
-    grid: {
-        padding: theme.spacing(2)
-    },
-    fab: {
-        margin: theme.spacing(1),
-        position: 'absolute',
-        bottom: theme.spacing(5),
-        right: theme.spacing(10),
-    },
-    root: {
-        flexGrow: 1,
-    },
-    menuButton: {
-        marginRight: theme.spacing(2),
-    },
-    title: {
-        flexGrow: 1,
-    },
-
-});
+import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom";
+import ModelItem from '../ModelItem/ModelItem';
+import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 
 class ModelsView extends Component {
     constructor(props) {
@@ -63,6 +31,7 @@ class ModelsView extends Component {
 
     componentDidMount() {
         axios.get(`http://127.0.0.1:4000/models?token=${this.props.token}`).then(res => {
+            console.log(res.data)
             this.setState({ models: res.data.reverse() })
         })
     }
@@ -89,7 +58,7 @@ class ModelsView extends Component {
     }
 
     handleUpload() {
-        this.setState({isUploaded: true})
+        this.setState({ isUploaded: true })
         console.log(this.fileInput, this.state)
         let bodyFormData = new FormData();
 
@@ -109,16 +78,16 @@ class ModelsView extends Component {
         })
             .then(res => {
                 //handle success
-                console.log(res.data.model_id)
+                console.log(res.data);
+            
                 this.setState(prev => ({
-                    isUploaded: false, isDiaglogOpen: false, models: [{ id_model: res.data.model_id, title: prev.title, desc: prev.desc }, ...prev.models]
+                    isUploaded: false, isDiaglogOpen: false, models: [res.data, ...prev.models]
                 }));
             })
             .catch(function (response) {
                 //handle error
                 console.log(response);
             });
-
     }
 
     handleLogOut() {
@@ -128,72 +97,99 @@ class ModelsView extends Component {
 
     render() {
         console.log(this.state.isDiaglogOpen)
-        const { classes } = this.props;
 
-        const modelItems = this.state.models.map(model => {
-            return (<Grid item xs={12} md={4}>
-                <ModelItem token={this.props.token} title={model.title} desc={model.desc} id={model.id_model}></ModelItem>
-            </Grid>);
+        const modelCells = this.state.models.map(model => {
+            console.log(model)
+            return (
+                <ModelItem
+                    id={model.model_id}
+                    token={this.props.token}
+                    filename={model.filename}
+                    type={model.type}
+                    sizeKB={model.sizeKB}
+                    createdTime={model.createdTime}>
+                </ModelItem>
+            );
         })
 
         return (
             <div>
-                <AppBar position="static">
-                    <Toolbar>
-                        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography variant="h6" className={classes.title}>
-                            Облако Политеха
-          </Typography>
-                        <Button color="inherit" onClick={this.handleLogOut}>Выход</Button>
-                    </Toolbar>
-                </AppBar>
-                <Container maxWidth='md'>
-                    <Grid className={classes.grid} container spacing={3}>
-                        {modelItems}
-                    </Grid>
-                    <Fab color="primary" className={classes.fab} onClick={this.handleOpenDialog}>
-                        <AddIcon />
-                    </Fab>
-                </Container>
-                <Dialog onClose={this.handleCloseDialog} open={this.state.isDiaglogOpen}>
-                    <DialogTitle id="customized-dialog-title" onClose={this.handleCloseDialog}>
-                        Новая модель
-        </DialogTitle>
-                    <DialogContent>
-                        <Grid container spacing={2} container direction="column">
-                            <Grid item>
-                                <TextField fullWidth={true} label="Название" id="title" value={this.state.title} onChange={this.handleTitleChange} required /></Grid>
-                            <Grid item>
-                                <TextField fullWidth={true} label="Описание" id="desc" value={this.state.desc} onChange={this.handleDescChange} required />
-                            </Grid>
-                            <Grid item>
-                                <input style={{ display: 'none' }} id="contained-button-file" type="file" ref={this.fileInput} onChange={this.handleFileSelection} />
-                                <label htmlFor="contained-button-file">
-                                    <Button size='small' variant="contained" component="span" className={classes.button} >
-                                        Выбрать файл
-        </Button>
-                                    <Typography style={{ marginLeft: 12 + 'px' }} variant="p">{this.state.filename !== '' ? this.state.filename : 'Файл не выбран'}</Typography>
+                <div hidden={!this.state.isDiaglogOpen} class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Добавить модель</h5>
+                                <button  onClick={this.handleCloseDialog} type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="input-group" style={{ marginBottom: '16px' }}>
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="">Название</span>
+                                    </div>
+                                    <input name="author" type="text" class="form-control" onChange={this.handleTitleChange} required />
+                                </div>
+                                <div class="form-group" style={{ textAlign: 'left' }} >
+                                    <label style={{ textAlign: 'left' }} for="exampleFormControlTextarea1">Описание</label>
+                                    <textarea name="desc" class="form-control" id="exampleFormControlTextarea1" rows="5" onChange={this.handleDescChange} required></textarea>
+                                </div>
+                                <div class="custom-file">
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input ref={this.fileInput} class="custom-file-input" name="model" id="inputGroupFile04" type="file" required="" />
+                                                <label style={{ textAlign: 'left' }}  class="custom-file-label" for="inputGroupFile04">Выберете файл</label>
+									</div>
 
-                                </label>
-                            </Grid>
-                        </Grid>
-                    </DialogContent>
-                    <DialogActions>
-                        {!this.state.isUploaded ?
-                            <Button onClick={this.handleUpload} color="primary">
-                                Отправить
-      </Button> : <Button onClick={this.handleUpload} color="primary" disabled >
-      <CircularProgress size={24} style={{marginRight: '12px'}} />
-                                Загрузка..
-          </Button>
-                        }
-                    </DialogActions>
-                </Dialog>
-            </div>
-        );
-    }
-}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button onClick={this.handleCloseDialog} type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                    {this.state.isUploaded ? <button class="btn btn-primary" type="button" disabled>
+  <span style={{marginRight: '8px'}} class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  Загрузка...
+</button> : <button type="button" class="btn btn-primary" onClick={this.handleUpload}>Отправить</button>}
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-export default withStyles(styles)(ModelsView);
+
+                    <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{ marginBottom: 24 + 'px' }}>
+                        <div className="container">
+                            <a className="navbar-brand" href="/">MPU Cloud</a>
+                            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
+                                <span className="navbar-toggler-icon"></span>
+                            </button>
+                            <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                                <div className="navbar-nav">
+                                    <Link className="nav-item nav-link" to="/models">Модели</Link>
+                                    <Link className="nav-item nav-link" to="/learn">Руководства</Link>
+                                    <Link className="nav-item nav-link" to="/profile">Профиль</Link>
+
+                                </div>
+                                <span style={{ marginLeft: 'auto' }} class="navbar-text"><button type="button" onClick={this.handleLogOut} className="btn btn-link">Выход</button></span>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <div className="container">
+                        <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>
+                            <h2>Мои модели</h2>
+                            <button onClick={this.handleOpenDialog} type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                Добавить
+</button>
+                        </div>
+                        <table className="table">
+                            {modelCells}
+                        </table>
+
+                    </div>
+                </div>
+                );
+            }
+        }
+        
+export default ModelsView;
