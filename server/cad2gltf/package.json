@@ -8,8 +8,13 @@
   },
   "author": "Nexeon",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "json-stream-stringify": "^2.0.1"
+  },
   "devDependencies": {
     "three": "^0.103.0"
+  },
+  "config": {
+    "configuration": "Debug"
   }
 }
