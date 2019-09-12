@@ -6,6 +6,7 @@ import SignUpView from './SignUpView'
 import SignInView from './SignInView'
 import ModelsView from './ModelsView'
 import ModelView from './ModelView'
+import LandingView from "./LandingView";
 import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom";
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
@@ -49,6 +50,7 @@ class App extends Component {
     return (
       <Router>
         <div className="App">
+          <Route path="/home" component={LandingView} />
           <Route path="/login" render={props => <SignInView onAuthenticated={this.handleAuthentication} {...props} />} />
           <Route path="/signup" render={props => <SignUpView onAuthenticated={this.handleAuthentication} {...props} />} />
           <PrivateRoute exact path="/models" component={ModelsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
