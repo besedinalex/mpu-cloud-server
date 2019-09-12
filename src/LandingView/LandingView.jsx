@@ -5,7 +5,7 @@ import './LandingView.css';
 class LandingView extends Component {
     render() {
         return (
-            <div>
+            <body className="body">
                 <header className="navbar navbar-expand-lg py-3 navbar-dark bg-dark fixed-top">
                     <a className="navbar-brand text-white">MPU Cloud</a>
 
@@ -38,8 +38,8 @@ class LandingView extends Component {
                         <h1 className="display-4 font-weight-normal">MPU Cloud</h1>
                         <p className="lead font-weight-normal">Designed to be the best cloud storage for engineers.</p>
                         <div>
-                            <a className="btn btn-outline-info" href="#">Sign Up</a>
-                            <a className="btn btn-outline-dark" href="#">Log In</a>
+                            <a className="btn btn-outline-info mx-1" href="#">Sign Up</a>
+                            <a className="btn btn-outline-dark mx-1" href="#">Log In</a>
                         </div>
                     </div>
                     <div className="product-device shadow-sm d-none d-md-block"></div>
@@ -114,7 +114,7 @@ class LandingView extends Component {
                     <div className="product-device shadow-sm d-none d-md-block"></div>
                     <div className="product-device product-device-2 shadow-sm d-none d-md-block"></div>
                 </div>
-            </div>
+            </body>
         );
     }
 }
