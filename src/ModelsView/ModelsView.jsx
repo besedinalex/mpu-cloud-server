@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom
 import ModelItem from '../ModelItem/ModelItem';
 import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import $ from "jquery";
+import Header from "../Header";
 
 class ModelsView extends Component {
     constructor(props) {
@@ -127,7 +128,7 @@ class ModelsView extends Component {
         })
 
         return (
-            <div>
+            <div className="margin-for-header">
                 <div hidden={!this.state.isDiaglogOpen} class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -171,23 +172,7 @@ class ModelsView extends Component {
                 </div>
 
 
-                <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{ marginBottom: 24 + 'px' }}>
-                    <div className="container">
-                        <a className="navbar-brand" href="/">MPU Cloud</a>
-                        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
-                            <span className="navbar-toggler-icon"></span>
-                        </button>
-                        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-                            <div className="navbar-nav">
-                                <Link className="nav-item nav-link" to="/models">Модели</Link>
-                                <Link className="nav-item nav-link" to="/learn">Руководства</Link>
-                                <Link className="nav-item nav-link" to="/profile">Профиль</Link>
-
-                            </div>
-                            <span style={{ marginLeft: 'auto' }} class="navbar-text"><button type="button" onClick={this.handleLogOut} className="btn btn-link">Выход</button></span>
-                        </div>
-                    </div>
-                </nav>
+                <Header />
 
                 <div className="container">
                     <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>

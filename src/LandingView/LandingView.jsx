@@ -1,21 +1,22 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
+import {Link} from "react-router-dom";
 
 import './LandingView.css';
 
-import Header from "../components/Header";
+import Header from "../Header";
 
 class LandingView extends Component {
     render() {
         return (
-            <body className="margin-for-header">
+            <div className="margin-for-header">
                 <Header />
                 <div className="position-relative overflow-hidden p-3 p-md-3 text-center bg-light">
                     <div className="col-md-5 p-lg-5 mx-auto my-5">
                         <h1 className="display-4 font-weight-normal">MPU Cloud</h1>
                         <p className="lead font-weight-normal">Designed to be the best cloud storage for engineers.</p>
                         <div>
-                            <a className="btn btn-outline-info mx-1" href="#">Sign Up</a>
-                            <a className="btn btn-outline-dark mx-1" href="#">Log In</a>
+                            <Link className="btn btn-outline-info mx-1" to="/signup">Sign Up</Link>
+                            <Link className="btn btn-outline-dark mx-1" to="/login">Log In</Link>
                         </div>
                     </div>
                     <div className="product-device shadow-sm d-none d-md-block"></div>
@@ -90,7 +91,7 @@ class LandingView extends Component {
                     <div className="product-device shadow-sm d-none d-md-block"></div>
                     <div className="product-device product-device-2 shadow-sm d-none d-md-block"></div>
                 </div>
-            </body>
+            </div>
         );
     }
 }
