@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import axios from "axios";
 
-import './Header.css';
+import './HeaderComponent.css';
 
-class Header extends Component {
+class HeaderComponent extends Component {
     constructor(props) {
         super(props);
 
@@ -68,4 +67,4 @@ class Header extends Component {
     }
 }
 
-export default Header;
+export default HeaderComponent;

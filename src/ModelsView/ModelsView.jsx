@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom
 import ModelItem from '../ModelItem/ModelItem';
 import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import $ from "jquery";
-import Header from "../Header";
+import HeaderComponent from "../HeaderComponent";
 
 class ModelsView extends Component {
     constructor(props) {
@@ -172,7 +172,7 @@ class ModelsView extends Component {
                 </div>
 
 
-                <Header />
+                <HeaderComponent />
 
                 <div className="container">
                     <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>
