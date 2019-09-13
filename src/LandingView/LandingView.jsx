@@ -2,37 +2,13 @@ import React, { Component } from "react";
 
 import './LandingView.css';
 
+import Header from "../components/Header";
+
 class LandingView extends Component {
     render() {
         return (
-            <body className="body">
-                <header className="navbar navbar-expand-lg py-3 navbar-dark bg-dark fixed-top">
-                    <a className="navbar-brand text-white">MPU Cloud</a>
-
-                    <button className="navbar-toggler" type="button" data-toggle="collapse"
-                            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon" />
-                    </button>
-
-                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul className="navbar-nav mr-auto">
-                            <li className="nav-item active">
-                                <a className="nav-link" href="#">Home</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Placeholder</a>
-                            </li>
-                        </ul>
-                        <a className="mx-3" href="#">
-                            <button className="btn btn-info">Sign Up</button>
-                        </a>
-                        <a href="#">
-                            <button className="btn btn-light">Log In</button>
-                        </a>
-                    </div>
-                </header>
-
+            <body className="margin-for-header">
+                <Header />
                 <div className="position-relative overflow-hidden p-3 p-md-3 text-center bg-light">
                     <div className="col-md-5 p-lg-5 mx-auto my-5">
                         <h1 className="display-4 font-weight-normal">MPU Cloud</h1>
