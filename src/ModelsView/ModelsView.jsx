@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-
-import axios from 'axios';
 import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom";
-import ModelItem from '../ModelItem/ModelItem';
+import axios from 'axios';
 import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import $ from "jquery";
+
 import HeaderComponent from "../HeaderComponent";
+import ModelItem from '../ModelItem/ModelItem';
+
+import './ModelsView.css';
 
 class ModelsView extends Component {
     constructor(props) {
@@ -123,7 +125,7 @@ class ModelsView extends Component {
         });
 
         return (
-            <div className="margin-for-header">
+            <div>
                 <div hidden={!this.state.isDialogOpen} className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
@@ -169,7 +171,7 @@ class ModelsView extends Component {
 
                 <HeaderComponent />
 
-                <div className="container">
+                <div className="container margin-after-header">
                     <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>
                         <h3>Мои модели</h3>
                         <button style={{ height: '42px' }} onClick={this.handleOpenDialog} type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
