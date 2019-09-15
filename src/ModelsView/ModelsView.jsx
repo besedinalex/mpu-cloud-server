@@ -103,10 +103,6 @@ class ModelsView extends Component {
             });
     }
 
-    handleLogOut() {
-        localStorage.removeItem('session');
-        window.location.reload();
-    }
 
     render() {
         console.log(this.state.isDiaglogOpen)
