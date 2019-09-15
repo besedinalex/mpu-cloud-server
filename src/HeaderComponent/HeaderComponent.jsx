@@ -33,13 +33,13 @@ class HeaderComponent extends Component {
 
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav mr-auto">
-                        <li className="nav-item">
+                        <li className="nav-item" hidden={!loggedIn}>
                             <Link className="nav-link" to="/models">Модели</Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="/learn">Руководства</Link>
                         </li>
-                        <li hidden={!loggedIn}>
+                        <li className="nav-item" hidden={!loggedIn}>
                             <Link className="nav-link" to="/profile">Профиль</Link>
                         </li>
                     </ul>
