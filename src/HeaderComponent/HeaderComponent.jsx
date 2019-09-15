@@ -10,19 +10,8 @@ class HeaderComponent extends Component {
         const session = JSON.parse(localStorage.getItem('session'));
 
         this.state = {
-            isAuthenticated: session !== null && Date.now() <= session.expiresAt,
-            token: session !== null ? session['token'] : undefined
+            isAuthenticated: session !== null && Date.now() <= session.expiresAt
         };
-
-        this.handleAuthentication = this.handleAuthentication.bind(this);
-    }
-
-    handleAuthentication(session) {
-        localStorage.setItem('session', JSON.stringify(session));
-        this.setState({
-            isAuthenticated: true ,
-            token: session.token
-        });
     }
 
     handleLogOut() {
