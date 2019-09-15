@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import SignUpView from './SignUpView'
-import SignInView from './SignInView'
-import ModelsView from './ModelsView'
-import ModelView from './ModelView'
-import LandingView from "./LandingView";
+import SignUpView from './components/SignUpView'
+import SignInView from './components/SignInView'
+import ModelsView from './components/ModelsView'
+import ModelView from './components/ModelView'
+import LandingView from "./components/LandingView";
 import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom";
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
