@@ -19,22 +19,22 @@ class LandingView extends Component {
                             <Link className="btn btn-outline-dark mx-1" to="/login">Log In</Link>
                         </div>
                     </div>
-                    <div className="product-device shadow-sm d-none d-md-block"></div>
-                    <div className="product-device product-device-2 shadow-sm d-none d-md-block"></div>
+                    <div className="product-device shadow-sm d-none d-md-block" />
+                    <div className="product-device product-device-2 shadow-sm d-none d-md-block" />
                 </div>
 
                 <div id="myCarousel" className="carousel slide" data-ride="carousel">
                     <ol className="carousel-indicators">
-                        <li data-target="#myCarousel" data-slide-to="0" className="active"></li>
-                        <li data-target="#myCarousel" data-slide-to="1"></li>
-                        <li data-target="#myCarousel" data-slide-to="2"></li>
+                        <li data-target="#myCarousel" data-slide-to="0" className="active"/>
+                        <li data-target="#myCarousel" data-slide-to="1" />
+                        <li data-target="#myCarousel" data-slide-to="2" />
                     </ol>
                     <div className="carousel-inner">
                         <div className="carousel-item active">
                             <svg className="bd-placeholder-img" width="100%" height="100%"
                                  xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
                                  focusable="false" role="img">
-                                <rect width="100%" height="100%" fill="#777"/>
+                                <rect width="100%" height="100%" fill="#777" />
                             </svg>
                             <div className="container">
                                 <div className="carousel-caption">
@@ -75,11 +75,11 @@ class LandingView extends Component {
                         </div>
                     </div>
                     <a className="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
-                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span className="carousel-control-prev-icon" aria-hidden="true" />
                         <span className="sr-only">Previous</span>
                     </a>
                     <a className="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
-                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span className="carousel-control-next-icon" aria-hidden="true" />
                         <span className="sr-only">Next</span>
                     </a>
                 </div>
@@ -88,8 +88,6 @@ class LandingView extends Component {
                     <div className="col-md-5 p-lg-5 mx-auto my-5">
                         <h1 className="display-5 font-weight-normal">Start using today!</h1>
                     </div>
-                    <div className="product-device shadow-sm d-none d-md-block"></div>
-                    <div className="product-device product-device-2 shadow-sm d-none d-md-block"></div>
                 </div>
             </div>
         );
