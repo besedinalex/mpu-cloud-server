@@ -46,17 +46,17 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state)
+    console.log(this.state);
     return (
       <Router>
         <div className="App">
-          <Route path="/home" component={LandingView} />
+          <Route exact path="/" component={LandingView}/>
           <Route path="/login" render={props => <SignInView onAuthenticated={this.handleAuthentication} {...props} />} />
           <Route path="/signup" render={props => <SignUpView onAuthenticated={this.handleAuthentication} {...props} />} />
           <PrivateRoute exact path="/models" component={ModelsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
           <PrivateRoute exact path="/models/:id" component={ModelView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
         </div>
-      </Router >
+      </Router>
     );
   }
 }
