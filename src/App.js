@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import SignUpView from './SignUpView'
-import SignInView from './SignInView'
-import ModelsView from './ModelsView'
-import ModelView from './ModelView'
+import SignUpView from './components/SignUpView'
+import SignInView from './components/SignInView'
+import ModelsView from './components/ModelsView'
+import ModelView from './components/ModelView'
+import LandingView from "./components/LandingView";
 import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom";
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
@@ -45,16 +46,17 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state)
+    console.log(this.state);
     return (
       <Router>
         <div className="App">
+          <Route exact path="/" component={LandingView}/>
           <Route path="/login" render={props => <SignInView onAuthenticated={this.handleAuthentication} {...props} />} />
           <Route path="/signup" render={props => <SignUpView onAuthenticated={this.handleAuthentication} {...props} />} />
           <PrivateRoute exact path="/models" component={ModelsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
           <PrivateRoute exact path="/models/:id" component={ModelView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
         </div>
-      </Router >
+      </Router>
     );
   }
 }
