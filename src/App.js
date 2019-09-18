@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import {isAuthenticated, token} from "./services/authentication";
+
 import SignUpView from './components/SignUpView'
 import SignInView from './components/SignInView'
 import ModelsView from './components/ModelsView'
@@ -27,12 +29,10 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    const session = JSON.parse(localStorage.getItem('session'));
-
     this.state = {
-        isAuthenticated: session !== null && Date.now() <= session.expiresAt,
-        token: session !== null ? session['token'] : undefined
-    }
+        isAuthenticated: isAuthenticated(),
+        token: token()
+    };
 
     this.handleAuthentication = this.handleAuthentication.bind(this)
   }

@@ -1,18 +1,14 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 
+import {isAuthenticated} from "../../services/authentication";
+
 import './HeaderComponent.css';
 
 class HeaderComponent extends Component {
-    constructor(props) {
-        super(props);
-
-        const session = JSON.parse(localStorage.getItem('session'));
-
-        this.state = {
-            isAuthenticated: session !== null && Date.now() <= session.expiresAt
-        };
-    }
+    state = {
+        isAuthenticated: isAuthenticated()
+    };
 
     handleLogOut() {
         localStorage.removeItem('session');
