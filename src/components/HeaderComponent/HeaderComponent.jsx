@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 
-import {isAuthenticated} from "../../services/authentication";
+import {handleLogOut, isAuthenticated} from "../../services/authentication";
 
 import './HeaderComponent.css';
 
@@ -9,11 +9,6 @@ class HeaderComponent extends Component {
     state = {
         isAuthenticated: isAuthenticated()
     };
-
-    handleLogOut() {
-        localStorage.removeItem('session');
-        window.location.reload();
-    }
 
     render() {
         const loggedIn = this.state.isAuthenticated;
@@ -45,7 +40,7 @@ class HeaderComponent extends Component {
                     <Link hidden={loggedIn} to="/login">
                         <button className="btn btn-light">Войти</button>
                     </Link>
-                    <button hidden={!loggedIn} className="btn btn-danger" onClick={this.handleLogOut}>Выйти</button>
+                    <button hidden={!loggedIn} className="btn btn-danger" onClick={handleLogOut}>Выйти</button>
                 </div>
             </header>
         );
