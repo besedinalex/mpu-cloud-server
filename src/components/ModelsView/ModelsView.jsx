@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom";
 import axios from 'axios';
-import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import $ from "jquery";
 
 import HeaderComponent from "../HeaderComponent";

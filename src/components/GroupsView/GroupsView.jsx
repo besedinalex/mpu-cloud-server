@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import HeaderComponent from "../HeaderComponent";
 import GroupItem from "../GroupItem";
 import axios from 'axios';
-import $ from "jquery";
 
 class GroupsView extends Component {
     constructor(props) {
@@ -13,12 +12,7 @@ class GroupsView extends Component {
             key: "",
             title: '',
             filename: '',
-            token:this.props.token,
-            
-            groups: [
-                { key: 1, title: "Группа #1", owner: "Кудрявых К.А", dateOfCreation: "12.11.2017" },
-                { key: 2, title: "Группа #2", owner: "Александров В.Г", dateOfCreation: "16.8.2019" }
-            ]
+            groups: []
         };
 
         this.fileInput = React.createRef();
@@ -30,13 +24,11 @@ class GroupsView extends Component {
         this.getGroups = this.getGroups.bind(this);
     }
     
-    getGroups(){
-        axios.get(`http://127.0.0.1:4000/groups?token=${this.state.token}`).then(res => {
-            console.log(res.data);
-            console.log("fff");
-            this.setState({ groups: res.data });
-        });
-        
+    getGroups() {
+        axios.get(`http://127.0.0.1:4000/groups?token=${this.props.token}`)
+            .then(res => {
+                this.setState({ groups: res.data });
+            });
     }
 
     handleCloseDialog() {
@@ -61,27 +53,24 @@ class GroupsView extends Component {
 
     handleCreate = (e)  => {
         e.preventDefault();
-        axios.post(`http://127.0.0.1:4000/groups?token=${this.state.token}&title=${this.state.title}&image=${this.state.file}&dateOfCreation=${this.getCurrentDate()}`)
-    }
+        axios.post(`http://127.0.0.1:4000/groups?token=${this.props.token}&title=${this.state.title}&image=${this.state.file}&dateOfCreation=${this.getCurrentDate()}`)
+            .then();
+        this.getGroups();
+    };
     
     getCurrentDate() {
         const date = new Date();
         return date.getDate().toString() +"."+ (date.getMonth() + 1).toString() +"."+ date.getFullYear().toString();
     }
 
-     componentWillMount(){
+     componentDidMount(){
          this.getGroups();
     }
-    
 
     render() { 
         return ( 
             <div>
-            {/* Функции */}
-            
-
-
-            <div hidden={!this.state.isDialogOpen} className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div hidden={!this.state.isDialogOpen} className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
@@ -98,7 +87,7 @@ class GroupsView extends Component {
                                     </div>
                                     <input name="author" type="text"  value= {this.state.title} className="form-control" onChange={this.handleTitleChange} required />
                                 </div>
-                               
+
                                 <div className="custom-file">
                                     <div className="input-group">
                                         <div className="custom-file">
@@ -117,8 +106,7 @@ class GroupsView extends Component {
                         </div>
                     </div>
                 </div>
-                
-                
+
                 <HeaderComponent />
 
                 <div className="container margin-after-header">
@@ -140,15 +128,15 @@ class GroupsView extends Component {
                         </thead>
                         <tbody>
                             {this.state.groups.map(group =>
-                                <GroupItem 
-                                    key={group.key} 
+                                <GroupItem
+                                    key={group.key}
                                     group={group}
                                 />)}
                         </tbody>
                     </table>
                     <br/>
                     <br/>
-                    
+
                 </div>
             </div>
          );

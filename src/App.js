@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Redirect, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Redirect, Route } from "react-router-dom";
 
-import logo from './logo.svg';
 import './App.css';
 
 import SignUpView from './components/SignUpView'
@@ -36,7 +35,7 @@ class App extends Component {
     this.state = {
         isAuthenticated: session !== null && Date.now() <= session.expiresAt,
         token: session !== null ? session['token'] : undefined
-    }
+    };
 
     this.handleAuthentication = this.handleAuthentication.bind(this)
   }
