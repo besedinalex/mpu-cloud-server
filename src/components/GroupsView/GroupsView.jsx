@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
 import HeaderComponent from "../HeaderComponent";
-import GroupItem from "../GroupItem"
-import SignInView from "../SignInView"
+import GroupItem from "../GroupItem";
+import axios from 'axios';
+import $ from "jquery";
 
 class GroupsView extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = {
             isDialogOpen: false,
             key: "",
             title: '',
             filename: '',
+            token:this.props.token,
             
             groups: [
-                { key: 1, title: "Группа #1", name: "Кудрявых К.А", date: "12.11.2017" },
-                { key: 2, title: "Группа #2", name: "Александров В.Г", date: "16.8.2019" }
+                { key: 1, title: "Группа #1", owner: "Кудрявых К.А", dateOfCreation: "12.11.2017" },
+                { key: 2, title: "Группа #2", owner: "Александров В.Г", dateOfCreation: "16.8.2019" }
             ]
         };
 
@@ -25,8 +27,19 @@ class GroupsView extends Component {
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
         this.handleTitleChange = this.handleTitleChange.bind(this);
         this.handleFileSelection = this.handleFileSelection.bind(this);
+        this.getGroups = this.getGroups.bind(this);
     }
     
+    getGroups(){
+
+        axios.get(`http://127.0.0.1:4000/groups?token=${this.state.token}`).then(res => {
+            console.log(res.data);
+            console.log("fff");
+            this.setState({ groups: res.data });
+        });
+        
+    }
+
     handleCloseDialog() {
         this.setState({ isDialogOpen: false });
     }
@@ -65,11 +78,18 @@ class GroupsView extends Component {
         return date.getDate().toString() +"."+ date.getMonth().toString() +"."+ date.getFullYear().toString();
     }
 
+     componentWillMount(){
+         this.getGroups();
+    }
+    
 
     render() { 
         return ( 
             <div>
+            {/* Функции */}
             
+
+
             <div hidden={!this.state.isDialogOpen} className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
@@ -107,9 +127,13 @@ class GroupsView extends Component {
                     </div>
                 </div>
                 
+                
                 <HeaderComponent></HeaderComponent>
 
                 <div className="container margin-after-header">
+                    
+                <button onClick={this.getGroups}>fffffff</button>
+
                     <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>
                     <h3>Группы</h3>
                         <button style={{ height: '42px' }} onClick={this.handleOpenDialog} type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal">

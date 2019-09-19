@@ -51,6 +51,11 @@ exports.login = function (email, password) {
 exports.getModels = function (userId) {
     return new Promise((resolve, reject) => {
         let sql = `SELECT * FROM Models WHERE owner = '${userId}'`;
+exports.getGroups = function (userId) {
+    return new Promise((resolve, reject) => {
+        let sql = `SELECT Groups.title, Groups.image, Groups.owner, Groups.dateOfCreation, Users.firstName, Users.lastName FROM Groups
+        JOIN Users ON Groups.owner = Users.user_id
+        WHERE Groups.owner = '${userId}'`;
         db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);

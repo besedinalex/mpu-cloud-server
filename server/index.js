@@ -65,6 +65,13 @@ app.get('/models', tokenRequired, function (req, res) {
     })
 })
 
+app.get('/groups', tokenRequired, function (req, res) {
+    db.getGroups(req.user_id).then(data => {
+        res.json(data);
+        console.log("ff");
+    })
+})
+
 app.get('/model/original/:id', tokenRequired, (req, res) => {
     db.getModels(req.user_id).then(models => {
         for (let model of models) {
