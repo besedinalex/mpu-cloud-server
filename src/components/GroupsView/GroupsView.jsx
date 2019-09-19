@@ -31,7 +31,6 @@ class GroupsView extends Component {
     }
     
     getGroups(){
-
         axios.get(`http://127.0.0.1:4000/groups?token=${this.state.token}`).then(res => {
             console.log(res.data);
             console.log("fff");
@@ -62,20 +61,12 @@ class GroupsView extends Component {
 
     handleCreate = (e)  => {
         e.preventDefault();
-        const{inputText, textareatext} = this.state;
-        this.state.groups.push({key: this.state.groups[this.state.groups.length - 1].key + 1, title: this.state.title, date: this.getCurrentDate(), name:"Заглушка З.З"})
-        this.setState({
-            title:""
-        });
-        this.handleCloseDialog(); 
-        console.log(this.props);
-        
-        
+        axios.post(`http://127.0.0.1:4000/groups?token=${this.state.token}&title=${this.state.title}&image=${this.state.file}&dateOfCreation=${this.getCurrentDate()}`)
     }
     
-    getCurrentDate(){
-        var date = new Date();
-        return date.getDate().toString() +"."+ date.getMonth().toString() +"."+ date.getFullYear().toString();
+    getCurrentDate() {
+        const date = new Date();
+        return date.getDate().toString() +"."+ (date.getMonth() + 1).toString() +"."+ date.getFullYear().toString();
     }
 
      componentWillMount(){
@@ -128,11 +119,9 @@ class GroupsView extends Component {
                 </div>
                 
                 
-                <HeaderComponent></HeaderComponent>
+                <HeaderComponent />
 
                 <div className="container margin-after-header">
-                    
-                <button onClick={this.getGroups}>fffffff</button>
 
                     <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>
                     <h3>Группы</h3>

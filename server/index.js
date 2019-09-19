@@ -68,9 +68,12 @@ app.get('/models', tokenRequired, function (req, res) {
 app.get('/groups', tokenRequired, function (req, res) {
     db.getGroups(req.user_id).then(data => {
         res.json(data);
-        console.log("ff");
     })
 })
+
+app.post('/groups', tokenRequired, function (req) {
+    db.addGroups(req.query.title, req.query.image, req.user_id, req.query.dateOfCreation);
+});
 
 app.get('/model/original/:id', tokenRequired, (req, res) => {
     db.getModels(req.user_id).then(models => {

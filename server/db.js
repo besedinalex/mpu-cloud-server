@@ -51,6 +51,9 @@ exports.login = function (email, password) {
 exports.getModels = function (userId) {
     return new Promise((resolve, reject) => {
         let sql = `SELECT * FROM Models WHERE owner = '${userId}'`;
+    })
+}
+
 exports.getGroups = function (userId) {
     return new Promise((resolve, reject) => {
         let sql = `SELECT Groups.title, Groups.image, Groups.owner, Groups.dateOfCreation, Users.firstName, Users.lastName FROM Groups
@@ -63,6 +66,20 @@ exports.getGroups = function (userId) {
                 resolve(rows);
             }
         });
+    })
+}
+
+exports.addGroups = function (title, image, owner, dateOfCreation) {
+    return new Promise((resolve, reject) => {
+        let sql = `INSERT INTO Groups (title, image, owner, dateOfCreation) 
+        VALUES  ('${title}','${image}', '${owner}', '${dateOfCreation}')`;
+        db.run(sql, [], function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this.lastID);
+            }
+        })
     })
 }
 
@@ -83,7 +100,7 @@ exports.addModel = function (title, desc, filename, gltfPath, originalPath, size
 exports.removeModel = function(modelId, ownerId) {
     return new Promise((resolve, reject) => {
         let sql = `DELETE FROM Models WHERE model_id = ${modelId} AND owner = ${ownerId}`;
-        db.run(sql, [], function(err) {
+        db.run(sql, [], function (err) {
             if (err) {
                 reject(err);
             } else {
