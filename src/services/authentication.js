@@ -1,14 +1,22 @@
+let session;
+
+export let isAuthenticated;
+export let token;
+
+updateAuthData();
+
+export function handleAuthentication(session) {
+    localStorage.setItem('session', JSON.stringify(session));
+    updateAuthData();
+}
+
 export function handleLogOut() {
     localStorage.removeItem('session');
     window.location.reload();
 }
 
-export function isAuthenticated() {
-    const session = JSON.parse(localStorage.getItem('session'));
-    return session !== null && Date.now() <= session.expiresAt;
-}
-
-export function token() {
-    const session = JSON.parse(localStorage.getItem('session'));
-    return session !== null ? session['token'] : undefined;
+function updateAuthData() {
+    session = JSON.parse(localStorage.getItem('session'));
+    isAuthenticated  = session !== null && Date.now() <= session.expiresAt;
+    token = session !== null ? session['token'] : undefined;
 }

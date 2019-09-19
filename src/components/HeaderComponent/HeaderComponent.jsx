@@ -7,7 +7,7 @@ import './HeaderComponent.css';
 
 class HeaderComponent extends Component {
     state = {
-        isAuthenticated: isAuthenticated()
+        isAuthenticated: isAuthenticated
     };
 
     render() {

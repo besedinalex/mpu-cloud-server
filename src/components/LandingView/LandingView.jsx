@@ -9,7 +9,7 @@ import './LandingView.css';
 
 class LandingView extends Component {
     state = {
-        isAuthenticated: isAuthenticated()
+        isAuthenticated: isAuthenticated
     };
 
     render() {

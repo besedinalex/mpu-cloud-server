@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import {isAuthenticated, token} from "./services/authentication";
+import {isAuthenticated, token, handleAuthentication} from "./services/authentication";
 
 import SignUpView from './components/SignUpView'
 import SignInView from './components/SignInView'
@@ -30,17 +30,17 @@ class App extends Component {
     super(props);
 
     this.state = {
-        isAuthenticated: isAuthenticated(),
-        token: token()
+        isAuthenticated: isAuthenticated,
+        token: token
     };
 
-    this.handleAuthentication = this.handleAuthentication.bind(this)
+    this.handleAuth = this.handleAuth.bind(this)
   }
 
-  handleAuthentication(session) {
-    localStorage.setItem('session', JSON.stringify(session));
+  handleAuth(session) {
+    handleAuthentication(session);
     this.setState({
-      isAuthenticated: true ,
+      isAuthenticated: true,
       token: session.token
     })
   }
@@ -51,8 +51,8 @@ class App extends Component {
       <Router>
         <div className="App">
           <Route exact path="/" component={LandingView}/>
-          <Route path="/login" render={props => <SignInView onAuthenticated={this.handleAuthentication} {...props} />} />
-          <Route path="/signup" render={props => <SignUpView onAuthenticated={this.handleAuthentication} {...props} />} />
+          <Route path="/login" render={props => <SignInView onAuthenticated={this.handleAuth} {...props} />} />
+          <Route path="/signup" render={props => <SignUpView onAuthenticated={this.handleAuth} {...props} />} />
           <PrivateRoute exact path="/models" component={ModelsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
           <PrivateRoute exact path="/models/:id" component={ModelView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
         </div>
