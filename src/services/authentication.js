@@ -10,7 +10,7 @@ export function handleAuthentication(session) {
     updateAuthData();
 }
 
-export function handleLogOut() {
+export function handleLoggingOut() {
     localStorage.removeItem('session');
     window.location.reload();
 }

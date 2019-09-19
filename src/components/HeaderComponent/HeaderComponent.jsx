@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 
-import {handleLogOut, isAuthenticated} from "../../services/authentication";
+import {handleLoggingOut, isAuthenticated} from "../../services/authentication";
 
 import './HeaderComponent.css';
 
@@ -40,7 +40,7 @@ class HeaderComponent extends Component {
                     <Link hidden={loggedIn} to="/login">
                         <button className="btn btn-light">Войти</button>
                     </Link>
-                    <button hidden={!loggedIn} className="btn btn-danger" onClick={handleLogOut}>Выйти</button>
+                    <button hidden={!loggedIn} className="btn btn-danger" onClick={handleLoggingOut}>Выйти</button>
                 </div>
             </header>
         );
