@@ -33,14 +33,11 @@ class HeaderComponent extends Component {
 
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav mr-auto">
+                        <li className="nav-item">
+                            <Link to="/docs" className="nav-link">Руководства</Link>
+                        </li>
                         <li className="nav-item" hidden={!loggedIn}>
                             <Link to="/models" className="nav-link">Модели</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/learn" className="nav-link">Руководства</Link>
-                        </li>
-                        <li className="nav-item" hidden={!loggedIn}>
-                            <Link to="/profile" className="nav-link">Профиль</Link>
                         </li>
                         <li className="nav-item" hidden={!loggedIn}>
                             <Link to="/groups" className="nav-link">Группы</Link>
@@ -51,6 +48,9 @@ class HeaderComponent extends Component {
                     </Link>
                     <Link to="/login" hidden={loggedIn}>
                         <button className="btn btn-light">Войти</button>
+                    </Link>
+                    <Link to="/settings" hidden={!loggedIn} className="margin-right">
+                        <button className="btn btn-light">Настройки</button>
                     </Link>
                     <button hidden={!loggedIn} className="btn btn-danger" onClick={this.handleLogOut}>Выйти</button>
                 </div>
