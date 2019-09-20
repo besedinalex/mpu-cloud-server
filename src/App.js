@@ -5,10 +5,9 @@ import './App.css';
 
 import {isAuthenticated, token, handleAuthentication} from "./services/authentication";
 
-import SignUpView from './components/SignUpView'
-import SignInView from './components/SignInView'
-import ModelsView from './components/ModelsView'
-import ModelView from './components/ModelView'
+import SignUpView from './components/SignUpView';
+import SignInView from './components/SignInView';
+import ModelsView from './components/ModelsView';
 import LandingView from "./components/LandingView";
 import GroupsView from "./components/GroupsView";
 import GroupView from "./components/GroupView";
@@ -60,7 +59,6 @@ class App extends Component {
           <PrivateRoute exact path="/groups" component={GroupsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
           <PrivateRoute path="/group/:id" component={GroupView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
           <PrivateRoute exact path="/models" component={ModelsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
-          <PrivateRoute exact path="/models/:id" component={ModelView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
         </div>
       </Router>
     );
