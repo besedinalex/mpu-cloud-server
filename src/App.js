@@ -9,6 +9,7 @@ import ModelsView from './components/ModelsView'
 import ModelView from './components/ModelView'
 import LandingView from "./components/LandingView";
 import GroupsView from "./components/GroupsView";
+import GroupView from "./components/GroupView";
 
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
@@ -57,6 +58,7 @@ class App extends Component {
           <Route path="/login" render={props => <SignInView onAuthenticated={this.handleAuthentication} {...props} />} />
           <Route path="/signup" render={props => <SignUpView onAuthenticated={this.handleAuthentication} {...props} />} />
           <PrivateRoute exact path="/groups" component={GroupsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
+          <PrivateRoute path="/group/:id" component={GroupView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
           <PrivateRoute exact path="/models" component={ModelsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
           <PrivateRoute exact path="/models/:id" component={ModelView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
         </div>

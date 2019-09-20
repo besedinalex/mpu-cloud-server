@@ -23,37 +23,29 @@ class GroupsView extends Component {
         this.handleFileSelection = this.handleFileSelection.bind(this);
         this.getGroups = this.getGroups.bind(this);
     }
+
+    componentDidMount = () => this.getGroups();
     
     getGroups() {
         axios.get(`http://127.0.0.1:4000/groups?token=${this.props.token}`)
-            .then(res => {
-                this.setState({ groups: res.data });
-            });
+            .then(res => this.setState({ groups: res.data }) );
     }
 
-    handleCloseDialog() {
-        this.setState({ isDialogOpen: false });
-    }
+    handleCloseDialog = () => this.setState({ isDialogOpen: false });
 
-    handleOpenDialog() {
-        this.setState({ isDialogOpen: true });
-    }
+    handleOpenDialog = () => this.setState({ isDialogOpen: true });
 
-    handleTitleChange = ({target:{value}}) => {
-        this.setState({
-            title:value
-        })
-    }
+    handleTitleChange = ({ target: {value} }) => this.setState({ title: value });
 
-    handleFileSelection = ({target:{value}}) => {
-        this.setState({
-            filename:value
-        })
-    }
+    handleFileSelection = ({ target: {value}} ) => this.setState({ filename: value });
 
-    handleCreate = (e)  => {
-        e.preventDefault();
-        axios.post(`http://127.0.0.1:4000/groups?token=${this.props.token}&title=${this.state.title}&image=${this.state.file}&dateOfCreation=${this.getCurrentDate()}`)
+    handleCreate = (event) => {
+        event.preventDefault();
+        const token = this.props.token;
+        const title = this.state.title;
+        const file = this.state.file;
+        const date = this.getCurrentDate();
+        axios.post(`http://127.0.0.1:4000/groups?token=${token}&title=${title}&image=${file}&dateOfCreation=${date}`)
             .then();
         this.getGroups();
     };
@@ -61,10 +53,6 @@ class GroupsView extends Component {
     getCurrentDate() {
         const date = new Date();
         return date.getDate().toString() +"."+ (date.getMonth() + 1).toString() +"."+ date.getFullYear().toString();
-    }
-
-     componentDidMount(){
-         this.getGroups();
     }
 
     render() { 
@@ -112,7 +100,7 @@ class GroupsView extends Component {
                 <div className="container margin-after-header">
 
                     <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>
-                    <h3>Группы</h3>
+                        <h3>Группы</h3>
                         <button style={{ height: '42px' }} onClick={this.handleOpenDialog} type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                             Добавить
                         </button>
@@ -127,16 +115,11 @@ class GroupsView extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.groups.map(group =>
-                                <GroupItem
-                                    key={group.key}
-                                    group={group}
-                                />)}
+                            {this.state.groups.map(group => <GroupItem group={group} />)}
                         </tbody>
                     </table>
-                    <br/>
-                    <br/>
-
+                    <br />
+                    <br />
                 </div>
             </div>
          );

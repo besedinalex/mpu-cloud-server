@@ -56,7 +56,7 @@ exports.getModels = function (userId) {
 
 exports.getGroups = function (userId) {
     return new Promise((resolve, reject) => {
-        let sql = `SELECT Groups.title, Groups.image, Groups.owner, Groups.dateOfCreation, Users.firstName, Users.lastName FROM Groups
+        let sql = `SELECT Groups.group_id, Groups.title, Groups.image, Groups.owner, Groups.dateOfCreation, Users.firstName, Users.lastName FROM Groups
         JOIN Users ON Groups.owner = Users.user_id
         WHERE Groups.owner = '${userId}'`;
         db.all(sql, [], (err, rows) => {

@@ -171,7 +171,7 @@ class ModelsView extends Component {
 
                 <div className="container margin-after-header">
                     <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>
-                        <h3>Мои модели</h3>
+                        <h3>Модели</h3>
                         <button style={{ height: '42px' }} onClick={this.handleOpenDialog} type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                             Добавить
 </button>
