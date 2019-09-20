@@ -65,6 +65,10 @@ app.get('/models', tokenRequired, function (req, res) {
     })
 })
 
+app.get('/models-group', tokenRequired, function (req, res) {
+    db.getGroupModels(req.query.groupId).then(data => res.json(data));
+})
+
 app.get('/groups', tokenRequired, function (req, res) {
     db.getGroups(req.user_id).then(data => {
         res.json(data);

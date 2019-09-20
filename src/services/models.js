@@ -26,3 +26,10 @@ export function getUserModels() {
             .then(resolve).catch(reject);
     });
 }
+
+export function getGroupModels(groupId) {
+    return new Promise((resolve, reject) => {
+        axios.get(`http://127.0.0.1:4000/models-group?token=${token}&groupId=${groupId}`)
+            .then(resolve).catch(reject);
+    })
+}
