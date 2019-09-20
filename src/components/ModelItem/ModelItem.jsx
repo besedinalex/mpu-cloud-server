@@ -44,8 +44,6 @@ class ModelItem extends Component {
     }
 
     render() {
-        console.log(this.state.isMouseOver)
-
         return (
             <tr onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
                 <td onClick={this.handleModelClick} className="filename">{this.props.filename}</td>

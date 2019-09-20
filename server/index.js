@@ -145,7 +145,8 @@ app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
                 fullPathOrig.replace(/\\/g, "/"),
                 req.file.size,
                 'STEP',
-                req.user_id
+                req.user_id,
+                req.body.groupId
             ).then(model_id => {
                 res.json({
                     model_id: model_id,

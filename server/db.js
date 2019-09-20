@@ -89,10 +89,10 @@ exports.addGroup = function (title, image, owner, dateOfCreation) {
     })
 }
 
-exports.addModel = function (title, desc, filename, gltfPath, originalPath, sizeKB, type, owner) {
+exports.addModel = function (title, desc, filename, gltfPath, originalPath, sizeKB, type, ownerUser, ownerGroup) {
     return new Promise((resolve, reject) => {
-        let sql = `INSERT INTO Models (title, desc, filename, gltfPath, originalPath, sizeKB, type, owner) 
-        VALUES  ('${title}','${desc}', '${filename}', '${gltfPath}', '${originalPath}', '${sizeKB}', '${type}', '${owner}')`;
+        let sql = `INSERT INTO Models (title, desc, filename, gltfPath, originalPath, sizeKB, type, ownerUser, ownerGroup) 
+        VALUES  ('${title}','${desc}', '${filename}', '${gltfPath}', '${originalPath}', '${sizeKB}', '${type}', '${ownerUser}', '${ownerGroup}')`;
         db.run(sql, [], function(err) {
             if (err) {
                 reject(err);

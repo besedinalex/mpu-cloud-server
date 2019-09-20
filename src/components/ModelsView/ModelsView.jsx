@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import $ from "jquery";
+
+import $ from 'jquery';
+
+import {getUserModels, uploadModel} from "../../services/models";
 
 import HeaderComponent from "../HeaderComponent";
 import ModelItem from '../ModelItem/ModelItem';
@@ -29,14 +31,12 @@ class ModelsView extends Component {
         this.handleUpload = this.handleUpload.bind(this);
         this.handleFileSelection = this.handleFileSelection.bind(this);
         this.handleModelRemoved = this.handleModelRemoved.bind(this);
+        this.getModels = this.getModels.bind(this);
     }
 
-    componentDidMount() {
-        axios.get(`http://127.0.0.1:4000/models?token=${this.props.token}`).then(res => {
-            console.log(res.data);
-            this.setState({ models: res.data.reverse() });
-        })
-    }
+    componentDidMount = () => this.getModels();
+
+    getModels = () => getUserModels().then(res => this.setState({ models: res.data.reverse() }));
 
     handleCloseDialog() {
         this.setState({ isDialogOpen: false });
@@ -70,44 +70,17 @@ class ModelsView extends Component {
     }
 
     handleUpload() {
-        this.setState({ isUploaded: true });
-        console.log(this.fileInput, this.state);
-        let bodyFormData = new FormData();
-
-        bodyFormData.append('title', this.state.title);
-        bodyFormData.append('desc', this.state.desc);
-        bodyFormData.append('model', this.fileInput.current.files[0]);
-
-        for (const pair of bodyFormData.entries()) {
-            console.log(pair[0] + ', ' + pair[1]);
-        }
-
-        axios({
-            method: 'post',
-            url: `http://127.0.0.1:4000/models?token=${this.props.token}`,
-            data: bodyFormData,
-            config: { headers: { 'Content-Type': 'multipart/form-data' } }
-        })
-            .then(res => {
-                //handle success
-                console.log(res.data);
-
-                this.setState(prev => ({
-                    isUploaded: false, isDialogOpen: false, models: [res.data, ...prev.models]
-                }));
+        this.setState({isUploaded: true});
+        uploadModel(this.state.title, this.state.desc, this.fileInput.current.files[0], 'NULL')
+            .then(() => {
+                this.setState({isUploaded: false, isDialogOpen: false});
                 $('#exampleModal').modal('hide');
-            })
-            .catch(function (response) {
-                //handle error
-                console.log(response);
+                this.getModels().then();
             });
     }
 
     render() {
-        console.log(this.state.isDialogOpen);
-
         const modelCells = this.state.models.map(model => {
-            console.log(model);
             return (
                 <ModelItem
                     id={model.model_id}
@@ -117,8 +90,7 @@ class ModelsView extends Component {
                     sizeKB={model.sizeKB}
                     createdTime={model.createdTime}
                     onModelRemoved={this.handleModelRemoved}
-                >
-                </ModelItem>
+                />
             );
         });
 
@@ -150,22 +122,20 @@ class ModelsView extends Component {
                                             <input ref={this.fileInput} className="custom-file-input" name="model" id="inputGroupFile04" type="file" required="" />
                                             <label style={{ textAlign: 'left' }} className="custom-file-label" htmlFor="inputGroupFile04">Выберете файл</label>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                             <div className="modal-footer">
                                 <button onClick={this.handleCloseDialog} type="button" className="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                                {this.state.isUploaded ? <button className="btn btn-primary" type="button" disabled>
-                                    <span style={{ marginRight: '8px' }} className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
-                                    Загрузка...
-</button> : <button type="button" className="btn btn-primary" onClick={this.handleUpload}>Отправить</button>}
-
+                                {this.state.isUploaded ?
+                                    <button className="btn btn-primary" type="button" disabled>
+                                        <span style={{ marginRight: '8px' }} className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                                        Загрузка...
+                                    </button> : <button type="button" className="btn btn-primary" onClick={this.handleUpload}>Отправить</button>}
                             </div>
                         </div>
                     </div>
                 </div>
-
 
                 <HeaderComponent />
 
@@ -174,7 +144,7 @@ class ModelsView extends Component {
                         <h3>Модели</h3>
                         <button style={{ height: '42px' }} onClick={this.handleOpenDialog} type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                             Добавить
-</button>
+                        </button>
                     </div>
                     <table className="table">
                         <thead>
@@ -190,7 +160,6 @@ class ModelsView extends Component {
                             {modelCells}
                         </tbody>
                     </table>
-
                 </div>
             </div>
         );
