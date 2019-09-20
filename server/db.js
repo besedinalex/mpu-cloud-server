@@ -1,4 +1,3 @@
-
 ////////////////////////////
 ////// Модуль для работы с БД SQLite
 ////////////////////////////
@@ -50,7 +49,14 @@ exports.login = function (email, password) {
 
 exports.getModels = function (userId) {
     return new Promise((resolve, reject) => {
-        let sql = `SELECT * FROM Models WHERE owner = '${userId}'`;
+        let sql = `SELECT * FROM Models WHERE ownerUser = '${userId}'`;
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
     })
 }
 
