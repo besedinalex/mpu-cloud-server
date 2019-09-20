@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Redirect, Route } from "react-router-dom";
 
 import './App.css';
 
+import {isAuthenticated, token, handleAuthentication} from "./services/authentication";
+
 import SignUpView from './components/SignUpView'
 import SignInView from './components/SignInView'
 import ModelsView from './components/ModelsView'
@@ -31,20 +33,18 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    const session = JSON.parse(localStorage.getItem('session'));
-
     this.state = {
-        isAuthenticated: session !== null && Date.now() <= session.expiresAt,
-        token: session !== null ? session['token'] : undefined
+        isAuthenticated: isAuthenticated,
+        token: token
     };
 
-    this.handleAuthentication = this.handleAuthentication.bind(this)
+    this.handleAuth = this.handleAuth.bind(this)
   }
 
-  handleAuthentication(session) {
-    localStorage.setItem('session', JSON.stringify(session));
+  handleAuth(session) {
+    handleAuthentication(session);
     this.setState({
-      isAuthenticated: true ,
+      isAuthenticated: true,
       token: session.token
     })
   }
@@ -55,8 +55,8 @@ class App extends Component {
       <Router>
         <div className="App">
           <Route exact path="/" component={LandingView}/>
-          <Route path="/login" render={props => <SignInView onAuthenticated={this.handleAuthentication} {...props} />} />
-          <Route path="/signup" render={props => <SignUpView onAuthenticated={this.handleAuthentication} {...props} />} />
+          <Route path="/login" render={props => <SignInView onAuthenticated={this.handleAuth} {...props} />} />
+          <Route path="/signup" render={props => <SignUpView onAuthenticated={this.handleAuth} {...props} />} />
           <PrivateRoute exact path="/groups" component={GroupsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
           <PrivateRoute path="/group/:id" component={GroupView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
           <PrivateRoute exact path="/models" component={ModelsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />

@@ -1,5 +1,5 @@
 var exporter = require('./GLTFExporter.js'),
-    triangulator = require("./" + process.arch + "/cad_gltf_exporter"),
+    triangulator = require("./" + process.arch + '/Release/' + '/c2g'),
     THREE = require('three');
 
 module.exports = function convert(input, cb) {
@@ -31,6 +31,8 @@ module.exports = function convert(input, cb) {
             }
 
             exporter.parse(scene, function (gltf) {
+            
+                res = {};
                 cb(gltf, undefined);
             });
         }
