@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {BrowserRouter as Router, Redirect, Route} from "react-router-dom";
+import {BrowserRouter as Router, Link, Redirect, Route, Switch} from "react-router-dom";
 
 import 'jquery';
 
@@ -32,17 +32,31 @@ function PublicRoute({component: Component, ...rest}) {
     );
 }
 
+function Page404() {
+    return (
+        <div>
+            <h3>Error 404: Page is not found.</h3>
+            <h4>
+                <Link to="/">Return to landing page.</Link>
+            </h4>
+        </div>
+    );
+}
+
 class App extends Component {
     render() {
         return (
             <Router>
                 <div className="App">
-                    <Route exact path="/" component={LandingView} />
-                    <PublicRoute path="/login" component={SignInView} />
-                    <PublicRoute path="/signup" component={SignUpView} />
-                    <PrivateRoute path="/models" component={ModelsView} />
-                    <PrivateRoute path="/groups" component={GroupsView} />
-                    <PrivateRoute path="/group/:id" component={GroupView} />
+                    <Switch>
+                        <Route exact path="/" component={LandingView} />
+                        <PublicRoute path="/login" component={SignInView} />
+                        <PublicRoute path="/signup" component={SignUpView} />
+                        <PrivateRoute path="/models" component={ModelsView} />
+                        <PrivateRoute path="/groups" component={GroupsView} />
+                        <PrivateRoute path="/group/:id" component={GroupView} />
+                        <Route component={Page404} />
+                    </Switch>
                 </div>
             </Router>
         );
