@@ -5,9 +5,10 @@
 .icon-excel {
     background-image: url("https://image.flaticon.com/icons/svg/130/130993.svg");
     padding: 6px 6px 0px 32px;
-    background-repeat : no-repeat;
+    background-repeat: no-repeat;
 }
-.inline{
+
+.inline {
     display: inline;
     padding-left: 40%;
 }

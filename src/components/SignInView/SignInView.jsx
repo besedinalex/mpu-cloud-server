@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -9,10 +9,10 @@ import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
-import { Redirect } from "react-router-dom";
+import {Redirect} from "react-router-dom";
 
 import axios from 'axios';
 
@@ -62,21 +62,21 @@ class SignInView extends Component {
             console.log(res);
             if (res.status == 200) {
                 this.props.onAuthenticated(res.data);
-                this.setState({ redirect: true });
+                this.setState({redirect: true});
             }
         })
     }
 
     handleEmailChange(e) {
-        this.setState({ email: e.target.value })
+        this.setState({email: e.target.value})
     }
 
     handlePasswordChange(e) {
-        this.setState({ password: e.target.value })
+        this.setState({password: e.target.value})
     }
 
     render() {
-        const { classes } = this.props;
+        const {classes} = this.props;
 
         if (this.state.redirect) {
             return <Redirect to="/models" />;

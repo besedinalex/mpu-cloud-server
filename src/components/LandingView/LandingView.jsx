@@ -40,7 +40,8 @@ class LandingView extends Component {
                         <h1 className="display-4 font-weight-normal">MPU Cloud</h1>
                         <p className="lead font-weight-normal">Лучшее облачное хранилище для инженеров.</p>
                         <div>
-                            <Link hidden={loggedIn} className="btn btn-outline-info mx-1" to="/signup">Зарегистрироваться</Link>
+                            <Link hidden={loggedIn} className="btn btn-outline-info mx-1"
+                                  to="/signup">Зарегистрироваться</Link>
                             <Link hidden={loggedIn} className="btn btn-outline-dark mx-1" to="/login">Войти</Link>
                             <Link hidden={!loggedIn} className="btn btn-outline-primary" to="/models">Ваши модели</Link>
                         </div>
@@ -49,7 +50,7 @@ class LandingView extends Component {
 
                 <div id="myCarousel" className="carousel slide" data-ride="carousel">
                     <ol className="carousel-indicators">
-                        <li data-target="#myCarousel" data-slide-to="0" className="active"/>
+                        <li data-target="#myCarousel" data-slide-to="0" className="active" />
                         <li data-target="#myCarousel" data-slide-to="1" />
                         <li data-target="#myCarousel" data-slide-to="2" />
                     </ol>
@@ -61,7 +62,7 @@ class LandingView extends Component {
                                     <svg className="bd-placeholder-img" width="100%" height="100%"
                                          xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
                                          focusable="false" role="img">
-                                        <rect width="100%" height="100%" fill="#777"/>
+                                        <rect width="100%" height="100%" fill="#777" />
                                     </svg>
                                     <div className="container">
                                         <div className="carousel-caption">

@@ -17,6 +17,6 @@ export function handleLoggingOut() {
 
 function updateAuthData() {
     session = JSON.parse(localStorage.getItem('session'));
-    isAuthenticated  = session !== null && Date.now() <= session.expiresAt;
+    isAuthenticated = session !== null && Date.now() <= session.expiresAt;
     token = session !== null ? session['token'] : undefined;
 }

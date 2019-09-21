@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 // Material UI
 
@@ -12,9 +12,9 @@ import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import {makeStyles, withStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { BrowserRouter as Router, Redirect } from "react-router-dom";
+import {BrowserRouter as Router, Redirect} from "react-router-dom";
 
 
 import axios from 'axios';
@@ -63,10 +63,21 @@ class SignUpView extends Component {
         this.signUp = this.signUp.bind(this);
     }
 
-    handleFirstNameCahnge(e) { this.setState({ firstName: e.target.value }) }
-    handleLastNameCahnge(e) { this.setState({ lastName: e.target.value }) }
-    handleEmailCahnge(e) { this.setState({ email: e.target.value }) }
-    handlePasswordCahnge(e) { this.setState({ password: e.target.value }) }
+    handleFirstNameCahnge(e) {
+        this.setState({firstName: e.target.value})
+    }
+
+    handleLastNameCahnge(e) {
+        this.setState({lastName: e.target.value})
+    }
+
+    handleEmailCahnge(e) {
+        this.setState({email: e.target.value})
+    }
+
+    handlePasswordCahnge(e) {
+        this.setState({password: e.target.value})
+    }
 
     signUp(e) {
         e.preventDefault();
@@ -74,13 +85,13 @@ class SignUpView extends Component {
             console.log(res)
             if (res.status == 200) {
                 this.props.onAuthenticated(res.data);
-                this.setState({ redirect: true });
+                this.setState({redirect: true});
             }
         })
     }
 
     render() {
-        const { classes } = this.props;
+        const {classes} = this.props;
 
         if (this.state.redirect) {
             return <Redirect to="/secret" />;
@@ -157,12 +168,12 @@ class SignUpView extends Component {
                                 onClick={this.signUp}
                             >
                                 Зарегистрироваться
-                </Button>
+                            </Button>
                             <Grid container justify="flex-end">
                                 <Grid item>
                                     <Link href="/login" variant="body2">
                                         Уже имейте аккаунт? Войти
-                    </Link>
+                                    </Link>
                                 </Grid>
                             </Grid>
                         </form>

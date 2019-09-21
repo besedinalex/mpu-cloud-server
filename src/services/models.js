@@ -15,7 +15,7 @@ export function uploadModel(title, desc, model, groupId) {
             method: 'post',
             url: `http://127.0.0.1:4000/models?token=${token}`,
             data: bodyFormData,
-            config: { headers: {'Content-Type': 'multipart/form-data'} }
+            config: {headers: {'Content-Type': 'multipart/form-data'}}
         }).then(resolve).catch(reject);
     });
 }
