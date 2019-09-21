@@ -15,20 +15,28 @@ class LandingView extends Component {
         const loggedIn = this.state.isAuthenticated;
         const carouselItems = [
             {
-                text: 'Храни все модели в одном месте',
+                text: 'Храните все модели в одном месте',
                 desc: 'Все ваши разработки будут в одном месте. Вы можете получить к ним доступ в в любое время любом месте прямо в вашем браузере.',
                 img: '',
                 id: 0
             },
             {
-                text: 'GLTF',
-                desc: 'Конвертирует ваши модели из множества распространненых форматов (например, из STEP) в GLTF.',
-                img: ''
+                text: 'Поддерживает более 18 форматов',
+                desc: 'Конвертирует ваши модели из множества форматов, например таких как ACIS, IGES, JT, Parasolid, STEP, STL, VRML, GRDECL, C3D в GLTF. Вы также можете загрузить модель к себе в любом из этих форматов',
+                img: '',
+                id: 1
+            },
+            {
+                text: 'Группы',
+                desc: 'Объединяйтесь в группы для совместной работы над общими проектами.',
+                img: '',
+                id: 2
             },
             {
                 text: 'Доступ с любого устройства',
                 desc: 'Вы можете смотреть, вращать и показывать свои работы с любого устройства на котором есть веб браузер.',
-                img: ''
+                img: '',
+                id: 3
             }
         ];
         return (
@@ -49,9 +57,10 @@ class LandingView extends Component {
 
                 <div id="myCarousel" className="carousel slide" data-ride="carousel">
                     <ol className="carousel-indicators">
-                        <li data-target="#myCarousel" data-slide-to="0" className="active" />
-                        <li data-target="#myCarousel" data-slide-to="1" />
-                        <li data-target="#myCarousel" data-slide-to="2" />
+                        {carouselItems.map(item => {
+                            const itemClass = item.id === 0 ? 'active' : '';
+                            return <li data-target="#myCarousel" data-slide-to={item.id} className={itemClass} />
+                        })}
                     </ol>
                     <div className="carousel-inner">
                         {carouselItems.map(item => {
