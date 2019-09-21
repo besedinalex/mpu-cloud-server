@@ -1,3 +1,13 @@
 .margin-after-header {
     margin-top: 120px;
 }
+
+.icon-excel {
+    background-image: url("https://image.flaticon.com/icons/svg/130/130993.svg");
+    padding: 6px 6px 0px 32px;
+    background-repeat : no-repeat;
+}
+.inline{
+    display: inline;
+    padding-left: 40%;
+}

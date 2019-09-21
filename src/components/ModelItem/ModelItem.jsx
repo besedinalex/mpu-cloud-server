@@ -46,9 +46,21 @@ class ModelItem extends Component {
     render() {
         console.log(this.state.isMouseOver)
 
+
+        
+
         return (
             <tr onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
-                <td onClick={this.handleModelClick} className="filename">{this.props.filename}</td>
+                 
+
+                 
+                
+                <td onClick={this.handleModelClick} className="filename">
+                <img src="https://cdn3.iconfinder.com/data/icons/ikooni-outline-file-formats/128/files2-48-512.png" style ={{position:"relative"}} width = "35px" alt=""/>
+                {this.props.filename}
+                </td>
+                
+
                 <td className="tools" style={{ width: '120px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }} hidden={!this.state.isMouseOver}>
                         <FontAwesomeIcon onClick={this.handleModelClick} className="tool" icon={faEye} />
@@ -59,7 +71,10 @@ class ModelItem extends Component {
                 <td>{this.props.type}</td>
                 <td>{this.props.sizeKB + ' KB'}</td>
                 <td>{new Date(this.props.createdDate).toString()}</td>
+                
             </tr>
+
+            
         );
     }
 }

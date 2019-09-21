@@ -3,6 +3,9 @@ import HeaderComponent from "../HeaderComponent";
 import GroupItem from "../GroupItem";
 import axios from 'axios';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFolderPlus } from "@fortawesome/free-solid-svg-icons";
+
 class GroupsView extends Component {
     constructor(props) {
         super(props);
@@ -97,29 +100,43 @@ class GroupsView extends Component {
 
                 <HeaderComponent />
 
-                <div className="container margin-after-header">
+                
 
-                    <div style={{ marginBottom: 20 + 'px', display: 'flex', justifyContent: 'space-between' }}>
-                        <h3>Группы</h3>
-                        <button style={{ height: '42px' }} onClick={this.handleOpenDialog} type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                            Добавить
-                        </button>
-                    </div>
+                
 
-                    <table className="table">
-                        <thead className="thead-dark">
-                            <tr>
-                                <th>Название</th>
-                                <th>Создано</th>
-                                <th>Дата создания</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.groups.map(group => <GroupItem group={group} />)}
-                        </tbody>
-                    </table>
-                    <br />
-                    <br />
+<div className="container margin-after-header">
+         
+
+          <main role="main" className="container">
+            <div class="my-3 p-3 bg-white rounded shadow-sm">
+
+                
+            <h3 className = "inline">Группы</h3>
+
+            <div className ="inline">
+                <FontAwesomeIcon className="tool" onClick={this.handleOpenDialog} transform="grow-10 left-2 up-2.2" data-toggle="modal" data-target="#exampleModal" icon={faFolderPlus} />
+            </div>
+
+            <h3 class="border-bottom border-gray pb-2 mb-0"></h3>
+              {/* <button class="btn btn-primary" onClick={this.handleOpenDialog} data-toggle="modal" data-target="#exampleModal">
+                <i class="icon-excel"></i>Добавить
+              </button> */}
+
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Название</th>
+                    <th scope="col" />
+                    <th scope="col">Создано</th>
+                    <th scope="col">Дата</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {this.state.groups.map(group => <GroupItem group={group} />)}
+                </tbody>
+              </table>
+            </div>
+          </main>
                 </div>
             </div>
          );
