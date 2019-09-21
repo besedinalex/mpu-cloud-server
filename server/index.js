@@ -1,29 +1,30 @@
-var isToolKitOn = process.argv[2] !== 'test';
+const isToolKitOn = process.argv[2] !== 'test';
 
 const db = require('./db');
 const express = require('express');
 const app = express();
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const secret = 'Hello World!';
-var cors = require('cors')
-var multer = require('multer')
-var upload = multer({ storage: multer.memoryStorage() })
+const cors = require('cors');
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 const generator = require('generate-password');
-const path = require('path')
+const path = require('path');
 const fs = require('fs-extra');
 
-var cad2gltf = {};
-if (isToolKitOn) {
+let cad2gltf = {};
+if (isToolKitOn)
     cad2gltf = require('./cad2gltf');
-} else console.log('Test Mode without C3D Toolkit has been started!')
+else
+    console.log('Test Mode without C3D Toolkit has been started!');
 
-app.use(cookieParser())
-app.use(cors())
-console.log(__dirname + '/xeogl')
-app.use('/view', express.static(__dirname + '/xeogl'))
+app.use(cookieParser());
+app.use(cors());
+console.log(__dirname + '/xeogl');
+app.use('/view', express.static(__dirname + '/xeogl'));
 
-var tokenRequired = function (req, res, next) {
+const tokenRequired = function (req, res, next) {
     const token = req.query.token;
     if (!token) {
         res.status(401).send('Unauthorized: No token provided');
@@ -57,21 +58,21 @@ app.post('/user', function (req, res) { // Добавить пользовате
         let expiresAt = Date.now() + + 365 * 24 * 60 * 60 * 1000;
         res.json({ token, expiresAt: expiresAt });
     })
-})
+});
 
-app.get('/models', tokenRequired, function (req, res) {
-    db.getModels(req.user_id).then(data => {
-        res.json(data);
-    })
-})
+app.get('/models-user', tokenRequired, function (req, res) {
+    db.getModels(req.user_id).then(data => res.json(data));
+});
+
+app.get('/models-group', tokenRequired, function (req, res) {
+    db.getGroupModels(req.query.groupId).then(data => res.json(data));
+});
 
 app.get('/groups', tokenRequired, function (req, res) {
-    db.getGroups(req.user_id).then(data => {
-        res.json(data);
-    })
-})
+    db.getGroups(req.user_id).then(data => res.json(data))
+});
 
-app.post('/groups', tokenRequired, function (req) {
+app.post('/group-create', tokenRequired, function (req) {
     db.addGroup(req.query.title, req.query.image, req.user_id, req.query.dateOfCreation);
 });
 
@@ -145,7 +146,8 @@ app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
                 fullPathOrig.replace(/\\/g, "/"),
                 req.file.size,
                 'STEP',
-                req.user_id
+                req.user_id,
+                req.body.groupId
             ).then(model_id => {
                 res.json({
                     model_id: model_id,

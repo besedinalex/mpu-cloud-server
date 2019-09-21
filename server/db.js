@@ -60,6 +60,19 @@ exports.getModels = function (userId) {
     })
 }
 
+exports.getGroupModels = function (groupId) {
+    return new Promise((resolve, reject) => {
+        let sql = `SELECT * FROM Models WHERE ownerGroup = '${groupId}'`;
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    })
+}
+
 exports.getGroups = function (userId) {
     return new Promise((resolve, reject) => {
         let sql = `SELECT Groups.group_id, Groups.title, Groups.image, Groups.owner, Groups.dateOfCreation, Users.firstName, Users.lastName FROM Groups
@@ -89,10 +102,10 @@ exports.addGroup = function (title, image, owner, dateOfCreation) {
     })
 }
 
-exports.addModel = function (title, desc, filename, gltfPath, originalPath, sizeKB, type, owner) {
+exports.addModel = function (title, desc, filename, gltfPath, originalPath, sizeKB, type, ownerUser, ownerGroup) {
     return new Promise((resolve, reject) => {
-        let sql = `INSERT INTO Models (title, desc, filename, gltfPath, originalPath, sizeKB, type, owner) 
-        VALUES  ('${title}','${desc}', '${filename}', '${gltfPath}', '${originalPath}', '${sizeKB}', '${type}', '${owner}')`;
+        let sql = `INSERT INTO Models (title, desc, filename, gltfPath, originalPath, sizeKB, type, ownerUser, ownerGroup) 
+        VALUES  ('${title}','${desc}', '${filename}', '${gltfPath}', '${originalPath}', '${sizeKB}', '${type}', '${ownerUser}', '${ownerGroup}')`;
         db.run(sql, [], function(err) {
             if (err) {
                 reject(err);

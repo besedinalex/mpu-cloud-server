@@ -48,7 +48,7 @@ class GroupsView extends Component {
         const title = this.state.title;
         const file = this.state.file;
         const date = this.getCurrentDate();
-        axios.post(`http://127.0.0.1:4000/groups?token=${token}&title=${title}&image=${file}&dateOfCreation=${date}`)
+        axios.post(`http://127.0.0.1:4000/group-create?token=${token}&title=${title}&image=${file}&dateOfCreation=${date}`)
             .then();
         this.getGroups();
     };
@@ -142,5 +142,5 @@ class GroupsView extends Component {
          );
     }
 }
- 
+
 export default GroupsView;

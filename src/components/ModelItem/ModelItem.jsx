@@ -44,11 +44,6 @@ class ModelItem extends Component {
     }
 
     render() {
-        console.log(this.state.isMouseOver)
-
-
-        
-
         return (
             <tr onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
                  
