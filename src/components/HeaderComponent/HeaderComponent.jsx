@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 
-import {handleLoggingOut, isAuthenticated} from "../../services/authentication";
+import {handleSigningOut, isAuthenticated} from "../../services/authentication";
 
 import './HeaderComponent.css';
 
@@ -13,7 +13,6 @@ class HeaderComponent extends Component {
     render() {
         const loggedIn = this.state.isAuthenticated;
         return (
-            <div>
             <header className="navbar navbar-expand-lg py-3 navbar-dark bg-dark fixed-top">
                 <Link className="navbar-brand text-white" to="/">MPU Cloud</Link>
 
@@ -44,12 +43,9 @@ class HeaderComponent extends Component {
                     <Link to="/settings" hidden={!loggedIn} className="margin-right">
                         <button className="btn btn-light">Настройки</button>
                     </Link>
-                    <button hidden={!loggedIn} className="btn btn-danger" onClick={handleLoggingOut}>Выйти</button>
+                    <button hidden={!loggedIn} className="btn btn-danger" onClick={handleSigningOut}>Выйти</button>
                 </div>
-
             </header>
-                <div className="container margin-after-header"> &nbsp; </div>
-            </div>
         );
     }
 }

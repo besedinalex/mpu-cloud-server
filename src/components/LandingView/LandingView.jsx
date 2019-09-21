@@ -3,9 +3,8 @@ import {Link} from "react-router-dom";
 
 import {isAuthenticated} from "../../services/authentication";
 
-
-
 import './LandingView.css';
+import HeaderComponent from "../HeaderComponent";
 
 class LandingView extends Component {
     state = {
@@ -33,15 +32,15 @@ class LandingView extends Component {
             }
         ];
         return (
-            <div className="margin-for-header">
-                
+            <div>
+                <HeaderComponent />
+
                 <div className="position-relative overflow-hidden p-3 p-md-3 text-center bg-light">
                     <div className="col-md-5 p-lg-5 mx-auto my-5">
                         <h1 className="display-4 font-weight-normal">MPU Cloud</h1>
                         <p className="lead font-weight-normal">Лучшее облачное хранилище для инженеров.</p>
                         <div>
-                            <Link hidden={loggedIn} className="btn btn-outline-info mx-1"
-                                  to="/signup">Зарегистрироваться</Link>
+                            <Link hidden={loggedIn} className="btn btn-outline-info mx-1" to="/signup">Зарегистрироваться</Link>
                             <Link hidden={loggedIn} className="btn btn-outline-dark mx-1" to="/login">Войти</Link>
                             <Link hidden={!loggedIn} className="btn btn-outline-primary" to="/models">Ваши модели</Link>
                         </div>
