@@ -83,30 +83,8 @@ class ModelsView extends Component {
             });
     }
 
-    render() {
-        console.log(this.state.isDialogOpen);
-
-        const modelCells = this.state.models.map(model => {
-            console.log(model);
-            return (
-                <ModelItem
-                    id={model.model_id}
-                    token={this.props.token}
-                    filename={model.filename}
-                    type={model.type}
-                    sizeKB={model.sizeKB}
-                    createdTime={model.createdTime}
-                    onModelRemoved={this.handleModelRemoved}
-                >
-                </ModelItem>
-            );
-        });
-
   render() {
-    console.log(this.state.isDialogOpen);
-
     const modelCells = this.state.models.map(model => {
-      console.log(model);
       return (
         <ModelItem
           id={model.model_id}
@@ -116,7 +94,7 @@ class ModelsView extends Component {
           sizeKB={model.sizeKB}
           createdTime={model.createdTime}
           onModelRemoved={this.handleModelRemoved}
-        ></ModelItem>
+        />
       );
     });
 
@@ -239,7 +217,7 @@ class ModelsView extends Component {
          
 
           <main role="main" className="container">
-            <div class="my-3 p-3 bg-white rounded shadow-sm">
+            <div className="my-3 p-3 bg-white rounded shadow-sm">
 
                 
             <h3 className = "inline">Модели</h3>
@@ -248,7 +226,7 @@ class ModelsView extends Component {
               <FontAwesomeIcon className="tool" onClick={this.handleOpenDialog} transform="grow-7 left-1.5 up-2.2" data-toggle="modal" data-target="#exampleModal" icon={faUpload} />
             </div>
 
-            <h3 class="border-bottom border-gray pb-2 mb-0"></h3>
+            <h3 className="border-bottom border-gray pb-2 mb-0"></h3>
               {/* <button class="btn btn-primary" onClick={this.handleOpenDialog} data-toggle="modal" data-target="#exampleModal">
                 <i class="icon-excel"></i>Добавить
               </button> */}
