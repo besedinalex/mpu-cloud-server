@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 
 import {isAuthenticated} from "../../services/authentication";
 
-import HeaderComponent from "../HeaderComponent";
+
 
 import './LandingView.css';
 
@@ -34,7 +34,7 @@ class LandingView extends Component {
         ];
         return (
             <div className="margin-for-header">
-                <HeaderComponent />
+                
                 <div className="position-relative overflow-hidden p-3 p-md-3 text-center bg-light">
                     <div className="col-md-5 p-lg-5 mx-auto my-5">
                         <h1 className="display-4 font-weight-normal">MPU Cloud</h1>

@@ -11,6 +11,7 @@ import ModelsView from './components/ModelsView';
 import LandingView from "./components/LandingView";
 import GroupsView from "./components/GroupsView";
 import GroupView from "./components/GroupView";
+import HeaderComponent from "./components/HeaderComponent";
 
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap';
@@ -51,8 +52,10 @@ class App extends Component {
     render() {
         console.log(this.state);
         return (
+            
             <Router>
                 <div className="App">
+                    <HeaderComponent/>
                     <Route exact path="/" component={LandingView} />
                     <Route path="/login" render={props => <SignInView onAuthenticated={this.handleAuth} {...props} />} />
                     <Route path="/signup" render={props => <SignUpView onAuthenticated={this.handleAuth} {...props} />} />
@@ -61,6 +64,7 @@ class App extends Component {
                     <PrivateRoute exact path="/models" component={ModelsView} token={this.state.token} isAuthenticated={this.state.isAuthenticated} />
                 </div>
             </Router>
+            
         );
     }
 }

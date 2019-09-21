@@ -13,6 +13,7 @@ class HeaderComponent extends Component {
     render() {
         const loggedIn = this.state.isAuthenticated;
         return (
+            <div>
             <header className="navbar navbar-expand-lg py-3 navbar-dark bg-dark fixed-top">
                 <Link className="navbar-brand text-white" to="/">MPU Cloud</Link>
 
@@ -45,7 +46,10 @@ class HeaderComponent extends Component {
                     </Link>
                     <button hidden={!loggedIn} className="btn btn-danger" onClick={handleLoggingOut}>Выйти</button>
                 </div>
+
             </header>
+                <div className="container margin-after-header"> &nbsp; </div>
+            </div>
         );
     }
 }
