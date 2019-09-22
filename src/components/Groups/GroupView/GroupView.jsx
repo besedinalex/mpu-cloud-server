@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
+import {Redirect} from "react-router-dom";
 
 import { getGroups } from "../../../services/groups";
 
@@ -14,20 +15,30 @@ class GroupView extends Component {
             groupId: Number(this.props.match.params.id),
             title: '',
             desc: '',
+            redirect: false
             group: {}
         };
     }
 
     componentDidMount = () => this.getGroupData();
 
-    getGroupData = () => getGroups().then(res => res.data.map(group => {
-        if (group.group_id === this.state.groupId) {
-            this.setState({ title: group.title, desc: group.description, group: group });
-        }
-        
-    }));
+    getGroupData = () => getGroups()
+        .then(res => {
+            let found = false;
+            res.data.map(group => {
+                if (group.group_id === this.state.groupId) {
+                    this.setState({ title: group.title, desc: group.description, group: group });
+                    found = true;
+                }
+            });
+            if (!found)
+                this.setState({redirect: true});
+        });
 
     render() {
+        if (this.state.redirect) {
+            return <Redirect to="/groups" />;
+        }
         return (
             <div>
                 <HeaderComponent />

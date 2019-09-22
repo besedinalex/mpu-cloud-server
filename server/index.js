@@ -69,7 +69,7 @@ app.get('/models-group', tokenRequired, function (req, res) {
 });
 
 app.get('/groups', tokenRequired, function (req, res) {
-    db.getGroups(req.user_id).then(data => res.json(data))
+    db.getGroups(req.user_id).then(data => res.json(data));
 });
 
 app.get('/group-users', tokenRequired, function (req, res) {
