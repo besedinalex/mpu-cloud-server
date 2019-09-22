@@ -56,7 +56,7 @@ class GroupView extends Component {
 
 
                     <button onClick={this.getNavigation}>Hook doesn't work</button>
-                    <ModelsView />
+                    <ModelsView groupModels={true} groupId={this.state.groupId} />
                     <UsersView />
                 </main>
             </div>

@@ -2,14 +2,14 @@ import React, {Component} from "react";
 
 import $ from "jquery";
 
-import {getUserModels, uploadModel} from "../../services/models";
+import {getGroupModels, getUserModels, uploadModel} from "../../services/models";
 
+import HeaderComponent from "../HeaderComponent";
 import ModelItem from "../ModelItem/ModelItem";
 
 import "./ModelsView.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUpload} from "@fortawesome/free-solid-svg-icons";
-import HeaderComponent from "../HeaderComponent";
 
 class ModelsView extends Component {
     constructor(props) {
@@ -38,8 +38,12 @@ class ModelsView extends Component {
 
     componentDidMount = () => this.getModels();
 
-    getModels = () =>
-        getUserModels().then(res => this.setState({models: res.data.reverse()}));
+    getModels = () => {
+        if (this.props.groupModels)
+            getGroupModels(this.props.groupId).then(res => this.setState({models: res.data.reverse()}));
+        else
+            getUserModels().then(res => this.setState({models: res.data.reverse()}));
+    };
 
     handleCloseDialog() {
         this.setState({isDialogOpen: false});
@@ -75,12 +79,8 @@ class ModelsView extends Component {
 
     handleUpload() {
         this.setState({isUploaded: true});
-        uploadModel(
-            this.state.title,
-            this.state.desc,
-            this.fileInput.current.files[0],
-            "NULL"
-        ).then(() => {
+        uploadModel(this.state.title, this.state.desc, this.fileInput.current.files[0], "NULL")
+            .then(() => {
             this.setState({isUploaded: false, isDialogOpen: false});
             $("#exampleModal").modal("hide");
             this.getModels().then();
