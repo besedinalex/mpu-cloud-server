@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Redirect} from "react-router-dom";
 
-import {getGroups} from "../../../services/groups";
+import { getGroups } from "../../../services/groups";
 
 import HeaderComponent from "../../HeaderComponent";
 import ModelsView from "../../ModelsView/ModelsView";
