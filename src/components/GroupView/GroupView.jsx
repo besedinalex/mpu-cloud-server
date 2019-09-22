@@ -1,18 +1,10 @@
 import React, {Component} from "react";
 
+import {getGroups} from "../../services/groups";
+
+import HeaderComponent from "../HeaderComponent";
 import ModelsView from "../ModelsView/ModelsView";
 import UsersView from "../UsersComponent/UsersView";
-
-import LabelBottomNavigation from "../../services/bottomNavigation";
-
-import {makeStyles} from '@material-ui/core/styles';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import FolderIcon from '@material-ui/icons/Folder';
-import RestoreIcon from '@material-ui/icons/Restore';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import HeaderComponent from "../HeaderComponent";
 
 class GroupView extends Component {
     constructor(props) {
@@ -20,44 +12,30 @@ class GroupView extends Component {
 
         this.state = {
             groupId: this.props.match.params.id,
-            models: [],
-            isDialogOpen: false,
             title: "",
             desc: "",
-            filename: "",
-            isUploaded: false
         };
-        const useStyles = makeStyles({
-            root: {
-                width: 500,
-            },
-        });
-        this.getNavigation = this.getNavigation.bind(this);
     }
 
+    componentDidMount = () => this.getGroupData();
 
-    getNavigation = () =>
-        LabelBottomNavigation();
-
+    getGroupData = () => getGroups().then(res => res.data.map(group => {
+        if (group.group_id == this.state.groupId) {
+            this.setState({title: group.title, desc: group.desc});
+        }
+    }));
 
     render() {
         return (
             <div>
               <HeaderComponent />
                 <main role="main" class="container margin-after-header">
-                    <div class="jumbotron" style={{background: "white"}}>
-                        <h1>Группа #{this.state.groupId}</h1>
-                        <p>
-                            Этот шаблон <strong>фиксированной панели навигации</strong> создан
-                            для наглядного примера. Меню растянуто на всю ширину экрана и{" "}
-                            <strong>всегда</strong> прижато к верхней части страницы.
-                        </p>
+                    <div className="jumbotron" style={{background: "white"}}>
+                        <h1>{this.state.title}</h1>
+                        <p>{this.state.desc}</p>
                     </div>
-
-
-                    <button onClick={this.getNavigation}>Hook doesn't work</button>
                     <ModelsView groupModels={true} groupId={this.state.groupId} />
-                    <UsersView />
+                    <UsersView groupId={this.state.groupId}/>
                 </main>
             </div>
         );
