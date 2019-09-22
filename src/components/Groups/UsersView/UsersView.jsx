@@ -5,8 +5,8 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserFriends, faFile } from "@fortawesome/free-solid-svg-icons";
 
-import UserView from "../UserComponent";
-import { getGroupUsers } from "../../services/users";
+import UserView from "../UserView";
+
 
 class UsersView extends Component {
   constructor(props) {
@@ -15,14 +15,7 @@ class UsersView extends Component {
       users: []
     };
   }
-  componentDidMount = () => this.getGroupUsers();
-
-  getGroupUsers() {
-    getGroupUsers().then(res => this.setState({ users: res.data.reverse() }));
-    console.log(this.state);
-    
-  }
-
+  
   render() {
     return (
       <div>
