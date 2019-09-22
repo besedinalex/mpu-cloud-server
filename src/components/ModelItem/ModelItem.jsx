@@ -102,6 +102,7 @@ class ModelItem extends Component {
                         />
                     </div>
                 </td>
+                <td>{this.props.name}</td>
                 <td>{this.props.type}</td>
                 <td>{this.props.sizeKB + " KB"}</td>
                 <td>{new Date(this.props.createdDate).toString()}</td>

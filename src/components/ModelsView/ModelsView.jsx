@@ -25,7 +25,8 @@ class ModelsView extends Component {
       title: "",
       desc: "",
       filename: "",
-      isUploaded: false
+      isUploaded: false, 
+      groupId: "NULL"
     };
 
     this.fileInput = React.createRef();
@@ -52,7 +53,15 @@ class ModelsView extends Component {
       getUserModels().then(res =>
         this.setState({ models: res.data.reverse() })
       );
+    this.handleGroupId() 
   };
+
+  handleGroupId(){
+    if (this.props.groupModels)
+      this.setState({groupId: this.props.groupId})
+    else
+      this.setState({groupId: "NULL"})
+  }
 
   isMarginAfterHeaderNecessary() {
     return this.props.path == "/models"
@@ -83,6 +92,7 @@ class ModelsView extends Component {
           <thead>
             <tr>
               <th scope="col">Название</th>
+              <th scope="col"/>
               <th scope="col">Пользователь</th>
               <th scope="col">Тип</th>
               <th scope="col">Вес</th>
@@ -128,13 +138,14 @@ class ModelsView extends Component {
     }));
   }
 
+
   handleUpload() {
     this.setState({ isUploaded: true });
     uploadModel(
       this.state.title,
       this.state.desc,
       this.fileInput.current.files[0],
-      "NULL"
+      this.state.groupId
     ).then(() => {
       this.setState({ isUploaded: false, isDialogOpen: false });
       $("#exampleModal").modal("hide");
@@ -152,6 +163,7 @@ class ModelsView extends Component {
           sizeKB={model.sizeKB}
           createdTime={model.createdTime}
           onModelRemoved={this.handleModelRemoved}
+          name={this.props.name}
         />
       );
     });

@@ -122,6 +122,25 @@ exports.addGroupUser = function (user_id, groupId, access, dateOfCreation) {
     })
 }
 
+exports.getUsersByGroup = function (group_id) {
+    
+    return new Promise((resolve, reject) => {
+        let sql = `SELECT GroupUsers.user_id, Users.firstName, Users.lastName, Users.email
+        FROM GroupUsers
+        JOIN Users
+        ON Users.user_id = GroupUsers.user_id 
+        WHERE GroupUsers.group_id ='${group_id}'`;
+        
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    })
+}
+
 exports.getIdByEmail = function (email) {
     return new Promise((resolve, reject) => {
         let sql = `SELECT Users.user_id FROM Users WHERE Users.email = '${email}'`;

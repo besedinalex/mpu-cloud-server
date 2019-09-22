@@ -72,6 +72,10 @@ app.get('/groups', tokenRequired, function (req, res) {
     db.getGroups(req.user_id).then(data => res.json(data))
 });
 
+app.get('/group-users', tokenRequired, function (req, res) {
+    db.getUsersByGroup(req.query.groupId).then(data => res.json(data))
+});
+
 app.post('/group-create', tokenRequired, function (req) {
     db.addGroup(req.query.title, req.query.description, req.query.image, req.user_id, req.query.dateOfCreation)
         .then(res => db.addGroupUser(req.user_id, res, 'ADMIN', req.query.dateOfCreation));

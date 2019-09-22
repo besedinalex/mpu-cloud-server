@@ -14,3 +14,10 @@ export function addGroup(title, desc, file, date) {
             .then(resolve, reject);
     })
 }
+
+export function getGroupUsers(groupId) {
+    return new Promise((resolve, reject) => {
+        axios.get(`http://127.0.0.1:4000/group-users?token=${token}&groupId=${groupId}`)
+            .then(resolve).catch(reject);
+    })
+}
