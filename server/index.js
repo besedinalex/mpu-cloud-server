@@ -73,7 +73,7 @@ app.get('/groups', tokenRequired, function (req, res) {
 });
 
 app.post('/group-create', tokenRequired, function (req) {
-    db.addGroup(req.query.title, req.query.image, req.user_id, req.query.dateOfCreation);
+    db.addGroup(req.query.title, req.query.description, req.query.image, req.user_id, req.query.dateOfCreation);
 });
 
 app.get('/model/original/:id', tokenRequired, (req, res) => {

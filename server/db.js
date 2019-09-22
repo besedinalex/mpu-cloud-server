@@ -88,10 +88,10 @@ exports.getGroups = function (userId) {
     })
 }
 
-exports.addGroup = function (title, image, owner, dateOfCreation) {
+exports.addGroup = function (title, description, image, owner, dateOfCreation) {
     return new Promise((resolve, reject) => {
-        let sql = `INSERT INTO Groups (title, image, owner, dateOfCreation) 
-        VALUES  ('${title}','${image}', '${owner}', '${dateOfCreation}')`;
+        let sql = `INSERT INTO Groups (title, description, image, owner, dateOfCreation) 
+        VALUES  ('${title}', '${description}', '${image}', '${owner}', '${dateOfCreation}')`;
         db.run(sql, [], function(err) {
             if (err) {
                 reject(err);

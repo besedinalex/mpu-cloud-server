@@ -23,8 +23,7 @@ class GroupItem extends Component {
                             src="https://image.flaticon.com/icons/svg/356/356480.svg"
                             width="35px"
                             alt=""
-                        />
-                        {this.props.group.title}
+                        /> {this.props.group.title}
                     </td>
                     <td />
                     <td>
