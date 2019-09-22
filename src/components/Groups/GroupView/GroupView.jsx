@@ -1,6 +1,6 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 
-import {getGroups} from "../../../services/groups";
+import { getGroups } from "../../../services/groups";
 
 import HeaderComponent from "../../HeaderComponent";
 import ModelsView from "../../ModelsView/ModelsView";
@@ -22,7 +22,7 @@ class GroupView extends Component {
     getGroupData = () => getGroups().then(res => res.data.map(group => {
         if (group.group_id === this.state.groupId) {
             console.log(group);
-            this.setState({title: group.title, desc: group.description});
+            this.setState({ title: group.title, desc: group.description });
         }
     }));
 
