@@ -78,7 +78,7 @@ exports.getGroups = function (userId) {
         let sql =
             `SELECT
             Groups.title, Groups.description, Groups.image, Groups.owner, Groups.dateOfCreation, Groups.group_id,
-            GroupUsers.group_id, GroupUsers.user_id, GroupUsers.access, GroupUsers.userJoinedDate,
+            GroupUsers.user_id, GroupUsers.access, GroupUsers.userJoinedDate,
             Users.firstName, Users.lastName, Users.email
             FROM Groups
             JOIN GroupUsers, Users
