@@ -43,7 +43,7 @@ const tokenRequired = function (req, res, next) {
 };
 
 app.get('/token', function (req, res) { // Получить токен на год
-    db.login(req.query.email, req.query.password).then(data => {
+    db.signIn(req.query.email, req.query.password).then(data => {
         const payload = { id: data.user_id };
         const token = jwt.sign(payload, secret, { expiresIn: '365d' });
         let expiresAt = Date.now() + + 365 * 24 * 60 * 60 * 1000;
@@ -52,7 +52,7 @@ app.get('/token', function (req, res) { // Получить токен на го
 });
 
 app.post('/user', function (req, res) { // Добавить пользователь
-    db.addUser(req.query.firstName, req.query.lastName, req.query.email, req.query.password).then(userId => {
+    db.signUp(req.query.firstName, req.query.lastName, req.query.email, req.query.password).then(userId => {
         const payload = { id: userId };
         const token = jwt.sign(payload, secret, { expiresIn: '365d' });
         let expiresAt = Date.now() + + 365 * 24 * 60 * 60 * 1000;
@@ -61,7 +61,7 @@ app.post('/user', function (req, res) { // Добавить пользовате
 });
 
 app.get('/models-user', tokenRequired, function (req, res) {
-    db.getModels(req.user_id).then(data => res.json(data));
+    db.getUserModels(req.user_id).then(data => res.json(data));
 });
 
 app.get('/models-group', tokenRequired, function (req, res) {
@@ -73,7 +73,8 @@ app.get('/groups', tokenRequired, function (req, res) {
 });
 
 app.post('/group-create', tokenRequired, function (req) {
-    db.addGroup(req.query.title, req.query.description, req.query.image, req.user_id, req.query.dateOfCreation);
+    db.addGroup(req.query.title, req.query.description, req.query.image, req.user_id, req.query.dateOfCreation)
+        .then(res => db.addGroupUser(req.user_id, res, 'ADMIN', req.query.dateOfCreation));
 });
 
 app.get('/model/original/:id', tokenRequired, (req, res) => {
@@ -94,7 +95,7 @@ app.delete('/model/:id', tokenRequired, (req, res) => {
 })
 
 app.get('/model/:id', tokenRequired, (req, res) => {
-    db.getModels(req.user_id).then(models => {
+    db.getUserModels(req.user_id).then(models => {
         for (let model of models) {
             if (model.model_id == req.params.id && model.owner == req.user_id) {
                 console.log(model)

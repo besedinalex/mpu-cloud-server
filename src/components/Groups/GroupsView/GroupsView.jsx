@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 
-import {addGroup, getGroups} from "../../services/groups";
+import {addGroup, getGroups} from "../../../services/groups";
 
-import HeaderComponent from "../HeaderComponent";
+import HeaderComponent from "../../HeaderComponent";
 import GroupItem from "../GroupItem";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -52,13 +52,7 @@ class GroupsView extends Component {
 
     getCurrentDate() {
         const date = new Date();
-        return (
-            date.getDate().toString() +
-            "." +
-            (date.getMonth() + 1).toString() +
-            "." +
-            date.getFullYear().toString()
-        );
+        return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
     }
 
     render() {

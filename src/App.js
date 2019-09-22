@@ -9,8 +9,8 @@ import SignUpView from './components/Auth/SignUpView';
 import SignInView from './components/Auth/SignInView';
 import ModelsView from './components/ModelsView';
 import LandingView from "./components/LandingView";
-import GroupsView from "./components/GroupsView";
-import GroupView from "./components/GroupView";
+import GroupsView from "./components/Groups/GroupsView";
+import GroupView from "./components/Groups/GroupView";
 
 import './App.css';
 import 'bootstrap/dist/js/bootstrap';
