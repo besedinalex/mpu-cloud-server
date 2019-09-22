@@ -87,6 +87,7 @@ class ModelsView extends Component {
         </table>
       );
     }
+  }
 
     /* Models interaction */
     handleCloseDialog() {

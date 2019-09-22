@@ -15,7 +15,7 @@ class GroupView extends Component {
             groupId: Number(this.props.match.params.id),
             title: '',
             desc: '',
-            redirect: false
+            redirect: false,
             group: {}
         };
     }
