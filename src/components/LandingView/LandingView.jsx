@@ -3,9 +3,8 @@ import {Link} from "react-router-dom";
 
 import {isAuthenticated} from "../../services/authentication";
 
-import HeaderComponent from "../HeaderComponent";
-
 import './LandingView.css';
+import HeaderComponent from "../HeaderComponent";
 
 class LandingView extends Component {
     state = {
@@ -16,25 +15,34 @@ class LandingView extends Component {
         const loggedIn = this.state.isAuthenticated;
         const carouselItems = [
             {
-                text: 'Храни все модели в одном месте',
+                text: 'Храните все модели в одном месте',
                 desc: 'Все ваши разработки будут в одном месте. Вы можете получить к ним доступ в в любое время любом месте прямо в вашем браузере.',
                 img: '',
                 id: 0
             },
             {
-                text: 'GLTF',
-                desc: 'Конвертирует ваши модели из множества распространненых форматов (например, из STEP) в GLTF.',
-                img: ''
+                text: 'Поддерживает более 18 форматов',
+                desc: 'Конвертирует ваши модели из множества форматов, например таких как ACIS, IGES, JT, Parasolid, STEP, STL, VRML, GRDECL, C3D в GLTF. Вы также можете загрузить модель к себе в любом из этих форматов',
+                img: '',
+                id: 1
+            },
+            {
+                text: 'Группы',
+                desc: 'Объединяйтесь в группы для совместной работы над общими проектами.',
+                img: '',
+                id: 2
             },
             {
                 text: 'Доступ с любого устройства',
                 desc: 'Вы можете смотреть, вращать и показывать свои работы с любого устройства на котором есть веб браузер.',
-                img: ''
+                img: '',
+                id: 3
             }
         ];
         return (
-            <div className="margin-for-header">
+            <div>
                 <HeaderComponent />
+
                 <div className="position-relative overflow-hidden p-3 p-md-3 text-center bg-light">
                     <div className="col-md-5 p-lg-5 mx-auto my-5">
                         <h1 className="display-4 font-weight-normal">MPU Cloud</h1>
@@ -49,9 +57,10 @@ class LandingView extends Component {
 
                 <div id="myCarousel" className="carousel slide" data-ride="carousel">
                     <ol className="carousel-indicators">
-                        <li data-target="#myCarousel" data-slide-to="0" className="active"/>
-                        <li data-target="#myCarousel" data-slide-to="1" />
-                        <li data-target="#myCarousel" data-slide-to="2" />
+                        {carouselItems.map(item => {
+                            const itemClass = item.id === 0 ? 'active' : '';
+                            return <li data-target="#myCarousel" data-slide-to={item.id} className={itemClass} />
+                        })}
                     </ol>
                     <div className="carousel-inner">
                         {carouselItems.map(item => {
@@ -61,7 +70,7 @@ class LandingView extends Component {
                                     <svg className="bd-placeholder-img" width="100%" height="100%"
                                          xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
                                          focusable="false" role="img">
-                                        <rect width="100%" height="100%" fill="#777"/>
+                                        <rect width="100%" height="100%" fill="#777" />
                                     </svg>
                                     <div className="container">
                                         <div className="carousel-caption">

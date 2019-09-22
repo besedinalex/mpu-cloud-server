@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 
-import {handleLoggingOut, isAuthenticated} from "../../services/authentication";
+import {handleSigningOut, isAuthenticated} from "../../services/authentication";
 
 import './HeaderComponent.css';
 
@@ -24,23 +24,26 @@ class HeaderComponent extends Component {
 
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav mr-auto">
-                        <li className="nav-item" hidden={!loggedIn}>
-                            <Link className="nav-link" to="/models">Модели</Link>
-                        </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/learn">Руководства</Link>
+                            <Link to="/docs" className="nav-link">Руководство</Link>
                         </li>
                         <li className="nav-item" hidden={!loggedIn}>
-                            <Link className="nav-link" to="/profile">Профиль</Link>
+                            <Link to="/models" className="nav-link">Модели</Link>
+                        </li>
+                        <li className="nav-item" hidden={!loggedIn}>
+                            <Link to="/groups" className="nav-link">Группы</Link>
                         </li>
                     </ul>
-                    <Link hidden={loggedIn} className="margin-right" to="/signup">
+                    <Link to="/signup" hidden={loggedIn} className="margin-right">
                         <button className="btn btn-info">Регистрация</button>
                     </Link>
-                    <Link hidden={loggedIn} to="/login">
+                    <Link to="/login" hidden={loggedIn}>
                         <button className="btn btn-light">Войти</button>
                     </Link>
-                    <button hidden={!loggedIn} className="btn btn-danger" onClick={handleLoggingOut}>Выйти</button>
+                    <Link to="/settings" hidden={!loggedIn} className="margin-right">
+                        <button className="btn btn-light">Настройки</button>
+                    </Link>
+                    <button hidden={!loggedIn} className="btn btn-danger" onClick={handleSigningOut}>Выйти</button>
                 </div>
             </header>
         );
