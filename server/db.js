@@ -76,18 +76,14 @@ exports.getGroupModels = function (groupId) {
 exports.getGroups = function (userId) {
     return new Promise((resolve, reject) => {
         let sql =
-            `SELECT 
-            Groups.group_id, 
-            Groups.title, 
-            Groups.description, 
-            Groups.image, 
-            Groups.owner, 
-            Groups.dateOfCreation, 
-            Users.firstName, 
-            Users.lastName 
+            `SELECT
+            Groups.title, Groups.description, Groups.image, Groups.owner, Groups.dateOfCreation, Groups.group_id,
+            GroupUsers.group_id, GroupUsers.user_id, GroupUsers.access, GroupUsers.userJoinedDate,
+            Users.firstName, Users.lastName, Users.email
             FROM Groups
-            JOIN Users ON Groups.owner = Users.user_id
-            WHERE Groups.owner = '${userId}'`;
+            JOIN GroupUsers, Users
+            ON Users.user_id = GroupUsers.user_id AND Groups.group_id = GroupUsers.group_id
+            WHERE Users.user_id = ${userId}`;
         db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);
@@ -114,7 +110,7 @@ exports.addGroup = function (title, description, image, owner, dateOfCreation) {
 
 exports.addGroupUser = function (user_id, groupId, access, dateOfCreation) {
     return new Promise((resolve, reject) => {
-        let sql = `INSERT INTO "GroupUsers" ("group", "user", "access", "userJoinedDate")
+        let sql = `INSERT INTO "GroupUsers" ("group_id", "user_id", "access", "userJoinedDate")
         VALUES (${groupId}, ${user_id}, '${access}', '${dateOfCreation}');`;
         db.run(sql, [], function(err) {
             if (err) {
