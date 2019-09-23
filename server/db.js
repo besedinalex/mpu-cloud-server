@@ -124,7 +124,7 @@ exports.addGroupUser = function (user_id, groupId, access, dateOfCreation) {
 
 exports.getUsersByGroup = function (group_id) {
     return new Promise((resolve, reject) => {
-        let sql = `SELECT GroupUsers.user_id, Users.firstName, Users.lastName, Users.email
+        let sql = `SELECT GroupUsers.user_id,  GroupUsers.access, Users.firstName, Users.lastName, Users.email 
         FROM GroupUsers
         JOIN Users
         ON Users.user_id = GroupUsers.user_id 
