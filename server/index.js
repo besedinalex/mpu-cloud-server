@@ -24,6 +24,11 @@ app.use(cors());
 console.log(__dirname + '/xeogl');
 app.use('/view', express.static(__dirname + '/xeogl'));
 
+function currentDate() {
+    const date = new Date();
+    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
+}
+
 const tokenRequired = function (req, res, next) {
     const token = req.query.token;
     if (!token) {
@@ -52,11 +57,12 @@ app.get('/token', function (req, res) { // Получить токен на го
 });
 
 app.post('/user', function (req, res) { // Добавить пользователь
-    db.signUp(req.query.firstName, req.query.lastName, req.query.email, req.query.password).then(userId => {
-        const payload = { id: userId };
-        const token = jwt.sign(payload, secret, { expiresIn: '365d' });
-        let expiresAt = Date.now() + + 365 * 24 * 60 * 60 * 1000;
-        res.json({ token, expiresAt: expiresAt });
+    db.signUp(req.query.firstName, req.query.lastName, req.query.email.toLowerCase(), req.query.password)
+        .then(userId => {
+            const payload = { id: userId };
+            const token = jwt.sign(payload, secret, { expiresIn: '365d' });
+            let expiresAt = Date.now() + + 365 * 24 * 60 * 60 * 1000;
+            res.json({ token, expiresAt: expiresAt });
     })
 });
 
@@ -77,8 +83,34 @@ app.get('/group-users', tokenRequired, function (req, res) {
 });
 
 app.post('/group-create', tokenRequired, function (req) {
-    db.addGroup(req.query.title, req.query.description, req.query.image, req.user_id, req.query.dateOfCreation)
-        .then(res => db.addGroupUser(req.user_id, res, 'ADMIN', req.query.dateOfCreation));
+    db.addGroup(req.query.title, req.query.description, req.query.image, req.user_id, currentDate())
+        .then(res => db.addGroupUser(req.user_id, res, 'ADMIN', currentDate()));
+});
+
+app.post('/group-user', tokenRequired, function (req, resolve) {
+    db.getUserAccess(req.query.groupId, req.user_id)
+        .then(res => {
+            const userHasAccess = res[0].access === 'ADMIN' || 'MODERATOR';
+            if (!userHasAccess)
+                return;
+            db.getIdByEmail(req.query.email.toLowerCase())
+                .then(id => {
+                    db.getUsersByGroup(req.query.groupId)
+                        .then(res => {
+                            let userFound = false;
+                            res.map(user => {
+                                if (user.user_id === id[0].user_id) {
+                                    userFound = true;
+                                }
+                            });
+                            if (!userFound) {
+                                db.addGroupUser(id[0].user_id, req.query.groupId, req.query.access, currentDate());
+                            } else {
+                                resolve.send(false);
+                            }
+                        });
+                })
+        })
 });
 
 app.get('/model/original/:id', tokenRequired, (req, res) => {
@@ -159,7 +191,7 @@ app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
                     filename: req.file.originalname,
                     type: 'STEP',
                     sizeKB: req.file.size,
-                    createdTime: Date.now()
+                    createdTime: currentDate()
                 });
             })
 
@@ -174,9 +206,9 @@ app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
 })
 
 app.set('view engine', 'ejs');
+
 app.get('/view', tokenRequired, function (req, res) { // Вьювер для модели
     res.render(__dirname + '/view.ejs');
 })
-
 
 app.listen(4000, () => console.log('Сервер запущен!'));

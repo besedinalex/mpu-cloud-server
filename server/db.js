@@ -123,14 +123,12 @@ exports.addGroupUser = function (user_id, groupId, access, dateOfCreation) {
 }
 
 exports.getUsersByGroup = function (group_id) {
-    
     return new Promise((resolve, reject) => {
         let sql = `SELECT GroupUsers.user_id, Users.firstName, Users.lastName, Users.email
         FROM GroupUsers
         JOIN Users
         ON Users.user_id = GroupUsers.user_id 
         WHERE GroupUsers.group_id ='${group_id}'`;
-        
         db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);
@@ -141,14 +139,29 @@ exports.getUsersByGroup = function (group_id) {
     })
 }
 
-exports.getIdByEmail = function (email) {
+exports.getUserAccess = function (group_id, user_id) {
     return new Promise((resolve, reject) => {
-        let sql = `SELECT Users.user_id FROM Users WHERE Users.email = '${email}'`;
-        db.run(sql, [], function(err) {
+        let sql = `SELECT GroupUsers.access
+        FROM GroupUsers
+        WHERE GroupUsers.group_id = ${group_id} AND GroupUsers.user_id = ${user_id}`;
+        db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);
             } else {
-                resolve(this.lastID);
+                resolve(rows);
+            }
+        });
+    });
+}
+
+exports.getIdByEmail = function (email) {
+    return new Promise((resolve, reject) => {
+        let sql = `SELECT Users.user_id FROM Users WHERE Users.email = '${email}'`;
+        db.all(sql, [], function(err, rows) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
             }
         })
     })
