@@ -27,6 +27,9 @@ class HeaderComponent extends Component {
                         <li className="nav-item">
                             <Link to="/docs" className="nav-link">Руководство</Link>
                         </li>
+                        <li className="nav-item" hidden={!loggedIn}> 
+                        <Link to="/profile" className="nav-link">Профиль</Link> 
+                        </li> 
                         <li className="nav-item" hidden={!loggedIn}>
                             <Link to="/models" className="nav-link">Модели</Link>
                         </li>
