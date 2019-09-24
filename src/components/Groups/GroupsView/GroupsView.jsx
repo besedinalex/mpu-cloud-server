@@ -46,14 +46,9 @@ class GroupsView extends Component {
 
     handleCreate = event => {
         event.preventDefault();
-        addGroup(this.state.title, this.state.description, this.state.file, this.getCurrentDate());
+        addGroup(this.state.title, this.state.description, this.state.file);
         this.getData().then();
     };
-
-    getCurrentDate() {
-        const date = new Date();
-        return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
-    }
 
     render() {
         return (
