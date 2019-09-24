@@ -28,3 +28,10 @@ export function addGroupUser(groupId, email, access) {
             .then(resolve).catch(reject);
     });
 }
+
+export function delUser(userId, groupId) {
+    return new Promise((resolve, reject) => {
+        axios.delete(`http://127.0.0.1:4000/user-from-group/?token=${token}&userId=${userId}&groupId=${groupId}`)
+            .then(resolve).catch(reject);
+    });
+}

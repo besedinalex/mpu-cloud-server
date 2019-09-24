@@ -17,6 +17,8 @@ class UsersView extends Component {
             email: "",
             access: "USER"
         };
+        this.handleUserDelete = this.handleUserDelete.bind(this);
+        this.handleCloseDialog = this.handleCloseDialog.bind(this);
     }
 
     componentDidMount = () => this.getGUsers();
@@ -29,6 +31,16 @@ class UsersView extends Component {
     handleCloseDialog = () => this.setState({isDialogOpen: false});
     handleMailChange = ({target: {value}}) => this.setState({email: value});
     handleAccessChange = ({target: {value}}) => this.setState({access: value});
+
+    handleUserDelete(userId){
+        for (let i = 0; i < this.state.users.length; i++) {
+            if (this.state.users[i].user_id === userId) {
+                this.setState({users: this.state.users.splice(i,1)});
+            }
+            
+        }
+    }
+
 
     handleAdd = event => {
         event.preventDefault();
@@ -112,8 +124,9 @@ class UsersView extends Component {
                     </div>
                 </div>
 
-
+                
                 <main role="main" class="container">
+                    
                     <div class="my-3 p-3 bg-white rounded shadow-sm">
 
                         <h5 className="inline pb-2 mb-0">Пользователи</h5>
@@ -127,12 +140,13 @@ class UsersView extends Component {
                                 icon={faUserPlus}
                             />
                         </div>
-                        <h3 className="border-bottom border-gray pb-2 mb-0" />
-
-                        {this.state.users.map(user => <UserView user={user} />)}
-
+                        <h3 className="border-bottom border-gray pb-2 mb-0"/>
+                        
+                       <div> {this.state.users.map(user => <UserView user={user} group={this.props.group} getGUsers ={this.handleUserDelete}/>)} </div>
                     </div>
+                    
                 </main>
+                
             </div>
         );
     }

@@ -23,3 +23,9 @@ tr:hover {
 .download:hover {
     color: #3498db;
 }
+
+.hasHover:hover {
+    cursor: pointer;
+    background: #ecf0f1;
+    border-radius: 10px;
+}

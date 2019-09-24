@@ -130,6 +130,12 @@ app.delete('/model/:id', tokenRequired, (req, res) => {
     })
 })
 
+app.delete('/user-from-group', tokenRequired, (req, res) => {
+    db.removeUser(req.query.groupId, req.query.userId).then(deleted => {
+        res.json({ deleted });
+    })
+})
+
 app.get('/model/:id', tokenRequired, (req, res) => {
     db.getUserModels(req.user_id).then(models => {
         for (let model of models) {
