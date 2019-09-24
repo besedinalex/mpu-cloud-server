@@ -35,9 +35,10 @@ class UsersView extends Component {
     handleUserDelete(userId){
         for (let i = 0; i < this.state.users.length; i++) {
             if (this.state.users[i].user_id === userId) {
-                this.setState({users: this.state.users.splice(i,1)});
+                this.state.users.splice(i,1);
+                this.setState({users: this.state.users});
+                return;
             }
-            
         }
     }
 
