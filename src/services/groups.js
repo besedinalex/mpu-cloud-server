@@ -8,7 +8,7 @@ export function getGroups() {
     });
 }
 
-export function addGroup(title, desc, file, date) {
+export function addGroup(title, desc, file) {
     return new Promise((resolve, reject) => {
         axios.post(`http://127.0.0.1:4000/group-create?token=${token}&title=${title}&description=${desc}&image=${file}`)
             .then(resolve, reject);
