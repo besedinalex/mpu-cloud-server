@@ -29,3 +29,9 @@ tr:hover {
     background: #ecf0f1;
     border-radius: 10px;
 }
+
+.icons-spacing {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+}

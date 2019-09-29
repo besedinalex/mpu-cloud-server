@@ -15,113 +15,44 @@ class ModelsView extends Component {
     constructor(props) {
         super(props);
 
-    this.state = {
-      models: [],
-      isDialogOpen: false,
-      title: "",
-      desc: "",
-      filename: "",
-      isUploaded: false,
-      
-    };
-        this.fileInput = React.createRef();
+        this.state = {
+            models: [],
+            isDialogOpen: false,
+            title: "",
+            desc: "",
+            filename: "",
+            isUploaded: false,
 
-        this.handleCloseDialog = this.handleCloseDialog.bind(this);
-        this.handleOpenDialog = this.handleOpenDialog.bind(this);
-        this.handleTitleChange = this.handleTitleChange.bind(this);
-        this.handleDescChange = this.handleDescChange.bind(this);
-        this.handleUpload = this.handleUpload.bind(this);
-        this.handleFileSelection = this.handleFileSelection.bind(this);
-        this.handleModelRemoved = this.handleModelRemoved.bind(this);
-        this.getModels = this.getModels.bind(this);
+        };
+        this.fileInput = React.createRef();
     }
 
     componentDidMount = () => this.getModels();
 
     getModels = () => {
-        if (this.props.groupModels)
+        if (this.props.groupModels) {
             getGroupModels(this.props.groupId).then(res => this.setState({models: res.data.reverse()}));
-        else
+        } else {
             getUserModels().then(res => this.setState({models: res.data.reverse()}));
-        
+        }
     };
-     
 
+    marginAfterHeader = () => this.props.groupModels ? "container" : "container margin-after-header";
 
-  isMarginAfterHeaderNecessary() {
-    return this.props.groupModels ? "container" : "container margin-after-header" ;
-  }
+    handleCloseDialog = () => this.setState({isDialogOpen: false});
 
-  handleTablePreferences(modelCells) {
-    if (this.props.groupModels) {
-      return (
-        <table className="table">
-        <thead>
-          <tr>
-            <th scope="col">Название</th>
-            <th scope="col"/>
-            <th scope="col">Пользователь</th>
-            <th scope="col">Тип</th>
-            <th scope="col">Вес</th>
-            <th scope="col">Загружено</th>
-          </tr>
-        </thead>
-        <tbody>{modelCells}</tbody>
-      </table>
-        
-      );
-    } else {
-      return (
-        <table className="table">
-        <thead>
-          <tr>
-            <th scope="col">Название</th>
-            <th scope="col" />
-            <th scope="col">Тип</th>
-            <th scope="col">Вес</th>
-            <th scope="col">Загружено</th>
-          </tr>
-        </thead>
-        <tbody>{modelCells}</tbody>
-      </table>
-      );
-    }
-  }
+    handleOpenDialog = () => this.setState({isDialogOpen: true});
 
-    /* Models interaction */
-    handleCloseDialog() {
-        this.setState({isDialogOpen: false});
-    }
+    handleTitleChange = (e) => this.setState({title: e.target.value});
 
-    handleOpenDialog() {
-        this.setState({isDialogOpen: true});
-    }
+    handleDescChange = (e) => this.setState({desc: e.target.value});
 
-    handleTitleChange(e) {
-        this.setState({title: e.target.value});
-    }
+    handleModelRemoved = (data) => {
+        const newModels = this.state.models.filter(model => model.model_id !== data.id);
+        this.setState({models: newModels});
+    };
 
-    handleDescChange(e) {
-        this.setState({desc: e.target.value});
-    }
-
-    handleFileSelection() {
-        console.log(this.fileInput.current.files);
-        if (this.fileInput.current.files)
-            this.setState({filename: this.fileInput.current.files[0].name});
-    }
-
-    handleModelRemoved(data) {
-        let newModels = this.state.models.filter(model => {
-            return model.model_id !== data.id;
-        });
-        console.log(newModels);
-        this.setState(prev => ({
-            models: newModels
-        }));
-    }
-
-    handleUpload() {
+    handleUpload = () => {
         this.setState({isUploaded: true});
         const groupId = this.props.groupId === undefined ? 'NULL' : this.props.groupId;
         uploadModel(this.state.title, this.state.desc, this.fileInput.current.files[0], groupId)
@@ -130,23 +61,24 @@ class ModelsView extends Component {
                 $("#exampleModal").modal("hide");
                 this.getModels();
             });
-    }
+    };
 
-  render() {
-    const modelCells = this.state.models.map(model => {
-      return (
-        <ModelItem
-          id={model.model_id}
-          filename={model.filename}
-          type={model.type}
-          sizeKB={model.sizeKB}
-          createdTime={model.createdTime}
-          onModelRemoved={this.handleModelRemoved}
-          name={this.props.name}
-          groupModels={this.props.groupModels}
-        />
-      );
-    });
+    render() {
+        const modelCells = this.state.models.map((model, i) => {
+            return (
+                <ModelItem
+                    id={model.model_id}
+                    filename={model.filename}
+                    type={model.type}
+                    sizeKB={model.sizeKB}
+                    createdTime={model.createdTime}
+                    onModelRemoved={this.handleModelRemoved}
+                    name={this.props.name}
+                    groupModels={this.props.groupModels}
+                    key={i}
+                />
+            );
+        });
 
         return (
             <div>
@@ -178,9 +110,7 @@ class ModelsView extends Component {
                             <div className="modal-body">
                                 <div className="input-group" style={{marginBottom: "16px"}}>
                                     <div className="input-group-prepend">
-                    <span className="input-group-text" id="">
-                      Название
-                    </span>
+                                        <span className="input-group-text">Название</span>
                                     </div>
                                     <input
                                         name="author"
@@ -191,10 +121,7 @@ class ModelsView extends Component {
                                     />
                                 </div>
                                 <div className="form-group" style={{textAlign: "left"}}>
-                                    <label
-                                        style={{textAlign: "left"}}
-                                        htmlFor="exampleFormControlTextarea1"
-                                    >
+                                    <label className="text-left" htmlFor="exampleFormControlTextarea1">
                                         Описание
                                     </label>
                                     <textarea
@@ -217,11 +144,7 @@ class ModelsView extends Component {
                                                 type="file"
                                                 required=""
                                             />
-                                            <label
-                                                style={{textAlign: "left"}}
-                                                className="custom-file-label"
-                                                htmlFor="inputGroupFile04"
-                                            >
+                                            <label className="custom-file-label text-left" htmlFor="inputGroupFile04">
                                                 Выберете файл
                                             </label>
                                         </div>
@@ -239,20 +162,17 @@ class ModelsView extends Component {
                                 </button>
                                 {this.state.isUploaded ? (
                                     <button className="btn btn-primary" type="button" disabled>
-                    <span
-                        style={{marginRight: "8px"}}
-                        className="spinner-border spinner-border-sm"
-                        role="status"
-                        aria-hidden="true"
-                    />{" "}
+                                        <span
+                                            style={{marginRight: "8px"}}
+                                            className="spinner-border spinner-border-sm"
+                                            role="status"
+                                            aria-hidden="true"
+                                        />
+                                        {" "}
                                         Загрузка...
                                     </button>
                                 ) : (
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={this.handleUpload}
-                                    >
+                                    <button type="button" className="btn btn-primary" onClick={this.handleUpload}>
                                         Отправить
                                     </button>
                                 )}
@@ -263,7 +183,7 @@ class ModelsView extends Component {
 
                 <HeaderComponent />
 
-                <main role="main" className={this.isMarginAfterHeaderNecessary()}>
+                <main role="main" className={this.marginAfterHeader()}>
                     <div className="my-3 p-3 bg-white rounded shadow-sm">
                         <h3 className="inline">Модели</h3>
 
@@ -278,12 +198,21 @@ class ModelsView extends Component {
                             />
                         </div>
 
-                        <h3 className="border-bottom border-gray pb-2 mb-0" />
-                        {/* <button class="btn btn-primary" onClick={this.handleOpenDialog} data-toggle="modal" data-target="#exampleModal">
-                <i class="icon-excel"></i>Добавить
-              </button> */}
+                        <div className="border-bottom border-gray pb-2 mb-0" />
 
-                        {this.handleTablePreferences(modelCells)}
+                        <table className="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Название</th>
+                                <th scope="col" />
+                                {this.props.groupModels ? <th scope="col">Пользователь</th> : null}
+                                <th scope="col">Тип</th>
+                                <th scope="col">Вес</th>
+                                <th scope="col">Загружено</th>
+                            </tr>
+                            </thead>
+                            <tbody>{modelCells}</tbody>
+                        </table>
                     </div>
                 </main>
             </div>

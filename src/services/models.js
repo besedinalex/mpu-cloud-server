@@ -20,6 +20,13 @@ export function uploadModel(title, desc, model, groupId) {
     });
 }
 
+export function deleteModel(id) {
+    return new Promise((resolve, reject) => {
+        axios.delete(`http://127.0.0.1:4000/model/${id}?token=${token}`)
+            .then(resolve).catch(reject);
+    })
+}
+
 export function getUserModels() {
     return new Promise((resolve, reject) => {
         axios.get(`http://127.0.0.1:4000/models-user?token=${token}`)
