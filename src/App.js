@@ -5,10 +5,11 @@ import 'jquery';
 
 import {isAuthenticated} from "./services/authentication";
 
+import LandingView from "./components/LandingView";
 import SignUpView from './components/Auth/SignUpView';
 import SignInView from './components/Auth/SignInView';
+import ProfileView from "./components/ProfileView";
 import ModelsView from './components/ModelsView';
-import LandingView from "./components/LandingView";
 import GroupsView from "./components/Groups/GroupsView";
 import GroupView from "./components/Groups/GroupView";
 
@@ -52,6 +53,7 @@ class App extends Component {
                         <Route exact path="/" component={LandingView} />
                         <PublicRoute path="/login" component={SignInView} />
                         <PublicRoute path="/signup" component={SignUpView} />
+                        <PrivateRoute path="/profile" component={ProfileView} />
                         <PrivateRoute path="/models" component={ModelsView} groupModels={false} />
                         <PrivateRoute path="/groups" component={GroupsView} />
                         <PrivateRoute path="/group/:id" component={GroupView} />
