@@ -78,7 +78,6 @@ class UsersView extends Component {
                                 </div>
                             </div>
 
-
                             <div style={{marginBottom: "16px"}}>
                                 <div className="col-auto my-1">
                                     <select className="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref"

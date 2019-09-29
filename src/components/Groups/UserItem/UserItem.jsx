@@ -41,14 +41,7 @@ class UserItem extends Component {
                                 {this.props.user.firstName} {this.props.user.lastName}
                             </strong>
                             <div className="tools" style={{position: "absolute", right: "30%"}}>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        marginTop: "4px"
-                                    }}
-                                    hidden={!this.state.isMouseOver}
-                                >
+                                <div className="icons-spacing" hidden={!this.state.isMouseOver}>
                                     <FontAwesomeIcon
                                         icon={faUserMinus}
                                         className="tool"
@@ -61,7 +54,7 @@ class UserItem extends Component {
                                 {this.props.user.access}
                             </span>
                         </div>
-                        <span className="d-block" style={{textAlign: "left"}}>
+                        <span className="d-block text-left">
                             {this.props.user.email}
                         </span>
                     </div>

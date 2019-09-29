@@ -63,13 +63,25 @@ class GroupView extends Component {
                         </ul>
                     </div>
                     <div className="tab-content" id="pills-tabContent">
-                        <div className="tab-pane fade show active" id="pills-home" role="tabpanel"
-                             aria-labelledby="pills-home-tab"><ModelsView groupModels={true}
-                                                                          groupId={this.state.groupId}
-                                                                          name={this.state.group.firstName + " " + this.state.group.lastName} />
+                        <div
+                            className="tab-pane fade show active"
+                            id="pills-home" role="tabpanel"
+                            aria-labelledby="pills-home-tab"
+                        >
+                            <ModelsView
+                                groupModels={true}
+                                groupId={this.state.groupId}
+                                name={`${this.state.group.firstName} ${this.state.group.lastName}`}
+                            />
                         </div>
-                        <div className="tab-pane fade" id="pills-profile" role="tabpanel"
-                             aria-labelledby="pills-profile-tab"><UsersView group={this.state.groupId} /></div>
+                        <div
+                            className="tab-pane fade"
+                            id="pills-profile"
+                            role="tabpanel"
+                            aria-labelledby="pills-profile-tab"
+                        >
+                            <UsersView group={this.state.groupId} />
+                        </div>
                     </div>
 
 

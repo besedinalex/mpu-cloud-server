@@ -48,9 +48,7 @@ class ModelsView extends Component {
     handleDescChange = (e) => this.setState({desc: e.target.value});
 
     handleModelRemoved = (data) => {
-        const newModels = this.state.models.filter(model => {
-            return model.model_id !== data.id;
-        });
+        const newModels = this.state.models.filter(model => model.model_id !== data.id);
         this.setState({models: newModels});
     };
 
