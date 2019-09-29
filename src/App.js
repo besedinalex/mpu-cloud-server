@@ -11,7 +11,6 @@ import ModelsView from './components/ModelsView';
 import LandingView from "./components/LandingView";
 import GroupsView from "./components/Groups/GroupsView";
 import GroupView from "./components/Groups/GroupView";
-import ProfileView from "./components/Groups/ProfileView";
 
 import './App.css';
 import 'bootstrap/dist/js/bootstrap';
@@ -53,7 +52,6 @@ class App extends Component {
                         <Route exact path="/" component={LandingView} />
                         <PublicRoute path="/login" component={SignInView} />
                         <PublicRoute path="/signup" component={SignUpView} />
-                        <PrivateRoute path="/profile" component={ProfileView} />
                         <PrivateRoute path="/models" component={ModelsView} groupModels={false} />
                         <PrivateRoute path="/groups" component={GroupsView} />
                         <PrivateRoute path="/group/:id" component={GroupView} />
