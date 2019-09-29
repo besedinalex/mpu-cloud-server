@@ -64,7 +64,7 @@ class ModelsView extends Component {
     };
 
     render() {
-        const modelCells = this.state.models.map(model => {
+        const modelCells = this.state.models.map((model, i) => {
             return (
                 <ModelItem
                     id={model.model_id}
@@ -75,6 +75,7 @@ class ModelsView extends Component {
                     onModelRemoved={this.handleModelRemoved}
                     name={this.props.name}
                     groupModels={this.props.groupModels}
+                    key={i}
                 />
             );
         });

@@ -125,7 +125,7 @@ class UsersView extends Component {
                         </div>
                         <div className="border-bottom border-gray pb-2 mb-0" />
                         <div>
-                            {this.state.users.map(user => <UserItem user={user} group={this.props.group} />)}
+                            {this.state.users.map((user, i) => <UserItem user={user} group={this.props.group} key={i} />)}
                         </div>
                     </div>
                 </main>

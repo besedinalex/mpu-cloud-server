@@ -175,8 +175,8 @@ class GroupsView extends Component {
                             </tr>
                             </thead>
                             <tbody>
-                            {this.state.groups.map(group => (
-                                <GroupItem group={group} />
+                            {this.state.groups.map((group, i) => (
+                                <GroupItem group={group} key={i} />
                             ))}
                             </tbody>
                         </table>

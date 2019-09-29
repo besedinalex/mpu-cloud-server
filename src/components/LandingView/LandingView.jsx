@@ -13,7 +13,8 @@ class LandingView extends Component {
 
     render() {
         const loggedIn = this.state.isAuthenticated;
-        const carouselItems = [
+
+        const carouselContent = [
             {
                 text: 'Храните все модели в одном месте',
                 desc: 'Все ваши разработки будут в одном месте. Вы можете получить к ним доступ в в любое время любом месте прямо в вашем браузере.',
@@ -39,6 +40,26 @@ class LandingView extends Component {
                 id: 3
             }
         ];
+
+        const carouselItems = carouselContent.map((item, i) => {
+            const itemClass = item.id === 0 ? 'carousel-item active' : 'carousel-item';
+            return (
+                <div className={itemClass} key={i}>
+                    <svg className="bd-placeholder-img" width="100%" height="100%"
+                         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
+                         focusable="false" role="img">
+                        <rect width="100%" height="100%" fill="#777" />
+                    </svg>
+                    <div className="container">
+                        <div className="carousel-caption">
+                            <h1>{item.text}</h1>
+                            <p>{item.desc}</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        });
+
         return (
             <div>
                 <HeaderComponent />
@@ -57,30 +78,13 @@ class LandingView extends Component {
 
                 <div id="myCarousel" className="carousel slide" data-ride="carousel">
                     <ol className="carousel-indicators">
-                        {carouselItems.map(item => {
+                        {carouselContent.map((item, i) => {
                             const itemClass = item.id === 0 ? 'active' : '';
-                            return <li data-target="#myCarousel" data-slide-to={item.id} className={itemClass} />
+                            return <li data-target="#myCarousel" data-slide-to={item.id} className={itemClass} key={i} />
                         })}
                     </ol>
                     <div className="carousel-inner">
-                        {carouselItems.map(item => {
-                            const itemClass = item.id === 0 ? 'carousel-item active' : 'carousel-item';
-                            return (
-                                <div className={itemClass}>
-                                    <svg className="bd-placeholder-img" width="100%" height="100%"
-                                         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
-                                         focusable="false" role="img">
-                                        <rect width="100%" height="100%" fill="#777" />
-                                    </svg>
-                                    <div className="container">
-                                        <div className="carousel-caption">
-                                            <h1>{item.text}</h1>
-                                            <p>{item.desc}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                        {carouselItems}
                     </div>
                     <a className="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
                         <span className="carousel-control-prev-icon" aria-hidden="true" />
