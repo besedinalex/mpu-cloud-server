@@ -2,7 +2,7 @@ import React, {Component} from "react";
 
 import {getGroupUsers, addGroupUser} from "../../../services/groups";
 
-import UserView from "../UserView";
+import UserItem from "../UserItem";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUserPlus} from "@fortawesome/free-solid-svg-icons";
@@ -14,38 +14,25 @@ class UsersView extends Component {
         this.state = {
             users: [],
             isDialogOpen: false,
-            email: "",
-            access: "USER"
+            email: '',
+            access: 'USER'
         };
-        this.handleUserDelete = this.handleUserDelete.bind(this);
-        this.handleCloseDialog = this.handleCloseDialog.bind(this);
     }
 
-    componentDidMount = () => this.getGUsers();
-
-    getGUsers = () => getGroupUsers(this.props.group)
-        .then(res =>
-            this.setState({users: res.data.reverse()}));
+    componentDidMount = () => getGroupUsers(this.props.group)
+        .then(res => this.setState({users: res.data.reverse()}));
 
     handleOpenDialog = () => this.setState({isDialogOpen: true});
+
     handleCloseDialog = () => this.setState({isDialogOpen: false});
+
     handleMailChange = ({target: {value}}) => this.setState({email: value});
+
     handleAccessChange = ({target: {value}}) => this.setState({access: value});
-
-    handleUserDelete(userId){
-        for (let i = 0; i < this.state.users.length; i++) {
-            if (this.state.users[i].user_id === userId) {
-                this.state.users.splice(i,1);
-                this.setState({users: this.state.users});
-                return;
-            }
-        }
-    }
-
 
     handleAdd = event => {
         event.preventDefault();
-        addGroupUser(this.props.group, this.state.email, this.state.access)
+        addGroupUser(this.props.group, this.state.email, this.state.access.toLocaleUpperCase())
             .then(window.location.reload());
     };
 
@@ -125,11 +112,8 @@ class UsersView extends Component {
                     </div>
                 </div>
 
-                
                 <main role="main" class="container">
-                    
                     <div class="my-3 p-3 bg-white rounded shadow-sm">
-
                         <h5 className="inline pb-2 mb-0">Пользователи</h5>
                         <div className="inline">
                             <FontAwesomeIcon
@@ -141,13 +125,13 @@ class UsersView extends Component {
                                 icon={faUserPlus}
                             />
                         </div>
-                        <h3 className="border-bottom border-gray pb-2 mb-0"/>
-                        
-                       <div> {this.state.users.map(user => <UserView user={user} group={this.props.group} getGUsers ={this.handleUserDelete}/>)} </div>
+                        <div className="border-bottom border-gray pb-2 mb-0" />
+                        <div>
+                            {this.state.users.map(user => <UserItem user={user} group={this.props.group} />)}
+                        </div>
                     </div>
-                    
                 </main>
-                
+
             </div>
         );
     }
