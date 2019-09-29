@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 
+import {serverURL} from "../../services/server-url";
 import {token} from "../../services/authentication";
 import {deleteModel} from "../../services/models";
 
@@ -17,9 +18,9 @@ class ModelItem extends Component {
         };
     }
 
-    handleModelClick = () => window.location.href = `http://127.0.0.1:4000/view?id=${this.props.id}&token=${token}`;
+    handleModelClick = () => window.location.href = `${serverURL}/view?id=${this.props.id}&token=${token}`;
 
-    handleDownloadClick = () => window.location.href = `http://127.0.0.1:4000/model/original/${this.props.id}?token=${token}`;
+    handleDownloadClick = () => window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}`;
 
     handleRemoveClick = () => deleteModel(this.props.id).then(res => this.props.onModelRemoved({id: this.props.id, deleted: res.data.deleted}));
 
