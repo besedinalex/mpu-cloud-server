@@ -24,11 +24,6 @@ app.use(cors());
 console.log(__dirname + '/xeogl');
 app.use('/view', express.static(__dirname + '/xeogl'));
 
-function currentDate() {
-    const date = new Date();
-    return date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
-}
-
 const tokenRequired = function (req, res, next) {
     const token = req.query.token;
     if (!token) {
@@ -83,8 +78,8 @@ app.get('/group-users', tokenRequired, function (req, res) {
 });
 
 app.post('/group-create', tokenRequired, function (req) {
-    db.addGroup(req.query.title, req.query.description, req.query.image, req.user_id, currentDate())
-        .then(res => db.addGroupUser(req.user_id, res, 'ADMIN', currentDate()));
+    db.addGroup(req.query.title, req.query.description, req.query.image, req.user_id)
+        .then(res => db.addGroupUser(req.user_id, res, 'ADMIN'));
 });
 
 app.post('/group-user', tokenRequired, function (req, resolve) {
@@ -104,7 +99,7 @@ app.post('/group-user', tokenRequired, function (req, resolve) {
                         if (access === 'ADMIN') {
                             access = 'MODERATOR';
                         }
-                        db.addGroupUser(id[0].user_id, groupId, access, currentDate());
+                        db.addGroupUser(id[0].user_id, groupId, access);
                     } else {
                         resolve.send(false);
                     }
@@ -219,8 +214,7 @@ app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
                     model_id: model_id,
                     filename: req.file.originalname,
                     type: 'STEP',
-                    sizeKB: req.file.size,
-                    createdTime: currentDate()
+                    sizeKB: req.file.size
                 });
             })
 

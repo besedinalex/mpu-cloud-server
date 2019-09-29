@@ -111,7 +111,7 @@ class ModelItem extends Component {
                 {this.handleTablePreferences()}
                 <td>{this.props.type}</td>
                 <td>{this.props.sizeKB + " KB"}</td>
-                <td>{new Date(this.props.createdDate).toString()}</td>
+                <td>{this.props.createdTime}</td>
             </tr>
         );
     }
