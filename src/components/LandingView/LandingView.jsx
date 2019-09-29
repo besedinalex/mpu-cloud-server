@@ -18,33 +18,34 @@ class LandingView extends Component {
             {
                 text: 'Храните все модели в одном месте',
                 desc: 'Все ваши разработки будут в одном месте. Вы можете получить к ним доступ в в любое время любом месте прямо в вашем браузере.',
-                img: '',
-                id: 0
+                img: ''
             },
             {
                 text: 'Поддерживает более 18 форматов',
                 desc: 'Конвертирует ваши модели из множества форматов, например таких как ACIS, IGES, JT, Parasolid, STEP, STL, VRML, GRDECL, C3D в GLTF. Вы также можете загрузить модель к себе в любом из этих форматов',
-                img: '',
-                id: 1
+                img: ''
             },
             {
                 text: 'Группы',
                 desc: 'Объединяйтесь в группы для совместной работы над общими проектами.',
-                img: '',
-                id: 2
+                img: ''
             },
             {
                 text: 'Доступ с любого устройства',
                 desc: 'Вы можете смотреть, вращать и показывать свои работы с любого устройства на котором есть веб браузер.',
-                img: '',
-                id: 3
+                img: ''
             }
         ];
 
-        const carouselItems = carouselContent.map((item, i) => {
-            const itemClass = item.id === 0 ? 'carousel-item active' : 'carousel-item';
+        const carouselScrolling = carouselContent.map((item, i) => {
             return (
-                <div className={itemClass} key={i}>
+                <li data-target="#myCarousel" data-slide-to={i} className={i === 0 ? 'active' : null} key={i} />
+            );
+        });
+
+        const carouselItems = carouselContent.map((item, i) => {
+            return (
+                <div className={i === 0 ? 'carousel-item active' : 'carousel-item'} key={i}>
                     <svg className="bd-placeholder-img" width="100%" height="100%"
                          xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
                          focusable="false" role="img">
@@ -78,10 +79,7 @@ class LandingView extends Component {
 
                 <div id="myCarousel" className="carousel slide" data-ride="carousel">
                     <ol className="carousel-indicators">
-                        {carouselContent.map((item, i) => {
-                            const itemClass = item.id === 0 ? 'active' : '';
-                            return <li data-target="#myCarousel" data-slide-to={item.id} className={itemClass} key={i} />
-                        })}
+                        {carouselScrolling}
                     </ol>
                     <div className="carousel-inner">
                         {carouselItems}
