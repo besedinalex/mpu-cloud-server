@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const secret = 'Hello World!';
 const cors = require('cors');
 const multer = require('multer');
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({storage: multer.memoryStorage()});
 const generator = require('generate-password');
 const path = require('path');
 const fs = require('fs-extra');
@@ -49,21 +49,21 @@ const tokenRequired = function (req, res, next) {
 
 app.get('/token', function (req, res) { // Получить токен на год
     db.signIn(req.query.email, req.query.password).then(data => {
-        const payload = { id: data.user_id };
-        const token = jwt.sign(payload, secret, { expiresIn: '365d' });
-        let expiresAt = Date.now() + + 365 * 24 * 60 * 60 * 1000;
-        res.json({ token, expiresAt: expiresAt });
+        const payload = {id: data.user_id};
+        const token = jwt.sign(payload, secret, {expiresIn: '365d'});
+        let expiresAt = Date.now() + +365 * 24 * 60 * 60 * 1000;
+        res.json({token, expiresAt: expiresAt});
     }).catch(err => res.status(401).send(err.message));
 });
 
 app.post('/user', function (req, res) { // Добавить пользователь
     db.signUp(req.query.firstName, req.query.lastName, req.query.email.toLowerCase(), req.query.password)
         .then(userId => {
-            const payload = { id: userId };
-            const token = jwt.sign(payload, secret, { expiresIn: '365d' });
-            let expiresAt = Date.now() + + 365 * 24 * 60 * 60 * 1000;
-            res.json({ token, expiresAt: expiresAt });
-    })
+            const payload = {id: userId};
+            const token = jwt.sign(payload, secret, {expiresIn: '365d'});
+            let expiresAt = Date.now() + +365 * 24 * 60 * 60 * 1000;
+            res.json({token, expiresAt: expiresAt});
+        })
 });
 
 app.get('/models-user', tokenRequired, function (req, res) {
@@ -88,29 +88,58 @@ app.post('/group-create', tokenRequired, function (req) {
 });
 
 app.post('/group-user', tokenRequired, function (req, resolve) {
-    db.getUserAccess(req.query.groupId, req.user_id)
-        .then(res => {
-            const userHasAccess = res[0].access === 'ADMIN' || 'MODERATOR';
-            if (!userHasAccess)
-                return;
-            db.getIdByEmail(req.query.email.toLowerCase())
-                .then(id => {
-                    db.getUsersByGroup(req.query.groupId)
-                        .then(res => {
-                            let userFound = false;
-                            res.map(user => {
-                                if (user.user_id === id[0].user_id) {
-                                    userFound = true;
-                                }
-                            });
-                            if (!userFound) {
-                                db.addGroupUser(id[0].user_id, req.query.groupId, req.query.access, currentDate());
-                            } else {
-                                resolve.send(false);
-                            }
-                        });
-                })
-        })
+    const groupId = req.query.groupId;
+    db.getUserAccess(groupId, req.user_id).then(res => {
+        if (res[0].access === 'ADMIN' || res[0].access === 'MODERATOR') {
+            db.getIdByEmail(req.query.email.toLowerCase()).then(id => {
+                db.getUsersByGroup(groupId).then(res => {
+                    let userFound = false;
+                    res.map(user => {
+                        if (user.user_id === id[0].user_id) {
+                            userFound = true;
+                        }
+                    });
+                    if (!userFound) {
+                        let access = req.query.access;
+                        if (access === 'ADMIN') {
+                            access = 'MODERATOR';
+                        }
+                        db.addGroupUser(id[0].user_id, groupId, access, currentDate());
+                    } else {
+                        resolve.send(false);
+                    }
+                });
+            });
+        } else {
+            resolve.send(false);
+        }
+    });
+});
+
+app.delete('/group-user', tokenRequired, (req, resolve) => {
+    const groupId = req.query.groupId;
+    const userId = req.query.userId;
+    db.getUserAccess(groupId, req.user_id).then(res => {
+        switch (res[0].access) {
+            case 'ADMIN':
+                db.getUserAccess(groupId, userId).then(res => {
+                    if (res[0].access !== 'ADMIN') {
+                        db.removeUser(groupId, userId).then(deleted => resolve.json({deleted}));
+                    }
+                });
+                break;
+            case 'MODERATOR':
+                db.getUserAccess(groupId, userId).then(res => {
+                    if (res[0].access === 'USER') {
+                        db.removeUser(groupId, userId).then(deleted => resolve.json({deleted}));
+                    }
+                });
+                break;
+            default:
+                resolve.send(false);
+                break;
+        }
+    });
 });
 
 app.get('/model/original/:id', tokenRequired, (req, res) => {
@@ -126,7 +155,7 @@ app.get('/model/original/:id', tokenRequired, (req, res) => {
 
 app.delete('/model/:id', tokenRequired, (req, res) => {
     db.removeModel(req.params.id, req.user_id).then(deleted => {
-        res.json({ deleted });
+        res.json({deleted});
     })
 })
 
@@ -136,7 +165,7 @@ app.get('/model/:id', tokenRequired, (req, res) => {
             if (model.model_id == req.params.id && model.owner == req.user_id) {
                 console.log(model)
                 let gltf = JSON.parse(fs.readFileSync(model.gltfPath));
-                res.json({ model: gltf })
+                res.json({model: gltf})
             }
         }
     })
@@ -151,7 +180,7 @@ app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
 
     console.log(req.file)
 
-    let modelCode = generator.generate({ length: 20, numbers: true });
+    let modelCode = generator.generate({length: 20, numbers: true});
     let cellPath = path.join(__dirname, 'storage', modelCode); // Путь к физической папке
 
     let fileNameOrig = modelCode + path.extname(req.file.originalname);
@@ -172,8 +201,8 @@ app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
         let plainGLTF = JSON.stringify(gltf);
 
         try {
-            fs.outputFileSync(fullPathGLTF, plainGLTF, { flag: 'wx' });
-            fs.outputFileSync(fullPathOrig, req.file.buffer, { flag: 'wx' });
+            fs.outputFileSync(fullPathGLTF, plainGLTF, {flag: 'wx'});
+            fs.outputFileSync(fullPathOrig, req.file.buffer, {flag: 'wx'});
 
             db.addModel(
                 req.body.title,

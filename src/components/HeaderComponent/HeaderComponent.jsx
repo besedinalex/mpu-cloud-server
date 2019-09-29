@@ -24,9 +24,6 @@ class HeaderComponent extends Component {
 
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav mr-auto">
-                        <li className="nav-item">
-                            <Link to="/docs" className="nav-link">Руководство</Link>
-                        </li>
                         <li className="nav-item" hidden={!loggedIn}>
                             <Link to="/models" className="nav-link">Модели</Link>
                         </li>
@@ -39,9 +36,6 @@ class HeaderComponent extends Component {
                     </Link>
                     <Link to="/login" hidden={loggedIn}>
                         <button className="btn btn-light">Войти</button>
-                    </Link>
-                    <Link to="/settings" hidden={!loggedIn} className="margin-right">
-                        <button className="btn btn-light">Настройки</button>
                     </Link>
                     <button hidden={!loggedIn} className="btn btn-danger" onClick={handleSigningOut}>Выйти</button>
                 </div>

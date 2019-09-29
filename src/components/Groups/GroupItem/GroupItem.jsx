@@ -20,8 +20,9 @@ class GroupItem extends Component {
                 <tr>
                     <td onClick={this.handleGroupClick} className="filename">
                         <img
-                            src="https://image.flaticon.com/icons/svg/356/356480.svg"
+                            src="https://image.flaticon.com/icons/svg/148/148946.svg"
                             width="35px"
+                            style ={{position:"relative", right:"5px"}}
                             alt=""
                         /> {this.props.group.title}
                     </td>

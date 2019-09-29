@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import {token} from "./authentication";
 
 export function getGroups() {
@@ -25,6 +26,13 @@ export function getGroupUsers(groupId) {
 export function addGroupUser(groupId, email, access) {
     return new Promise((resolve, reject) => {
         axios.post(`http://127.0.0.1:4000/group-user?token=${token}&groupId=${groupId}&email=${email}&access=${access}`)
+            .then(resolve).catch(reject);
+    });
+}
+
+export function deleteGroupUser(userId, groupId) {
+    return new Promise((resolve, reject) => {
+        axios.delete(`http://127.0.0.1:4000/group-user/?token=${token}&userId=${userId}&groupId=${groupId}`)
             .then(resolve).catch(reject);
     });
 }

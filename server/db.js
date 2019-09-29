@@ -193,3 +193,16 @@ exports.removeModel = function(modelId, ownerId) {
         })
     })
 }
+
+exports.removeUser = function(groupId, userId) {
+    return new Promise((resolve, reject) => {
+        let sql = `DELETE FROM GroupUsers WHERE group_id = ${groupId} AND user_id = ${userId}`;
+        db.run(sql, [], function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this.changes);
+            }
+        })
+    })
+}

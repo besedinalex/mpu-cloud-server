@@ -21,9 +21,9 @@ class ModelsView extends Component {
       title: "",
       desc: "",
       filename: "",
-      isUploaded: false, 
+      isUploaded: false,
+      
     };
-
         this.fileInput = React.createRef();
 
         this.handleCloseDialog = this.handleCloseDialog.bind(this);
@@ -43,48 +43,47 @@ class ModelsView extends Component {
             getGroupModels(this.props.groupId).then(res => this.setState({models: res.data.reverse()}));
         else
             getUserModels().then(res => this.setState({models: res.data.reverse()}));
+        
     };
      
 
 
   isMarginAfterHeaderNecessary() {
-    return this.props.path == "/models"
-      ? "container margin-after-header"
-      : "container";
+    return this.props.groupModels ? "container" : "container margin-after-header" ;
   }
 
   handleTablePreferences(modelCells) {
-    /* Getting the WHOLE table is because I'm gonna change the design a bit */
-    if (this.props.path == "/models") {
+    if (this.props.groupModels) {
       return (
         <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Название</th>
-              <th scope="col" />
-              <th scope="col">Тип</th>
-              <th scope="col">Вес</th>
-              <th scope="col">Загружено</th>
-            </tr>
-          </thead>
-          <tbody>{modelCells}</tbody>
-        </table>
+        <thead>
+          <tr>
+            <th scope="col">Название</th>
+            <th scope="col"/>
+            <th scope="col">Пользователь</th>
+            <th scope="col">Тип</th>
+            <th scope="col">Вес</th>
+            <th scope="col">Загружено</th>
+          </tr>
+        </thead>
+        <tbody>{modelCells}</tbody>
+      </table>
+        
       );
     } else {
       return (
         <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Название</th>
-              <th scope="col"/>
-              <th scope="col">Пользователь</th>
-              <th scope="col">Тип</th>
-              <th scope="col">Вес</th>
-              <th scope="col">Загружено</th>
-            </tr>
-          </thead>
-          <tbody>{modelCells}</tbody>
-        </table>
+        <thead>
+          <tr>
+            <th scope="col">Название</th>
+            <th scope="col" />
+            <th scope="col">Тип</th>
+            <th scope="col">Вес</th>
+            <th scope="col">Загружено</th>
+          </tr>
+        </thead>
+        <tbody>{modelCells}</tbody>
+      </table>
       );
     }
   }
@@ -144,6 +143,7 @@ class ModelsView extends Component {
           createdTime={model.createdTime}
           onModelRemoved={this.handleModelRemoved}
           name={this.props.name}
+          groupModels={this.props.groupModels}
         />
       );
     });

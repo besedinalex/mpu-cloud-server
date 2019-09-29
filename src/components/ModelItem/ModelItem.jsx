@@ -28,7 +28,6 @@ class ModelItem extends Component {
     }
 
     handleModelClick() {
-        console.log(this.props);
         window.location.href =
             "http://127.0.0.1:4000/view?id=" +
             Number(this.props.id).toString() +
@@ -63,13 +62,20 @@ class ModelItem extends Component {
         this.setState({isMouseOver: false});
     }
 
+    handleTablePreferences(){
+        if (this.props.groupModels) 
+            return <td>{this.props.name}</td>;
+        return;
+
+    }
+
     render() {
         return (
             <tr onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
                 <td onClick={this.handleModelClick} className="filename">
                     <img
-                        src="https://cdn3.iconfinder.com/data/icons/ikooni-outline-file-formats/128/files2-48-512.png"
-                        style={{position: "relative"}}
+                        src="https://image.flaticon.com/icons/svg/337/337926.svg"
+                        style={{position: "relative", right:"5px"}}
                         width="35px"
                         alt=""
                     />
@@ -102,7 +108,7 @@ class ModelItem extends Component {
                         />
                     </div>
                 </td>
-                <td>{this.props.name}</td>
+                {this.handleTablePreferences()}
                 <td>{this.props.type}</td>
                 <td>{this.props.sizeKB + " KB"}</td>
                 <td>{new Date(this.props.createdDate).toString()}</td>
