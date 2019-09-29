@@ -22,12 +22,6 @@ class GroupsView extends Component {
         };
 
         this.fileInput = React.createRef();
-
-        this.handleCloseDialog = this.handleCloseDialog.bind(this);
-        this.handleOpenDialog = this.handleOpenDialog.bind(this);
-        this.handleTitleChange = this.handleTitleChange.bind(this);
-        this.handleFileSelection = this.handleFileSelection.bind(this);
-        this.getData = this.getData.bind(this);
     }
 
     componentDidMount = () => this.getData();
@@ -46,8 +40,8 @@ class GroupsView extends Component {
 
     handleCreate = event => {
         event.preventDefault();
-        addGroup(this.state.title, this.state.description, this.state.file);
-        this.getData().then();
+        addGroup(this.state.title, this.state.description, this.state.file)
+            .then(window.location.reload());
     };
 
     render() {
@@ -169,7 +163,7 @@ class GroupsView extends Component {
                                 icon={faFolderPlus}
                             />
                         </div>
-                        <h3 className="border-bottom border-gray pb-2 mb-0" />
+                        <div className="border-bottom border-gray pb-2 mb-0" />
 
                         <table className="table">
                             <thead>
@@ -177,7 +171,7 @@ class GroupsView extends Component {
                                 <th scope="col">Название</th>
                                 <th scope="col" />
                                 <th scope="col">Создано</th>
-                                <th scope="col">Дата</th>
+                                <th scope="col">Дата создания</th>
                             </tr>
                             </thead>
                             <tbody>
