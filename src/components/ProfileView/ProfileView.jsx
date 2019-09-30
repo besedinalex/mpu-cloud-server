@@ -1,24 +1,33 @@
 import React, {Component} from "react";
 
+import {getUser} from "../../services/profile";
+import {getGroups} from "../../services/groups";
+
 import HeaderComponent from "../HeaderComponent";
 
 class ProfileView extends Component {
+    state = {
+        user: {},
+        groups: []
+    };
 
-    // constructor (props) {
-    //     super(props);
-    // }
+    componentDidMount = () => this.getData();
+
+    getData = () => {
+        getUser().then(res => this.setState({user: res.data[0]}));
+        getGroups().then(res => this.setState({groups: res.data}));
+    };
 
     render() {
         return (
             <div>
                 <HeaderComponent />
-                <main role="main" class="container margin-after-header">
-                    <div class="bg-white rounded shadow-sm">
-                        <div class="media  pt-3">
-                            {/* text-muted */}
-                            <div class="p-1 ml-4 bg-secondary rounded-circle">
+                <main role="main" className="container margin-after-header">
+                    <div className="bg-white rounded shadow-sm">
+                        <div className="media  pt-3">
+                            <div className="p-1 ml-4 bg-secondary rounded-circle">
                                 <svg
-                                    class="bd-placeholder-img  rounded-circle border border-secondary"
+                                    className="bd-placeholder-img  rounded-circle border border-secondary"
                                     width="128"
                                     height="128"
                                     xmlns="https://image.flaticon.com/icons/svg/145/145842.svg"
@@ -34,40 +43,39 @@ class ProfileView extends Component {
                                     </text>
                                 </svg>
                             </div>
-                            <div class="md-2 p-3 font-weight-bold ml-3 ">
-                                {/* {this.props.user.firstName} {this.props.user.lastName}*/}
-                                <h1>firstName lastName</h1>
+                            <div className="md-2 p-3 font-weight-bold ml-3 ">
+                                {this.state.user.firstName} {this.state.user.lastName}
                             </div>
                         </div>
 
                         <div>
-                            <table class="table my-3">
-                                <thead class="thead-dark">
+                            <table className="table my-3">
+                                <thead>
                                 <tr>
-                                    <th scope="col" style={{width: "33%"}}></th>
-                                    <th scope="row" colspan="2" style={{textAlign: "center"}}>Информация</th>
-                                    <th scope="col" style={{width: "33%"}}></th>
+                                    <th scope="col" style={{width: "33%"}} />
+                                    <th scope="row" className="font-weight-bold" colSpan="2" style={{textAlign: "center"}}>
+                                        Информация
+                                    </th>
+                                    <th scope="col" style={{width: "33%"}} />
                                 </tr>
                                 </thead>
 
                                 <tbody>
                                 <tr>
-                                    <td class="font-weight-bold">Дата регистрации:</td>
-                                    <td colspan="2"></td>
-                                    <td>10.10.10 10/10/10</td>
-                                    {/* {this.props.user.createdTime} */}
+                                    <td className="font-weight-bold">Время регистрации:</td>
+                                    <td colSpan="2" />
+                                    <td>{this.state.user.createdTime}</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-weight-bold">Email:</td>
-                                    <td colspan="2"></td>
-                                    <td>@autizm.com</td>
-                                    {/* {this.props.user.email} */}
+                                    <td className="font-weight-bold">Email:</td>
+                                    <td colSpan="2" />
+                                    <td>{this.state.user.email}</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-weight-bold">Группы:</td>
-                                    <td colspan="2"></td>
+                                    <td className="font-weight-bold">Группы:</td>
+                                    <td colSpan="2" />
                                     <td>1,2,3</td>
-                                    {/* */}
+                                    {/*{this.state.groups}*/}
                                 </tr>
                                 </tbody>
 

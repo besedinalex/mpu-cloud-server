@@ -56,6 +56,10 @@ app.get('/token', function (req, res) { // Получить токен на го
     }).catch(err => res.status(401).send(err.message));
 });
 
+app.get('/user', tokenRequired, function (req, res) {
+    db.getUser(req.user_id).then(data => res.json(data))
+});
+
 app.post('/user', function (req, res) { // Добавить пользователь
     db.signUp(req.query.firstName, req.query.lastName, req.query.email.toLowerCase(), req.query.password)
         .then(userId => {
