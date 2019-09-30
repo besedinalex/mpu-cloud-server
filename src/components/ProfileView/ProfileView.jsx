@@ -19,6 +19,18 @@ class ProfileView extends Component {
     };
 
     render() {
+
+        const groups = this.state.groups.map((group, i) => {
+            return (
+                <tr key={i}>
+                    <td colSpan="2" />
+                    <td>{group.access.toLowerCase()}</td>
+                    <td>{group.title}</td>
+                </tr>
+            );
+        });
+
+        console.log(this.state.groups);
         return (
             <div>
                 <HeaderComponent />
@@ -44,7 +56,7 @@ class ProfileView extends Component {
                                 </svg>
                             </div>
                             <div className="md-2 p-3 font-weight-bold ml-3 ">
-                                {this.state.user.firstName} {this.state.user.lastName}
+                                <h1>{this.state.user.firstName} {this.state.user.lastName}</h1>
                             </div>
                         </div>
 
@@ -62,7 +74,7 @@ class ProfileView extends Component {
 
                                 <tbody>
                                 <tr>
-                                    <td className="font-weight-bold">Время регистрации:</td>
+                                    <td className="font-weight-bold">Дата и время регистрации:</td>
                                     <td colSpan="2" />
                                     <td>{this.state.user.createdTime}</td>
                                 </tr>
@@ -71,12 +83,11 @@ class ProfileView extends Component {
                                     <td colSpan="2" />
                                     <td>{this.state.user.email}</td>
                                 </tr>
-                                <tr>
-                                    <td className="font-weight-bold">Группы:</td>
-                                    <td colSpan="2" />
-                                    <td>1,2,3</td>
-                                    {/*{this.state.groups}*/}
-                                </tr>
+                                <td className="font-weight-bold">Группы:</td>
+                                <td></td>
+                                <td className="font-weight-bold">Права доступа</td>
+                                <td className="font-weight-bold">Название</td>
+                                {groups}
                                 </tbody>
 
                             </table>
