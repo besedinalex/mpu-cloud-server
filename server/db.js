@@ -48,7 +48,6 @@ exports.signIn = function (email, password) {
 }
 
 exports.getUser = function(user_id) {
-    console.log("db");
     return new Promise((resolve, reject) => {
         let sql=`SELECT Users.user_id,  Users.createdTime, Users.firstName, Users.lastName, Users.email
         FROM Users
