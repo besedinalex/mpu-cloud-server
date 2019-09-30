@@ -1,10 +1,11 @@
 import axios from "axios";
 
+import {serverURL} from "./server-url";
 import {token} from "./authentication";
 
 export function getUser() {
     return new Promise((resolve, reject) => {
-        axios.get(`http://127.0.0.1:4000/user?token=${token}`)
+        axios.get(`${serverURL}/user?token=${token}`)
             .then(resolve).catch(reject);
     });
 }
