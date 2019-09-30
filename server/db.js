@@ -93,7 +93,7 @@ exports.getGroups = function (userId) {
     return new Promise((resolve, reject) => {
         let sql =
             `SELECT
-            Groups.title, Groups.description, Groups.image, Groups.owner, Groups.dateOfCreation, Groups.group_id,
+            Groups.title, Groups.description, Groups.image, Groups.owner, Groups.group_id, Groups.createdTime,
             GroupUsers.user_id, GroupUsers.access, GroupUsers.userJoinedDate,
             Users.firstName, Users.lastName, Users.email
             FROM Groups
@@ -110,10 +110,10 @@ exports.getGroups = function (userId) {
     })
 }
 
-exports.addGroup = function (title, description, image, owner, dateOfCreation) {
+exports.addGroup = function (title, description, image, owner) {
     return new Promise((resolve, reject) => {
-        let sql = `INSERT INTO Groups (title, description, image, owner, dateOfCreation) 
-        VALUES ('${title}', '${description}', '${image}', '${owner}', '${dateOfCreation}')`;
+        let sql = `INSERT INTO Groups (title, description, image, owner) 
+        VALUES ('${title}', '${description}', '${image}', '${owner}')`;
         db.run(sql, [], function(err) {
             if (err) {
                 reject(err);
@@ -124,10 +124,10 @@ exports.addGroup = function (title, description, image, owner, dateOfCreation) {
     })
 }
 
-exports.addGroupUser = function (user_id, groupId, access, dateOfCreation) {
+exports.addGroupUser = function (user_id, groupId, access) {
     return new Promise((resolve, reject) => {
-        let sql = `INSERT INTO "GroupUsers" ("group_id", "user_id", "access", "userJoinedDate")
-        VALUES (${groupId}, ${user_id}, '${access}', '${dateOfCreation}');`;
+        let sql = `INSERT INTO "GroupUsers" ("group_id", "user_id", "access")
+        VALUES (${groupId}, ${user_id}, '${access}');`;
         db.run(sql, [], function(err) {
             if (err) {
                 reject(err);
@@ -199,7 +199,7 @@ exports.addModel = function (title, desc, filename, gltfPath, originalPath, size
 
 exports.removeModel = function(modelId, ownerId) {
     return new Promise((resolve, reject) => {
-        let sql = `DELETE FROM Models WHERE model_id = ${modelId} AND owner = ${ownerId}`;
+        let sql = `DELETE FROM Models WHERE model_id = ${modelId} AND ownerUser = ${ownerId}`;
         db.run(sql, [], function (err) {
             if (err) {
                 reject(err);

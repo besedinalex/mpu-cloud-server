@@ -30,7 +30,7 @@ class GroupItem extends Component {
                     <td>
                         {this.props.group.firstName + " " + this.props.group.lastName}
                     </td>
-                    <td>{new Date(this.props.createdDate).toString()}</td>
+                    <td>{this.props.group.createdTime}</td>
                 </tr>
             );
         }

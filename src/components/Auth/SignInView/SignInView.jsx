@@ -7,19 +7,11 @@ import '../Auth.css';
 import '../../../assets/logo192.png';
 
 class SignInView extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            email: '',
-            password: '',
-            redirect: false
-        };
-
-        this.signIn = this.signIn.bind(this);
-        this.handleEmailChange = this.handleEmailChange.bind(this);
-        this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    }
+    state = {
+        email: '',
+        password: '',
+        redirect: false
+    };
 
     signIn = (e) => {
         e.preventDefault();

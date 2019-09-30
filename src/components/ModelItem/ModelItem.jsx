@@ -1,15 +1,11 @@
 import React, {Component} from "react";
 
-import Axios from "axios";
-
+import {serverURL} from "../../services/server-url";
 import {token} from "../../services/authentication";
+import {deleteModel} from "../../services/models";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-    faEye,
-    faCloudDownloadAlt,
-    faTrash
-} from "@fortawesome/free-solid-svg-icons";
+import {faEye, faCloudDownloadAlt, faTrash} from "@fortawesome/free-solid-svg-icons";
 
 import "./ModelItem.css";
 
@@ -20,54 +16,17 @@ class ModelItem extends Component {
         this.state = {
             isMouseOver: false
         };
-        this.handleModelClick = this.handleModelClick.bind(this);
-        this.handleMouseOver = this.handleMouseOver.bind(this);
-        this.handleMouseOut = this.handleMouseOut.bind(this);
-        this.handleDownloadClick = this.handleDownloadClick.bind(this);
-        this.handleRemoveClick = this.handleRemoveClick.bind(this);
     }
 
-    handleModelClick() {
-        window.location.href =
-            "http://127.0.0.1:4000/view?id=" +
-            Number(this.props.id).toString() +
-            "&token=" +
-            token;
-    }
+    handleModelClick = () => window.location.href = `${serverURL}/view?id=${this.props.id}&token=${token}`;
 
-    handleDownloadClick() {
-        window.location.href =
-            "http://127.0.0.1:4000/model/original/" +
-            Number(this.props.id).toString() +
-            "?token=" +
-            token;
-    }
+    handleDownloadClick = () => window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}`;
 
-    handleRemoveClick() {
-        Axios.delete(
-            `http://127.0.0.1:4000/model/${this.props.id}?token=${token}`
-        ).then(res => {
-            this.props.onModelRemoved({
-                id: this.props.id,
-                deleted: res.data.deleted
-            });
-        });
-    }
+    handleRemoveClick = () => deleteModel(this.props.id).then(res => this.props.onModelRemoved({id: this.props.id, deleted: res.data.deleted}));
 
-    handleMouseOver(e) {
-        this.setState({isMouseOver: true});
-    }
+    handleMouseOver = () => this.setState({isMouseOver: true});
 
-    handleMouseOut(e) {
-        this.setState({isMouseOver: false});
-    }
-
-    handleTablePreferences(){
-        if (this.props.groupModels) 
-            return <td>{this.props.name}</td>;
-        return;
-
-    }
+    handleMouseOut = () => this.setState({isMouseOver: false});
 
     render() {
         return (
@@ -75,7 +34,7 @@ class ModelItem extends Component {
                 <td onClick={this.handleModelClick} className="filename">
                     <img
                         src="https://image.flaticon.com/icons/svg/337/337926.svg"
-                        style={{position: "relative", right:"5px"}}
+                        style={{position: "relative", right: "5px"}}
                         width="35px"
                         alt=""
                     />
@@ -83,35 +42,16 @@ class ModelItem extends Component {
                 </td>
 
                 <td className="tools" style={{width: "120px"}}>
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            marginTop: "4px"
-                        }}
-                        hidden={!this.state.isMouseOver}
-                    >
-                        <FontAwesomeIcon
-                            onClick={this.handleModelClick}
-                            className="tool"
-                            icon={faEye}
-                        />
-                        <FontAwesomeIcon
-                            onClick={this.handleDownloadClick}
-                            className="tool download"
-                            icon={faCloudDownloadAlt}
-                        />
-                        <FontAwesomeIcon
-                            onClick={this.handleRemoveClick}
-                            className="tool trash"
-                            icon={faTrash}
-                        />
+                    <div className="icons-spacing" hidden={!this.state.isMouseOver}>
+                        <FontAwesomeIcon onClick={this.handleModelClick} className="tool" icon={faEye} />
+                        <FontAwesomeIcon onClick={this.handleDownloadClick} className="tool download" icon={faCloudDownloadAlt} />
+                        <FontAwesomeIcon onClick={this.handleRemoveClick} className="tool trash" icon={faTrash} />
                     </div>
                 </td>
-                {this.handleTablePreferences()}
+                {this.props.groupModels ? <td>{this.props.name}</td> : null}
                 <td>{this.props.type}</td>
                 <td>{this.props.sizeKB + " KB"}</td>
-                <td>{new Date(this.props.createdDate).toString()}</td>
+                <td>{this.props.createdTime}</td>
             </tr>
         );
     }

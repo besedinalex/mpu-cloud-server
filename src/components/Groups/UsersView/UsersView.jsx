@@ -39,7 +39,6 @@ class UsersView extends Component {
     render() {
         return (
             <div>
-
                 <div
                     hidden={!this.state.isDialogOpen}
                     className="modal fade"
@@ -79,12 +78,11 @@ class UsersView extends Component {
                                 </div>
                             </div>
 
-
                             <div style={{marginBottom: "16px"}}>
-                                <div class="col-auto my-1">
-                                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref"
+                                <div className="col-auto my-1">
+                                    <select className="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref"
                                             onChange={this.handleAccessChange}>
-                                        <option selected="USER">User</option>
+                                        <option defaultValue="USER">User</option>
                                         <option value="MODERATOR">Moderator</option>
                                     </select>
                                 </div>
@@ -112,8 +110,8 @@ class UsersView extends Component {
                     </div>
                 </div>
 
-                <main role="main" class="container">
-                    <div class="my-3 p-3 bg-white rounded shadow-sm">
+                <main role="main" className="container">
+                    <div className="my-3 p-3 bg-white rounded shadow-sm">
                         <h5 className="inline pb-2 mb-0">Пользователи</h5>
                         <div className="inline">
                             <FontAwesomeIcon
@@ -127,7 +125,7 @@ class UsersView extends Component {
                         </div>
                         <div className="border-bottom border-gray pb-2 mb-0" />
                         <div>
-                            {this.state.users.map(user => <UserItem user={user} group={this.props.group} />)}
+                            {this.state.users.map((user, i) => <UserItem user={user} group={this.props.group} key={i} />)}
                         </div>
                     </div>
                 </main>
