@@ -25,7 +25,7 @@ function PrivateRoute({component: Component, ...rest}) {
     );
 }
 
-function PublicRoute({component: Component, ...rest}) {
+function PublicOnlyRoute({component: Component, ...rest}) {
     return (
         <Route {...rest}
             render={props => isAuthenticated ? (<Redirect to="/models" />) : (<Component {...rest} {...props} />)}
@@ -51,12 +51,13 @@ class App extends Component {
                 <div className="App">
                     <Switch>
                         <Route exact path="/" component={LandingView} />
-                        <PublicRoute path="/login" component={SignInView} />
-                        <PublicRoute path="/signup" component={SignUpView} />
-                        <PrivateRoute path="/profile" component={ProfileView} />
+                        <Route path="/profile/:id" component={ProfileView} />
+                        <PublicOnlyRoute path="/login" component={SignInView} />
+                        <PublicOnlyRoute path="/signup" component={SignUpView} />
                         <PrivateRoute path="/models" component={ModelsView} groupModels={false} />
                         <PrivateRoute path="/groups" component={GroupsView} />
                         <PrivateRoute path="/group/:id" component={GroupView} />
+                        
                         <Route component={Page404} />
                     </Switch>
                 </div>

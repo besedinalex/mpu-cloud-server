@@ -1,11 +1,10 @@
 import axios from "axios";
 
 import {serverURL} from "./server-url";
-import {token} from "./authentication";
 
-export function getUser() {
+export function getUser(userId) {
     return new Promise((resolve, reject) => {
-        axios.get(`${serverURL}/user?token=${token}`)
+        axios.get(`${serverURL}/user?userId=${userId}`)
             .then(resolve).catch(reject);
     });
 }

@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import {Redirect} from "react-router-dom";
 
 import {getUser} from "../../services/profile";
 import {getGroups} from "../../services/groups";
@@ -6,19 +7,30 @@ import {getGroups} from "../../services/groups";
 import HeaderComponent from "../HeaderComponent";
 
 class ProfileView extends Component {
-    state = {
-        user: {},
-        groups: []
-    };
+    constructor(props) {
+        super(props);
 
-    componentDidMount = () => this.getData();
-
-    getData = () => {
-        getUser().then(res => this.setState({user: res.data[0]}));
+        this.state = {
+            userId: Number(this.props.match.params.id),
+            user: {},
+            groups: [],
+            redirect: false
+        };
+        getUser(this.state.userId)
+            .then(res => {
+                if (res.data.length === 0) {
+                    this.setState({redirect: true});
+                } else {
+                    this.setState({user: res.data[0]});
+                }
+            })
         getGroups().then(res => this.setState({groups: res.data}));
-    };
+    }
 
     render() {
+        if (this.state.redirect) {
+            return <Redirect to="/" />
+        }
 
         const groups = this.state.groups.map((group, i) => {
             return (
@@ -30,7 +42,6 @@ class ProfileView extends Component {
             );
         });
 
-        console.log(this.state.groups);
         return (
             <div>
                 <HeaderComponent />
@@ -84,7 +95,7 @@ class ProfileView extends Component {
                                     <td>{this.state.user.email}</td>
                                 </tr>
                                 <td className="font-weight-bold">Группы:</td>
-                                <td></td>
+                                <td />
                                 <td className="font-weight-bold">Права доступа</td>
                                 <td className="font-weight-bold">Название</td>
                                 {groups}

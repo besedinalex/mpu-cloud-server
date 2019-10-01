@@ -47,12 +47,12 @@ app.get('/token', function (req, res) { // Получить токен на го
         const payload = {id: data.user_id};
         const token = jwt.sign(payload, secret, {expiresIn: '365d'});
         let expiresAt = Date.now() + +365 * 24 * 60 * 60 * 1000;
-        res.json({token, expiresAt: expiresAt});
+        res.json({token, expiresAt: expiresAt, userId: data.user_id});
     }).catch(err => res.status(401).send(err.message));
 });
 
-app.get('/user', tokenRequired, function (req, res) {
-    db.getUser(req.user_id).then(data => res.json(data))
+app.get('/user', function (req, res) {
+    db.getUser(req.query.userId).then(data => res.json(data))
 });
 
 app.post('/user', function (req, res) { // Добавить пользователь
