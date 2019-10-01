@@ -51,13 +51,12 @@ class App extends Component {
                 <div className="App">
                     <Switch>
                         <Route exact path="/" component={LandingView} />
-                        <Route path="/profile/:id" component={ProfileView} />
                         <PublicOnlyRoute path="/login" component={SignInView} />
                         <PublicOnlyRoute path="/signup" component={SignUpView} />
                         <PrivateRoute path="/models" component={ModelsView} groupModels={false} />
                         <PrivateRoute path="/groups" component={GroupsView} />
                         <PrivateRoute path="/group/:id" component={GroupView} />
-                        
+                        <PrivateRoute path="/profile/:id" component={ProfileView} />
                         <Route component={Page404} />
                     </Switch>
                 </div>
