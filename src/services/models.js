@@ -30,14 +30,14 @@ export function deleteModel(id) {
 
 export function getUserModels() {
     return new Promise((resolve, reject) => {
-        axios.get(`${serverURL}/models-user?token=${token}`)
+        axios.get(`${serverURL}/user-models?token=${token}`)
             .then(resolve).catch(reject);
     });
 }
 
 export function getGroupModels(groupId) {
     return new Promise((resolve, reject) => {
-        axios.get(`${serverURL}/models-group?token=${token}&groupId=${groupId}`)
+        axios.get(`${serverURL}/group-models?token=${token}&groupId=${groupId}`)
             .then(resolve).catch(reject);
     })
 }

@@ -1,147 +1,83 @@
-const isToolKitOn = process.argv[2] !== 'test';
-
-const db = require('./db');
 const express = require('express');
-const app = express();
-const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');
-const secret = 'Hello World!';
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const multer = require('multer');
-const upload = multer({storage: multer.memoryStorage()});
 const generator = require('generate-password');
 const path = require('path');
 const fs = require('fs-extra');
 
-let cad2gltf = {};
-if (isToolKitOn)
-    cad2gltf = require('./cad2gltf');
-else
-    console.log('Test Mode without C3D Toolkit has been started!');
+const db = require('./db');
+const user = require('./requests/user');
+const group = require('./requests/group');
 
-app.use(cookieParser());
+const isToolKitOn = process.argv[2] !== 'test';
+let cad2gltf = {};
+if (isToolKitOn) {
+    cad2gltf = require('./cad2gltf');
+} else {
+    console.log('Test Mode without C3D Toolkit has been started!');
+}
+
+const upload = multer({storage: multer.memoryStorage()});
+
+const app = express();
+
 app.use(cors());
-console.log(__dirname + '/xeogl');
+app.use(cookieParser());
 app.use('/view', express.static(__dirname + '/xeogl'));
 
-const tokenRequired = function (req, res, next) {
-    const token = req.query.token;
-    if (!token) {
-        res.status(401).send('Unauthorized: No token provided');
-    } else {
-        jwt.verify(token, secret, function (err, decoded) {
-            if (err) {
-                res.status(401).send('Unauthorized: Invalid token');
-            } else if (Date.now() >= decoded.exp * 1000) {
-                res.status(401).send('Unauthorized: Token expired');
-            } else {
-                req.user_id = decoded.id;
-                next();
-            }
-        });
-    }
-};
+app.set('view engine', 'ejs');
 
-app.get('/token', function (req, res) { // Получить токен на год
-    db.signIn(req.query.email, req.query.password).then(data => {
-        const payload = {id: data.user_id};
-        const token = jwt.sign(payload, secret, {expiresIn: '365d'});
-        let expiresAt = Date.now() + +365 * 24 * 60 * 60 * 1000;
-        res.json({token, expiresAt: expiresAt, userId: data.user_id});
-    }).catch(err => res.status(401).send(err.message));
+app.listen(4000, () => console.log('Сервер запущен!'));
+
+
+// Auth (Partly tested)
+
+app.get('/token', function (req, res) {
+    user.signInUser(req.query.email, req.query.password, res);
 });
+
+app.post('/user', function (req, res) {
+    user.signUpUser(req.query.firstName, req.query.lastName, req.query.email, req.query.password, res)
+});
+
+// Groups (Not tested)
+
+app.get('/groups', user.checkToken, function (req, res) {
+    group.getGroups(req.user_id, res);
+});
+
+app.get('/group-models', user.checkToken, function (req, res) {
+    group.getGroupModels(req.query.groupId, res);
+});
+
+app.get('/group-users', user.checkToken, function (req, res) {
+    group.getGroupUsers(req.query.groupId, res);
+});
+
+app.post('/group-create', user.checkToken, function (req) {
+    group.createGroup(req.query.title, req.query.description, req.query.image, req.user_id);
+});
+
+app.post('/group-user', user.checkToken, function (req, res) {
+    group.addUserToGroup(req.user_id, req.query.groupId, req.query.email, req.query.access, res);
+});
+
+app.delete('/group-user', user.checkToken, (req, res) => {
+    group.removeUserFromGroup(req.user_id, req.query.groupId, req.query.userId, res);
+});
+
+// Unsorted
 
 app.get('/user', function (req, res) {
     db.getUser(req.query.userId).then(data => res.json(data))
 });
 
-app.post('/user', function (req, res) { // Добавить пользователь
-    db.signUp(req.query.firstName, req.query.lastName, req.query.email.toLowerCase(), req.query.password)
-        .then(userId => {
-            const payload = {id: userId};
-            const token = jwt.sign(payload, secret, {expiresIn: '365d'});
-            let expiresAt = Date.now() + +365 * 24 * 60 * 60 * 1000;
-            res.json({token, expiresAt: expiresAt});
-        })
-});
-
-app.get('/models-user', tokenRequired, function (req, res) {
+app.get('/user-models', user.checkToken, function (req, res) {
     db.getUserModels(req.user_id).then(data => res.json(data));
 });
 
-app.get('/models-group', tokenRequired, function (req, res) {
-    db.getGroupModels(req.query.groupId).then(data => res.json(data));
-});
-
-app.get('/groups', tokenRequired, function (req, res) {
-    db.getGroups(req.user_id).then(data => res.json(data));
-});
-
-app.get('/group-users', tokenRequired, function (req, res) {
-    db.getUsersByGroup(req.query.groupId).then(data => res.json(data))
-});
-
-app.post('/group-create', tokenRequired, function (req) {
-    db.addGroup(req.query.title, req.query.description, req.query.image, req.user_id)
-        .then(res => db.addGroupUser(req.user_id, res, 'ADMIN'));
-});
-
-app.post('/group-user', tokenRequired, function (req, resolve) {
-    const groupId = req.query.groupId;
-    db.getUserAccess(groupId, req.user_id).then(res => {
-        if (res[0].access === 'ADMIN' || res[0].access === 'MODERATOR') {
-            db.getIdByEmail(req.query.email.toLowerCase()).then(id => {
-                db.getUsersByGroup(groupId).then(res => {
-                    let userFound = false;
-                    res.map(user => {
-                        if (user.user_id === id[0].user_id) {
-                            userFound = true;
-                        }
-                    });
-                    if (!userFound) {
-                        let access = req.query.access;
-                        if (access === 'ADMIN') {
-                            access = 'MODERATOR';
-                        }
-                        db.addGroupUser(id[0].user_id, groupId, access);
-                    } else {
-                        resolve.send(false);
-                    }
-                });
-            });
-        } else {
-            resolve.send(false);
-        }
-    });
-});
-
-app.delete('/group-user', tokenRequired, (req, resolve) => {
-    const groupId = req.query.groupId;
-    const userId = req.query.userId;
-    db.getUserAccess(groupId, req.user_id).then(res => {
-        switch (res[0].access) {
-            case 'ADMIN':
-                db.getUserAccess(groupId, userId).then(res => {
-                    if (res[0].access !== 'ADMIN') {
-                        db.removeUser(groupId, userId).then(deleted => resolve.json({deleted}));
-                    }
-                });
-                break;
-            case 'MODERATOR':
-                db.getUserAccess(groupId, userId).then(res => {
-                    if (res[0].access === 'USER') {
-                        db.removeUser(groupId, userId).then(deleted => resolve.json({deleted}));
-                    }
-                });
-                break;
-            default:
-                resolve.send(false);
-                break;
-        }
-    });
-});
-
-app.get('/model/original/:id', tokenRequired, (req, res) => {
+app.get('/model/original/:id', user.checkToken, (req, res) => {
     db.getModels(req.user_id).then(models => {
         for (let model of models) {
             if (model.model_id == req.params.id && model.owner == req.user_id) {
@@ -152,13 +88,13 @@ app.get('/model/original/:id', tokenRequired, (req, res) => {
     })
 })
 
-app.delete('/model/:id', tokenRequired, (req, res) => {
+app.delete('/model/:id', user.checkToken, (req, res) => {
     db.removeModel(req.params.id, req.user_id).then(deleted => {
         res.json({deleted});
     })
 })
 
-app.get('/model/:id', tokenRequired, (req, res) => {
+app.get('/model/:id', user.checkToken, (req, res) => {
     db.getUserModels(req.user_id).then(models => {
         for (let model of models) {
             if (model.model_id == req.params.id && model.owner == req.user_id) {
@@ -170,7 +106,7 @@ app.get('/model/:id', tokenRequired, (req, res) => {
     })
 })
 
-app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
+app.post('/models', [user.checkToken, upload.single('model')], (req, res) => {
     if (!req.body || !req.file) {
         console.error('Bad Request. Fileds or files required!');
         res.status(500).send('Bad reqruest!');
@@ -232,10 +168,6 @@ app.post('/models', [tokenRequired, upload.single('model')], (req, res) => {
     })
 })
 
-app.set('view engine', 'ejs');
-
-app.get('/view', tokenRequired, function (req, res) { // Вьювер для модели
+app.get('/view', user.checkToken, function (req, res) { // Вьювер для модели
     res.render(__dirname + '/view.ejs');
 })
-
-app.listen(4000, () => console.log('Сервер запущен!'));
