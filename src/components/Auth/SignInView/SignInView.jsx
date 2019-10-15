@@ -4,7 +4,6 @@ import {Link, Redirect} from "react-router-dom";
 import {handleSigningIn} from "../../../services/authentication";
 
 import '../Auth.css';
-import '../../../assets/logo192.png';
 
 class SignInView extends Component {
     state = {
@@ -30,7 +29,7 @@ class SignInView extends Component {
             return (
                 <form className="form-auth">
                     <Link to="/">
-                        <img className="mb-4" src="logo192.png" alt="" width="72" height="72" />
+                        <img className="mb-4" src="../../../images/logo192.png" alt="" width="72" height="72" />
                     </Link>
                     <h1 className="h3 mb-3 font-weight-normal">Вход</h1>
                     <input onChange={this.handleEmailChange} type="email" className="form-control" placeholder="Электронная почта" required autoFocus />
