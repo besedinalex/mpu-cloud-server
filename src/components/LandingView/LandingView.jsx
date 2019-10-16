@@ -18,22 +18,22 @@ class LandingView extends Component {
             {
                 text: 'Храните все модели в одном месте',
                 desc: 'Все ваши разработки будут в одном месте. Вы можете получить к ним доступ в в любое время любом месте прямо в вашем браузере.',
-                img: ''
+                img: 'https://image.flaticon.com/icons/svg/1055/1055686.svg'
             },
             {
                 text: 'Поддерживает более 18 форматов',
                 desc: 'Конвертирует ваши модели из множества форматов, например таких как ACIS, IGES, JT, Parasolid, STEP, STL, VRML, GRDECL, C3D в GLTF. Вы также можете загрузить модель к себе в любом из этих форматов',
-                img: ''
+                img: 'https://image.flaticon.com/icons/svg/2205/2205505.svg'
             },
             {
                 text: 'Группы',
                 desc: 'Объединяйтесь в группы для совместной работы над общими проектами.',
-                img: ''
+                img: 'https://image.flaticon.com/icons/svg/1039/1039369.svg'
             },
             {
                 text: 'Доступ с любого устройства',
                 desc: 'Вы можете смотреть, вращать и показывать свои работы с любого устройства на котором есть веб браузер.',
-                img: ''
+                img: 'https://image.flaticon.com/icons/svg/344/344516.svg'
             }
         ];
 
@@ -49,10 +49,11 @@ class LandingView extends Component {
                     <svg className="bd-placeholder-img" width="100%" height="100%"
                          xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
                          focusable="false" role="img">
-                        <rect width="100%" height="100%" fill="#777" />
+                        <rect width="100%" height="100%" fill="#79ccf0" />
                     </svg>
                     <div className="container">
                         <div className="carousel-caption">
+                        <object width="25%" height="25%" type="image/svg+xml" data={item.img} id="object" class="icon"/>
                             <h1>{item.text}</h1>
                             <p>{item.desc}</p>
                         </div>
