@@ -42,7 +42,7 @@ exports.signUpUser = function (firstName, lastName, email, password, res) {
             const payload = {id: userId};
             const token = jwt.sign(payload, secret, {expiresIn: '365d'});
             let expiresAt = Date.now() + +365 * 24 * 60 * 60 * 1000;
-            res.json({token, expiresAt: expiresAt});
+            res.json({token, expiresAt: expiresAt, userId: userId});
         })
     // TODO: Выдавать ошибку в Front-End, если юзер уже существует.
 };
