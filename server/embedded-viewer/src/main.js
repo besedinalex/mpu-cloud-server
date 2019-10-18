@@ -11,19 +11,19 @@ function loadExternalStyle(path) {
     style.rel = 'stylesheet';
     style.type = 'text/css';
     style.href = path;
-    style.setAttribute('mpu-cloud-viewer', 'dependency');
+    style.setAttribute('mpu-cloud', 'viewer');
     document.getElementsByTagName("head")[0].appendChild(style);
 }
 
 function loadExternalStyles() {
     const styles = ['styles.css', 'bootstrap.min.css', 'all.min.css', 'annotation-style.css'];
     for (const style of styles) {
-        loadExternalStyle(`${serverURL}/embedded-viewer/styles/${style}`);
+        loadExternalStyle(`${serverURL}/viewer/styles/${style}`);
     }
 }
 
 function unloadExternalStyles() {
-    const loadedStyles = document.querySelectorAll('[mpu-cloud-viewer="dependency"]');
+    const loadedStyles = document.querySelectorAll('[mpu-cloud="viewer"]');
     for (const style of loadedStyles) {
         style.remove();
     }
@@ -31,7 +31,7 @@ function unloadExternalStyles() {
 
 window.onload = () => {
     loadExternalStyles();
-    axios.get(`${serverURL}/embedded-viewer/viewer.html`)
+    axios.get(`${serverURL}/viewer/viewer.html`)
         .then(res => viewerDiv.innerHTML = res.data);
     viewer.init();
 };

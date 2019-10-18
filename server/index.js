@@ -35,7 +35,7 @@ app.get('/embedded-viewer', function(req, res) {
 
 });
 
-app.use('/embedded-viewer', express.static(__dirname + '/embedded-viewer'));
+app.use('/viewer', express.static(__dirname + '/embedded-viewer/public'));
 
 // Auth (Partly tested)
 
