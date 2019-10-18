@@ -30,6 +30,12 @@ app.set('view engine', 'ejs');
 
 app.listen(4000, () => console.log('Сервер запущен!'));
 
+app.get('/embedded-viewer', function(req, res) {
+    res.send('test');
+
+});
+
+app.use('/embedded-viewer', express.static(__dirname + '/embedded-viewer'));
 
 // Auth (Partly tested)
 

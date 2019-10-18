@@ -360,3 +360,5 @@ MigrationBackup/
 .idea/
 
 server/storage/*
+
+mpu-cloud-viewer.js
