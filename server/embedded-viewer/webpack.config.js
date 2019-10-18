@@ -2,6 +2,7 @@ const path = require('path');
 
 module.exports = {
     mode: 'development',
+    // mode: 'production',
     entry: `${__dirname}/src/main.js`,
     output: {
         filename: 'mpu-cloud-viewer.js',

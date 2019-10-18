@@ -44,8 +44,6 @@ export function init() {
 				pickable: true
 			})
 
-			console.log(model);
-
 			model.on("loaded", () => {
 				model.edges = true;
 				model.outline = true;
