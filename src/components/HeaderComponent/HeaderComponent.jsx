@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 
-import {handleSigningOut, isAuthenticated} from "../../services/authentication";
+import {handleSigningOut, isAuthenticated, userId} from "../../services/authentication";
 
 import './HeaderComponent.css';
 
 class HeaderComponent extends Component {
     state = {
-        isAuthenticated: isAuthenticated
+        isAuthenticated: isAuthenticated,
+        userId: userId
     };
 
     render() {
@@ -24,6 +25,9 @@ class HeaderComponent extends Component {
 
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav mr-auto">
+                        <li className="nav-item" hidden={!loggedIn}>
+                            <Link to={`/profile/${this.state.userId}`} className="nav-link">Профиль</Link>
+                        </li>
                         <li className="nav-item" hidden={!loggedIn}>
                             <Link to="/models" className="nav-link">Модели</Link>
                         </li>

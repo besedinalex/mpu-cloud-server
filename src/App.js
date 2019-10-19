@@ -5,10 +5,11 @@ import 'jquery';
 
 import {isAuthenticated} from "./services/authentication";
 
+import LandingView from "./components/LandingView";
 import SignUpView from './components/Auth/SignUpView';
 import SignInView from './components/Auth/SignInView';
+import ProfileView from "./components/ProfileView";
 import ModelsView from './components/ModelsView';
-import LandingView from "./components/LandingView";
 import GroupsView from "./components/Groups/GroupsView";
 import GroupView from "./components/Groups/GroupView";
 
@@ -24,7 +25,7 @@ function PrivateRoute({component: Component, ...rest}) {
     );
 }
 
-function PublicRoute({component: Component, ...rest}) {
+function PublicOnlyRoute({component: Component, ...rest}) {
     return (
         <Route {...rest}
             render={props => isAuthenticated ? (<Redirect to="/models" />) : (<Component {...rest} {...props} />)}
@@ -50,11 +51,12 @@ class App extends Component {
                 <div className="App">
                     <Switch>
                         <Route exact path="/" component={LandingView} />
-                        <PublicRoute path="/login" component={SignInView} />
-                        <PublicRoute path="/signup" component={SignUpView} />
+                        <PublicOnlyRoute path="/login" component={SignInView} />
+                        <PublicOnlyRoute path="/signup" component={SignUpView} />
                         <PrivateRoute path="/models" component={ModelsView} groupModels={false} />
                         <PrivateRoute path="/groups" component={GroupsView} />
                         <PrivateRoute path="/group/:id" component={GroupView} />
+                        <PrivateRoute path="/profile/:id" component={ProfileView} />
                         <Route component={Page404} />
                     </Switch>
                 </div>

@@ -47,6 +47,21 @@ exports.signIn = function (email, password) {
     })
 }
 
+exports.getUser = function(user_id) {
+    return new Promise((resolve, reject) => {
+        let sql=`SELECT Users.user_id,  Users.createdTime, Users.firstName, Users.lastName, Users.email
+        FROM Users
+        WHERE Users.user_id ='${user_id}'`;
+        db.all(sql, [], function(err, rows) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        })
+    })
+}
+
 exports.getUserModels = function (userId) {
     return new Promise((resolve, reject) => {
         let sql = `SELECT * FROM Models WHERE ownerUser = '${userId}'`;
