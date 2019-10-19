@@ -10,6 +10,13 @@ export function getGroups() {
     });
 }
 
+export function getGroup(groupId) {
+    return new Promise((resolve, reject) => {
+        axios.get(`${serverURL}/group?token=${token}&groupId=${groupId}`)
+            .then(resolve).catch(reject);
+    });
+}
+
 export function addGroup(title, desc, file) {
     return new Promise((resolve, reject) => {
         axios.post(`${serverURL}/group-create?token=${token}&title=${title}&description=${desc}&image=${file}`)

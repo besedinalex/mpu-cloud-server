@@ -94,6 +94,26 @@ exports.getGroups = function (userId) {
     })
 }
 
+exports.getGroup = function (userId, groupId) {
+    return new Promise((resolve, reject) => {
+        let sql =
+            `SELECT
+            Groups.title, Groups.description, Groups.image, Groups.owner, Groups.group_id, Groups.createdTime,
+            GroupUsers.user_id, GroupUsers.access, GroupUsers.userJoinedDate
+            FROM Groups
+            JOIN GroupUsers, Users
+            ON Users.user_id = GroupUsers.user_id AND Groups.group_id = GroupUsers.group_id
+            WHERE Users.user_id = ${userId} AND Groups.group_id = ${groupId}`;
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    })
+}
+
 exports.addGroup = function (title, description, image, owner) {
     return new Promise((resolve, reject) => {
         let sql = `INSERT INTO Groups (title, description, image, owner) 

@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Redirect} from "react-router-dom";
 
-import {getGroups} from "../../../services/groups";
+import {getGroup} from "../../../services/groups";
 
 import HeaderComponent from "../../HeaderComponent";
 import ModelsView from "../../ModelsView/ModelsView";
@@ -22,18 +22,14 @@ class GroupView extends Component {
 
     componentDidMount = () => this.getGroupData();
 
-    getGroupData = () => getGroups()
+    getGroupData = () => getGroup(this.state.groupId)
         .then(res => {
-            let found = false;
-            // eslint-disable-next-line array-callback-return
-            res.data.map(group => {
-                if (group.group_id === this.state.groupId) {
-                    this.setState({title: group.title, desc: group.description, group: group});
-                    found = true;
-                }
-            });
-            if (!found)
+            const group = res.data[0];
+            if (group === undefined) {
                 this.setState({redirect: true});
+            } else {
+                this.setState({group: group})
+            }
         });
 
     render() {
@@ -46,9 +42,8 @@ class GroupView extends Component {
                 <main role="main" className="container margin-after-header">
 
                     <div className="px-3 mx-auto text-center">
-                        <h1 className="display-4">{this.state.title}</h1>
-                        <p className="lead">{this.state.desc}</p>
-
+                        <h1 className="display-4">{this.state.group.title}</h1>
+                        <p className="lead">{this.state.group.description}</p>
                     </div>
                     <div className="media-body mb-0 small lh-125 ">
                         <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist" style={{marginLeft: "10%"}}>
@@ -84,9 +79,7 @@ class GroupView extends Component {
                         </div>
                     </div>
 
-
                 </main>
-
             </div>
         );
     }

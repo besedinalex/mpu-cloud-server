@@ -87,10 +87,7 @@ class GroupsView extends Component {
                                 </div>
 
                                 <div className="form-group" style={{textAlign: "left"}}>
-                                    <label
-                                        style={{textAlign: "left"}}
-                                        htmlFor="exampleFormControlTextarea1"
-                                    >
+                                    <label style={{textAlign: "left"}} htmlFor="exampleFormControlTextarea1">
                                         Описание
                                     </label>
                                     <textarea
@@ -103,27 +100,27 @@ class GroupsView extends Component {
                                     />
                                 </div>
 
-                                <div className="custom-file">
-                                    <div className="input-group">
-                                        <div className="custom-file">
-                                            <input
-                                                ref={this.fileInput}
-                                                className="custom-file-input"
-                                                name="model"
-                                                id="inputGroupFile04"
-                                                type="file"
-                                                required=""
-                                            />
-                                            <label
-                                                style={{textAlign: "left"}}
-                                                className="custom-file-label"
-                                                htmlFor="inputGroupFile04"
-                                            >
-                                                Выберете аватар
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
+                                {/*<div className="custom-file">*/}
+                                {/*    <div className="input-group">*/}
+                                {/*        <div className="custom-file">*/}
+                                {/*            <input*/}
+                                {/*                ref={this.fileInput}*/}
+                                {/*                className="custom-file-input"*/}
+                                {/*                name="model"*/}
+                                {/*                id="inputGroupFile04"*/}
+                                {/*                type="file"*/}
+                                {/*                required=""*/}
+                                {/*            />*/}
+                                {/*            <label*/}
+                                {/*                style={{textAlign: "left"}}*/}
+                                {/*                className="custom-file-label"*/}
+                                {/*                htmlFor="inputGroupFile04"*/}
+                                {/*            >*/}
+                                {/*                Выберете аватар*/}
+                                {/*            </label>*/}
+                                {/*        </div>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
                             </div>
 
                             <div className="modal-footer">

@@ -73,6 +73,10 @@ app.get('/groups', tokenRequired, function (req, res) {
     db.getGroups(req.user_id).then(data => res.json(data));
 });
 
+app.get('/group', tokenRequired, function (req, res) {
+    db.getGroup(req.user_id, req.query.groupId).then(data => res.json(data));
+});
+
 app.get('/group-users', tokenRequired, function (req, res) {
     db.getUsersByGroup(req.query.groupId).then(data => res.json(data))
 });
