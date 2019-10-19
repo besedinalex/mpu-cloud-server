@@ -56,7 +56,7 @@ class App extends Component {
                         <PrivateRoute path="/models" component={ModelsView} groupModels={false} />
                         <PrivateRoute path="/groups" component={GroupsView} />
                         <PrivateRoute path="/group/:id" component={GroupView} />
-                        <PrivateRoute path="/profile/:id" component={ProfileView} />
+                        {/*<PrivateRoute path="/profile/:id" component={ProfileView} />*/}
                         <Route component={Page404} />
                     </Switch>
                 </div>
