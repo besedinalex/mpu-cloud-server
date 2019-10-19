@@ -3,16 +3,16 @@ import axios from "axios";
 import {serverURL} from "./server-url";
 import {token} from "./authentication";
 
-export function getGroups() {
+export function getGroup(groupId) {
     return new Promise((resolve, reject) => {
-        axios.get(`${serverURL}/groups?token=${token}`)
+        axios.get(`${serverURL}/group?token=${token}&groupId=${groupId}`)
             .then(resolve).catch(reject);
     });
 }
 
-export function getGroup(groupId) {
+export function getGroups() {
     return new Promise((resolve, reject) => {
-        axios.get(`${serverURL}/group?token=${token}&groupId=${groupId}`)
+        axios.get(`${serverURL}/groups?token=${token}`)
             .then(resolve).catch(reject);
     });
 }
