@@ -92,9 +92,7 @@ exports.getGroups = function (userId) {
     return new Promise((resolve, reject) => {
         let sql =
             `SELECT
-            Groups.title, Groups.description, Groups.image, Groups.owner, Groups.group_id, Groups.createdTime,
-            GroupUsers.user_id, GroupUsers.access, GroupUsers.userJoinedDate,
-            Users.firstName, Users.lastName, Users.email
+            Groups.title, Groups.image, Groups.owner, Groups.group_id, Groups.createdTime
             FROM Groups
             JOIN GroupUsers, Users
             ON Users.user_id = GroupUsers.user_id AND Groups.group_id = GroupUsers.group_id

@@ -13,24 +13,21 @@ class GroupItem extends Component {
     handleGroupClick = () => this.setState({redirect: true});
 
     render() {
+        console.log(this.props);
         if (this.state.redirect) {
-            return <Redirect to={`/group/${this.props.group.group_id}`} />;
+            return <Redirect to={`/group/${this.props.groupId}`} />;
         } else {
             return (
                 <tr>
                     <td onClick={this.handleGroupClick} className="filename">
                         <img
-                            src="https://image.flaticon.com/icons/svg/148/148946.svg"
-                            width="35px"
-                            style ={{position:"relative", right:"5px"}}
-                            alt=""
-                        /> {this.props.group.title}
+                            src="https://image.flaticon.com/icons/svg/148/148946.svg" width="35px"
+                            style ={{position:"relative", right:"5px"}} alt=""
+                        /> {this.props.title}
                     </td>
                     <td />
-                    <td>
-                        {this.props.group.firstName + " " + this.props.group.lastName}
-                    </td>
-                    <td>{this.props.group.createdTime}</td>
+                    <td>{this.props.ownerName}</td>
+                    <td>{this.props.createdTime}</td>
                 </tr>
             );
         }

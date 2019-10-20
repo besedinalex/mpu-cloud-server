@@ -66,8 +66,7 @@ exports.removeUserFromGroup = function (adminId, groupId, userId, resolve) {
                 });
                 break;
             default:
-                resolve.send(false);
-                // TODO: Послать нормальную ошибку.
+                resolve.send('Access denied.');
                 break;
         }
     });
