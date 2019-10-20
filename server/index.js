@@ -46,20 +46,20 @@ app.get('/group', user.checkToken, function (req, res) {
     group.getGroup(req.user_id, req.query.groupId, res);
 });
 
+app.post('/group-create', user.checkToken, function (req) {
+    group.createGroup(req.query.title, req.query.description, req.query.image, req.user_id);
+});
+
 app.get('/groups', user.checkToken, function (req, res) {
     group.getGroups(req.user_id, res);
 });
 
 app.get('/group-models', user.checkToken, function (req, res) {
-    group.getGroupModels(req.query.groupId, res);
+    group.getGroupModels(req.user_id, req.query.groupId, res);
 });
 
 app.get('/group-users', user.checkToken, function (req, res) {
-    group.getGroupUsers(req.query.groupId, res);
-});
-
-app.post('/group-create', user.checkToken, function (req) {
-    group.createGroup(req.query.title, req.query.description, req.query.image, req.user_id);
+    group.getGroupUsers(req.user_id, req.query.groupId, res);
 });
 
 app.post('/group-user', user.checkToken, function (req, res) {

@@ -8,12 +8,24 @@ exports.getGroups = function (userId, res) {
     db.getGroups(userId).then(data => res.json(data));
 };
 
-exports.getGroupModels = function (groupId, res) {
-    db.getGroupModels(groupId).then(data => res.json(data));
+exports.getGroupModels = function (userId, groupId, res) {
+    db.getGroup(userId, groupId).then(group => {
+        if (group.length === 0) {
+            res.status(401).send();
+        } else {
+            db.getGroupModels(groupId).then(data => res.json(data));
+        }
+    });
 };
 
-exports.getGroupUsers = function (groupId, res) {
-    db.getUsersByGroup(groupId).then(data => res.json(data));
+exports.getGroupUsers = function (userId, groupId, res) {
+    db.getGroup(userId, groupId).then(group => {
+        if (group.length === 0) {
+            res.status(401).send();
+        } else {
+            db.getUsersByGroup(groupId).then(data => res.json(data));
+        }
+    });
 };
 
 exports.createGroup = function (title, description, image, userId) {
@@ -38,12 +50,12 @@ exports.addUserToGroup = function (adminId, groupId, email, access, resolve) {
                         }
                         db.addGroupUser(id[0].user_id, groupId, access);
                     } else {
-                        resolve.send(false);
+                        resolve.status(409).send();
                     }
                 });
             });
         } else {
-            resolve.send(false);
+            resolve.status(401).send();
         }
     });
 };
@@ -66,7 +78,7 @@ exports.removeUserFromGroup = function (adminId, groupId, userId, resolve) {
                 });
                 break;
             default:
-                resolve.send('Access denied.');
+                resolve.status(401).send();
                 break;
         }
     });
