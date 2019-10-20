@@ -14,7 +14,7 @@ export function uploadModel(title, desc, model, groupId) {
 
         axios({
             method: 'post',
-            url: `${serverURL}/models?token=${token}`,
+            url: `${serverURL}/model?token=${token}`,
             data: bodyFormData,
             config: {headers: {'Content-Type': 'multipart/form-data'}}
         }).then(resolve).catch(reject);

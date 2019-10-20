@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
-
-const db = require('../db');
+const userData = require('../db/user');
 
 const secret = 'Hello World!';
 
@@ -23,7 +22,7 @@ exports.checkToken = function (req, res, next) {
 };
 
 exports.signInUser = function (email, password, res) {
-    db.signIn(email, password)
+    userData.signIn(email, password)
         .then(data => {
             const payload = {id: data.user_id};
             const token = jwt.sign(payload, secret, {expiresIn: '365d'});
@@ -37,7 +36,7 @@ exports.signInUser = function (email, password, res) {
 };
 
 exports.signUpUser = function (firstName, lastName, email, password, res) {
-    db.signUp(firstName, lastName, email.toLowerCase(), password)
+    userData.signUp(firstName, lastName, email.toLowerCase(), password)
         .then(userId => {
             const payload = {id: userId};
             const token = jwt.sign(payload, secret, {expiresIn: '365d'});
@@ -45,4 +44,12 @@ exports.signUpUser = function (firstName, lastName, email, password, res) {
             res.json({token, expiresAt: expiresAt, userId: userId});
         })
     // TODO: Выдавать ошибку в Front-End, если юзер уже существует.
+};
+
+exports.getUserData = function (userId, res) {
+    userData.getUser(userId).then(data => res.json(data))
+};
+
+exports.getUserModels = function (userId, res) {
+    userData.getUserModels(userId).then(data => res.json(data));
 };
