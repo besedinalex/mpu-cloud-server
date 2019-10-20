@@ -28,10 +28,11 @@ function spoilers(curSpoiler, curBtn) {
 var urlParams = new URLSearchParams(window.location.search);
 var modelId = urlParams.get('id');
 var token = urlParams.get('token');
+var groupId = urlParams.get('groupId');
 
 $.ajax({
 	type: 'GET',
-	url: '/model/' + modelId + '?token=' + token,
+	url: '/model/' + modelId + '?token=' + token + '&groupId=' + groupId,
 	success: function (data) {
 		gltf = data.model;
 		init();

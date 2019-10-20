@@ -98,13 +98,30 @@ app.delete('/model/:id', user.checkToken, (req, res) => {
 })
 
 app.get('/model/:id', user.checkToken, (req, res) => {
-    db.getUserModels(req.user_id).then(models => {
-        for (let model of models) {
+    db.getUserModels(req.user_id).then(userModels => {
+        let found = false;
+        for (let model of userModels) {
             if (model.model_id == req.params.id && model.ownerUser == req.user_id) {
-                console.log(model)
+                found = true;
                 let gltf = JSON.parse(fs.readFileSync(model.gltfPath));
                 res.json({model: gltf})
             }
+        }
+        if (!found) {
+            db.getGroup(req.user_id, req.query.groupId).then(group => {
+                if (group.length === 0) {
+                    res.status(401).send();
+                } else {
+                    db.getGroupModels(req.query.groupId).then(groupModels => {
+                        for (let model of groupModels) {
+                            if (model.model_id == req.params.id && model.ownerGroup == req.query.groupId) {
+                                let gltf = JSON.parse(fs.readFileSync(model.gltfPath));
+                                res.json({model: gltf})
+                            }
+                        }
+                    })
+                }
+            })
         }
     })
 })
