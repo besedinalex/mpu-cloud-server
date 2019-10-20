@@ -30,14 +30,14 @@ class ModelsView extends Component {
     componentDidMount = () => this.getModels();
 
     getModels = () => {
-        if (this.props.groupModels) {
+        if (this.props.groupId !== undefined) {
             getGroupModels(this.props.groupId).then(res => this.setState({models: res.data.reverse()}));
         } else {
             getUserModels().then(res => this.setState({models: res.data.reverse()}));
         }
     };
 
-    marginAfterHeader = () => this.props.groupModels ? "container" : "container margin-after-header";
+    marginAfterHeader = () => this.props.groupId !== undefined ? "container" : "container margin-after-header";
 
     handleCloseDialog = () => this.setState({isDialogOpen: false});
 
@@ -64,32 +64,12 @@ class ModelsView extends Component {
     };
 
     render() {
-        const modelCells = this.state.models.map((model, i) => {
-            return (
-                <ModelItem
-                    id={model.model_id}
-                    filename={model.filename}
-                    type={model.type}
-                    sizeKB={model.sizeKB}
-                    createdTime={model.createdTime}
-                    onModelRemoved={this.handleModelRemoved}
-                    name={this.props.name}
-                    groupModels={this.props.groupModels}
-                    key={i}
-                />
-            );
-        });
-
         return (
             <div>
                 <div
-                    hidden={!this.state.isDialogOpen}
-                    className="modal fade"
-                    id="exampleModal"
-                    tabIndex="-1"
-                    role="dialog"
-                    aria-labelledby="exampleModalLabel"
-                    aria-hidden="true"
+                    hidden={!this.state.isDialogOpen} className="modal fade"
+                    id="exampleModal" tabIndex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true"
                 >
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
@@ -98,11 +78,8 @@ class ModelsView extends Component {
                                     Добавить модель
                                 </h5>
                                 <button
-                                    onClick={this.handleCloseDialog}
-                                    type="button"
-                                    className="close"
-                                    data-dismiss="modal"
-                                    aria-label="Close"
+                                    onClick={this.handleCloseDialog} type="button"
+                                    className="close" data-dismiss="modal" aria-label="Close"
                                 >
                                     <span>&times;</span>
                                 </button>
@@ -113,11 +90,8 @@ class ModelsView extends Component {
                                         <span className="input-group-text">Название</span>
                                     </div>
                                     <input
-                                        name="author"
-                                        type="text"
-                                        className="form-control"
-                                        onChange={this.handleTitleChange}
-                                        required
+                                        name="author" type="text" className="form-control"
+                                        onChange={this.handleTitleChange} required
                                     />
                                 </div>
                                 <div className="form-group" style={{textAlign: "left"}}>
@@ -125,24 +99,18 @@ class ModelsView extends Component {
                                         Описание
                                     </label>
                                     <textarea
-                                        name="desc"
-                                        className="form-control"
-                                        id="exampleFormControlTextarea1"
-                                        rows="5"
-                                        onChange={this.handleDescChange}
-                                        required
+                                        name="desc" className="form-control"
+                                        id="exampleFormControlTextarea1" rows="5"
+                                        onChange={this.handleDescChange} required
                                     />
                                 </div>
                                 <div className="custom-file">
                                     <div className="input-group">
                                         <div className="custom-file">
                                             <input
-                                                ref={this.fileInput}
-                                                className="custom-file-input"
-                                                name="model"
-                                                id="inputGroupFile04"
-                                                type="file"
-                                                required=""
+                                                ref={this.fileInput} className="custom-file-input"
+                                                name="model" id="inputGroupFile04"
+                                                type="file" required
                                             />
                                             <label className="custom-file-label text-left" htmlFor="inputGroupFile04">
                                                 Выберете файл
@@ -153,10 +121,8 @@ class ModelsView extends Component {
                             </div>
                             <div className="modal-footer">
                                 <button
-                                    onClick={this.handleCloseDialog}
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    data-dismiss="modal"
+                                    onClick={this.handleCloseDialog} type="button"
+                                    className="btn btn-secondary" data-dismiss="modal"
                                 >
                                     Отмена
                                 </button>
@@ -189,12 +155,9 @@ class ModelsView extends Component {
 
                         <div className="inline">
                             <FontAwesomeIcon
-                                className="tool"
-                                onClick={this.handleOpenDialog}
-                                transform="grow-7 left-1.5 up-2.2"
-                                data-toggle="modal"
-                                data-target="#exampleModal"
-                                icon={faUpload}
+                                className="tool" onClick={this.handleOpenDialog}
+                                transform="grow-7 left-1.5 up-2.2" data-toggle="modal"
+                                data-target="#exampleModal" icon={faUpload}
                             />
                         </div>
 
@@ -211,7 +174,16 @@ class ModelsView extends Component {
                                 <th scope="col">Загружено</th>
                             </tr>
                             </thead>
-                            <tbody>{modelCells}</tbody>
+                            <tbody>
+                            {this.state.models.map((model, i) => (
+                                <ModelItem
+                                    id={model.model_id} filename={model.filename} type={model.type}
+                                    sizeKB={model.sizeKB} createdTime={model.createdTime}
+                                    onModelRemoved={this.handleModelRemoved} name={this.props.name}
+                                    groupId={this.props.groupId} key={i}
+                                />
+                                ))}
+                            </tbody>
                         </table>
                     </div>
                 </main>

@@ -53,7 +53,7 @@ class App extends Component {
                         <Route exact path="/" component={LandingView} />
                         <PublicOnlyRoute path="/login" component={SignInView} />
                         <PublicOnlyRoute path="/signup" component={SignUpView} />
-                        <PrivateRoute path="/models" component={ModelsView} groupModels={false} />
+                        <PrivateRoute path="/models" component={ModelsView} />
                         <PrivateRoute path="/groups" component={GroupsView} />
                         <PrivateRoute path="/group/:id" component={GroupView} />
                         {/*<PrivateRoute path="/profile/:id" component={ProfileView} />*/}
