@@ -20,7 +20,7 @@ class UserItem extends Component {
 
     handleMouseOut = () => this.setState({isMouseOver: false});
 
-    handleMouseClick = () => this.setState({redirect: true});
+    // handleMouseClick = () => this.setState({redirect: true});
 
     deleteUser = event => {
         event.preventDefault();

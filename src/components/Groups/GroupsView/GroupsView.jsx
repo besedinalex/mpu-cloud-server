@@ -7,6 +7,7 @@ import GroupItem from "../GroupItem";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFolderPlus} from "@fortawesome/free-solid-svg-icons";
+import {getUser} from "../../../services/profile";
 
 class GroupsView extends Component {
     constructor(props) {
@@ -24,9 +25,15 @@ class GroupsView extends Component {
         this.fileInput = React.createRef();
     }
 
-    componentDidMount = () => this.getData();
-
-    getData = () => getGroups().then(res => this.setState({groups: res.data}));
+    componentDidMount = () => getGroups().then(groupsRes => {
+        const groups = groupsRes.data;
+        groups.map(group =>
+            getUser(group.owner).then(userRes => {
+                group.ownerName = `${userRes.data[0].firstName} ${userRes.data[0].lastName}`;
+                this.setState({groups})
+            })
+        );
+    });
 
     handleCloseDialog = () => this.setState({isDialogOpen: false});
 
@@ -48,24 +55,17 @@ class GroupsView extends Component {
         return (
             <div>
                 <div
-                    hidden={!this.state.isDialogOpen}
-                    className="modal fade"
-                    id="exampleModal"
-                    tabIndex="-1"
-                    role="dialog"
-                    aria-labelledby="exampleModalLabel"
-                    aria-hidden="true"
+                    hidden={!this.state.isDialogOpen} className="modal fade"
+                    id="exampleModal" tabIndex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true"
                 >
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="exampleModalLabel">Создать группу</h5>
                                 <button
-                                    onClick={this.handleCloseDialog}
-                                    type="button"
-                                    className="close"
-                                    data-dismiss="modal"
-                                    aria-label="Close"
+                                    onClick={this.handleCloseDialog} type="button"
+                                    className="close" data-dismiss="modal" aria-label="Close"
                                 >
                                     <span>&times;</span>
                                 </button>
@@ -77,69 +77,56 @@ class GroupsView extends Component {
                                         <span className="input-group-text">Имя группы</span>
                                     </div>
                                     <input
-                                        name="author"
-                                        type="text"
-                                        value={this.state.title}
-                                        className="form-control"
-                                        onChange={this.handleTitleChange}
-                                        required
+                                        name="author" type="text"
+                                        value={this.state.title} className="form-control"
+                                        onChange={this.handleTitleChange} required
                                     />
                                 </div>
 
                                 <div className="form-group" style={{textAlign: "left"}}>
-                                    <label
-                                        style={{textAlign: "left"}}
-                                        htmlFor="exampleFormControlTextarea1"
-                                    >
+                                    <label style={{textAlign: "left"}} htmlFor="exampleFormControlTextarea1">
                                         Описание
                                     </label>
                                     <textarea
-                                        name="desc"
-                                        className="form-control"
-                                        id="exampleFormControlTextarea1"
-                                        rows="5"
-                                        onChange={this.handleDescChange}
-                                        required
+                                        name="desc" className="form-control"
+                                        id="exampleFormControlTextarea1" rows="5"
+                                        onChange={this.handleDescChange} required
                                     />
                                 </div>
 
-                                <div className="custom-file">
-                                    <div className="input-group">
-                                        <div className="custom-file">
-                                            <input
-                                                ref={this.fileInput}
-                                                className="custom-file-input"
-                                                name="model"
-                                                id="inputGroupFile04"
-                                                type="file"
-                                                required=""
-                                            />
-                                            <label
-                                                style={{textAlign: "left"}}
-                                                className="custom-file-label"
-                                                htmlFor="inputGroupFile04"
-                                            >
-                                                Выберете аватар
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
+                                {/*<div className="custom-file">*/}
+                                {/*    <div className="input-group">*/}
+                                {/*        <div className="custom-file">*/}
+                                {/*            <input*/}
+                                {/*                ref={this.fileInput}*/}
+                                {/*                className="custom-file-input"*/}
+                                {/*                name="model"*/}
+                                {/*                id="inputGroupFile04"*/}
+                                {/*                type="file"*/}
+                                {/*                required=""*/}
+                                {/*            />*/}
+                                {/*            <label*/}
+                                {/*                style={{textAlign: "left"}}*/}
+                                {/*                className="custom-file-label"*/}
+                                {/*                htmlFor="inputGroupFile04"*/}
+                                {/*            >*/}
+                                {/*                Выберете аватар*/}
+                                {/*            </label>*/}
+                                {/*        </div>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
                             </div>
 
                             <div className="modal-footer">
                                 <button
-                                    onClick={this.handleCloseDialog}
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    data-dismiss="modal"
+                                    onClick={this.handleCloseDialog} type="button"
+                                    className="btn btn-secondary" data-dismiss="modal"
                                 >
                                     Отмена
                                 </button>
                                 <button
-                                    onClick={this.handleCreate}
-                                    type="button"
-                                    className="btn btn-primary"
-                                    data-dismiss="modal"
+                                    onClick={this.handleCreate} type="button"
+                                    className="btn btn-primary" data-dismiss="modal"
                                 >
                                     Создать
                                 </button>
@@ -155,12 +142,8 @@ class GroupsView extends Component {
                         <h3 className="inline">Группы</h3>
                         <div className="inline">
                             <FontAwesomeIcon
-                                className="tool"
-                                onClick={this.handleOpenDialog}
-                                transform="grow-10 left-2 up-2.2"
-                                data-toggle="modal"
-                                data-target="#exampleModal"
-                                icon={faFolderPlus}
+                                className="tool" onClick={this.handleOpenDialog} transform="grow-10 left-2 up-2.2"
+                                data-toggle="modal" data-target="#exampleModal" icon={faFolderPlus}
                             />
                         </div>
                         <div className="border-bottom border-gray pb-2 mb-0" />
@@ -176,7 +159,10 @@ class GroupsView extends Component {
                             </thead>
                             <tbody>
                             {this.state.groups.map((group, i) => (
-                                <GroupItem group={group} key={i} />
+                                <GroupItem
+                                    groupId={group.group_id} title={group.title} ownerName={group.ownerName}
+                                    createdTime={group.createdTime} key={i}
+                                />
                             ))}
                             </tbody>
                         </table>

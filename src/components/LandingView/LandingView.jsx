@@ -53,7 +53,9 @@ class LandingView extends Component {
                     </svg>
                     <div className="container">
                         <div className="carousel-caption">
-                        <object width="25%" height="25%" type="image/svg+xml" data={item.img} id="object" class="icon"/>
+                            <object width="25%" height="25%" type="image/svg+xml" data={item.img} id="object" className="icon">
+                                Иконка, которая графически демонстрирует текст описания.
+                            </object>
                             <h1>{item.text}</h1>
                             <p>{item.desc}</p>
                         </div>
