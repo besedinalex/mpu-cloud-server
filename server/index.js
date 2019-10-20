@@ -78,7 +78,7 @@ app.delete('/group-user', user.checkToken, (req, res) => {
 // Models requests
 
 app.get('/model/original/:id', user.checkToken, function (req, res) {
-    model.downloadModel(req.user_id, req.params.id, res);
+    model.downloadModel(req.user_id, req.query.groupId, req.params.id, res);
 });
 
 app.get('/model/:id', user.checkToken, function (req, res) {

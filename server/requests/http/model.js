@@ -6,25 +6,13 @@ const userData = require('../db/user');
 const groupData = require('../db/group');
 const modelData = require('../db/model');
 
-exports.downloadModel = function (userId, modelId, res) {
-    userData.getUserModels(userId).then(models => {
-        for (let model of models) {
-            if (model.model_id == req.params.id && model.owner == req.user_id) {
-                console.log(model.originalPath)
-                res.download(model.originalPath, model.filename);
-            }
-        }
-    })
-};
-
-exports.getModel = function (userId, groupId, modelId, res) {
+function checkAccess(userId, groupId, modelId, res, callback) {
     userData.getUserModels(userId).then(userModels => {
         let found = false;
         for (let model of userModels) {
             if (model.model_id == modelId && model.ownerUser == userId) {
                 found = true;
-                let gltf = JSON.parse(fs.readFileSync(model.gltfPath));
-                res.json({model: gltf})
+                callback(model);
             }
         }
         if (!found) {
@@ -35,8 +23,7 @@ exports.getModel = function (userId, groupId, modelId, res) {
                     groupData.getGroupModels(groupId).then(groupModels => {
                         for (let model of groupModels) {
                             if (model.model_id == modelId && model.ownerGroup == groupId) {
-                                let gltf = JSON.parse(fs.readFileSync(model.gltfPath));
-                                res.json({model: gltf})
+                                callback(model);
                             }
                         }
                     })
@@ -44,6 +31,18 @@ exports.getModel = function (userId, groupId, modelId, res) {
             })
         }
     })
+}
+
+exports.downloadModel = function (userId, groupId, modelId, res) {
+    checkAccess(userId, groupId, modelId, res, model =>
+        res.download(model.originalPath, model.filename)
+    );
+};
+
+exports.getModel = function (userId, groupId, modelId, res) {
+    checkAccess(userId, groupId, modelId, res, model =>
+        res.json({model: JSON.parse(fs.readFileSync(model.gltfPath))})
+    );
 };
 
 exports.addModel = function (userId, body, file, dirname, cad2gltf, res) {

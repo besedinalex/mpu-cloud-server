@@ -179,8 +179,7 @@ class ModelsView extends Component {
                                 <ModelItem
                                     id={model.model_id} filename={model.filename} type={model.type}
                                     sizeKB={model.sizeKB} createdTime={model.createdTime}
-                                    onModelRemoved={this.handleModelRemoved} name={this.props.name}
-                                    groupId={this.props.groupId} key={i}
+                                    name={this.props.name} groupId={this.props.groupId} key={i}
                                 />
                                 ))}
                             </tbody>
