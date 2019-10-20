@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import {Redirect} from "react-router-dom";
 
 import {deleteGroupUser} from "../../../services/groups";
 
@@ -10,14 +11,16 @@ class UserItem extends Component {
         super(props);
 
         this.state = {
-            user: [],
-            isMouseOver: false
+            isMouseOver: false,
+            redirect: false
         };
     }
 
     handleMouseOver = () => this.setState({isMouseOver: true});
 
     handleMouseOut = () => this.setState({isMouseOver: false});
+
+    // handleMouseClick = () => this.setState({redirect: true});
 
     deleteUser = event => {
         event.preventDefault();
@@ -26,8 +29,11 @@ class UserItem extends Component {
     };
 
     render() {
+        if (this.state.redirect) {
+            return <Redirect to={`/profile/${this.props.user.user_id}`} />;
+        }
         return (
-            <div className="container" onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
+            <div className="container" onClick={this.handleMouseClick} onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
                 <div className="media text-muted pt-3 hasHover">
                     <img
                         src="https://image.flaticon.com/icons/svg/145/145842.svg"

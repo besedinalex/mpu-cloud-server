@@ -18,11 +18,13 @@ class ModelItem extends Component {
         };
     }
 
-    handleModelClick = () => window.location.href = `${serverURL}/view?id=${this.props.id}&token=${token}`;
+    handleModelClick = () =>
+        window.location.href = `${serverURL}/view?id=${this.props.id}&token=${token}&groupId=${this.props.groupId}`;
 
-    handleDownloadClick = () => window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}`;
+    handleDownloadClick = () =>
+        window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}&groupId=${this.props.groupId}`;
 
-    handleRemoveClick = () => deleteModel(this.props.id).then(res => this.props.onModelRemoved({id: this.props.id, deleted: res.data.deleted}));
+    handleRemoveClick = () => deleteModel(this.props.id).then(window.location.reload());
 
     handleMouseOver = () => this.setState({isMouseOver: true});
 

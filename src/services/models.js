@@ -14,7 +14,7 @@ export function uploadModel(title, desc, model, groupId) {
 
         axios({
             method: 'post',
-            url: `${serverURL}/models?token=${token}`,
+            url: `${serverURL}/model?token=${token}`,
             data: bodyFormData,
             config: {headers: {'Content-Type': 'multipart/form-data'}}
         }).then(resolve).catch(reject);
@@ -30,14 +30,14 @@ export function deleteModel(id) {
 
 export function getUserModels() {
     return new Promise((resolve, reject) => {
-        axios.get(`${serverURL}/models-user?token=${token}`)
+        axios.get(`${serverURL}/user-models?token=${token}`)
             .then(resolve).catch(reject);
     });
 }
 
 export function getGroupModels(groupId) {
     return new Promise((resolve, reject) => {
-        axios.get(`${serverURL}/models-group?token=${token}&groupId=${groupId}`)
+        axios.get(`${serverURL}/group-models?token=${token}&groupId=${groupId}`)
             .then(resolve).catch(reject);
     })
 }

@@ -6,6 +6,7 @@ let session;
 
 export let isAuthenticated;
 export let token;
+export let userId;
 
 updateAuthData();
 
@@ -43,4 +44,5 @@ function updateAuthData() {
     session = JSON.parse(localStorage.getItem('session'));
     isAuthenticated = session !== null && Date.now() <= session.expiresAt;
     token = session !== null ? session['token'] : undefined;
+    userId = session !== null ? session.userId : undefined;
 }
