@@ -361,4 +361,4 @@ MigrationBackup/
 
 server/storage/*
 
-mpu-cloud-viewer.js
+mpu-cloud-viewer.min.js

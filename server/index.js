@@ -173,7 +173,3 @@ app.post('/models', [user.checkToken, upload.single('model')], (req, res) => {
         }
     })
 })
-
-app.get('/view', user.checkToken, function (req, res) { // Вьювер для модели
-    res.render(__dirname + '/view.ejs');
-})

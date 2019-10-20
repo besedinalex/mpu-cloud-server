@@ -1,15 +1,13 @@
-class Clipping {
+import xeogl from './../xeogl-dependencies';
 
+export default class ClippingExtension {
     constructor(model) {
-
         this.clippingMode = false;
 
         this.rangeX = document.querySelector("#clipX");
         this.rangeX.min = model.aabb[0];
         this.rangeX.max = model.aabb[3];
         this.rangeX.value = this.rangeX.min;
-
-
 
         this.rangeY = document.querySelector("#clipY");
         this.rangeY.min = model.aabb[1];
@@ -77,7 +75,6 @@ class Clipping {
         model.clippable = false;
 
         document.querySelector("#clipping").addEventListener("click", () => {
-
             // document.querySelector("#clipping").textContent = this.clippingMode ? "Сечение" : "Обычный режим";
 
             model.clippable = !model.clippable;
@@ -87,7 +84,7 @@ class Clipping {
             this.helperZ.visible = !this.helperZ.visible;
 
             this.clippingMode = !this.clippingMode;
-        })
+        });
 
         document.querySelector("#clipX").oninput = () => this.activateClippingX();
         document.querySelector("#clipY").oninput = () => this.activateClippingY();
@@ -98,11 +95,9 @@ class Clipping {
         document.querySelector("#clipXCheck").onclick = () => this.reverseX();
         document.querySelector("#clipYCheck").onclick = () => this.reverseY();
         document.querySelector("#clipZCheck").onclick = () => this.reverseZ();
-
     }
 
     activateClippingX() {
-
         this.helperX.visible = false;
 
         if (this.clippingMode) {
@@ -123,7 +118,6 @@ class Clipping {
     }
 
     activateClippingY() {
-
         this.helperY.visible = false;
 
         if (this.clippingMode) {
@@ -141,11 +135,9 @@ class Clipping {
                 solid: true
             });
         }
-
     }
 
     activateClippingZ() {
-
         this.helperZ.visible = false;
 
         if (this.clippingMode) {
@@ -163,38 +155,30 @@ class Clipping {
                 solid: true
             });
         }
-
     }
 
     reverseX() {
         this.clipX.dir = [this.clipX.dir[0] == 1 ? -1 : 1, 0, 0];
     }
+
     reverseY() {
         this.clipY.dir = [0, this.clipY.dir[1] == 1 ? -1 : 1, 0];
     }
+
     reverseZ() {
         this.clipZ.dir = [0, 0, this.clipZ.dir[2] == 1 ? -1 : 1];
     }
 
-
-
     createFace() {
         if (this.clippingMode) {
-            console.log("asd");
-
             for (let mesh of model._childList) {
                 if (this.clipX.pos[0] >= mesh.aabb[0] && this.clipX.pos[0] <= mesh.aabb[3]) {
                     // mesh.highlighted = true;
-                    console.log(mesh);
-                    for (let i in mesh.geometry.positions) {
-                        
-                    }
+                    for (let i in mesh.geometry.positions) { }
                 } else {
                     // mesh.highlighted = false;
                 }
             }
-
         }
     }
-
 }

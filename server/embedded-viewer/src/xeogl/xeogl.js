@@ -6993,7 +6993,7 @@ class Canvas extends Component {
             return;
         }
 
-        // If the canvas uses css styles to specify the sizes make sure the basic
+        // If the canvas uses styles styles to specify the sizes make sure the basic
         // width and height attributes match or the WebGL context will use 300 x 150
 
         this.canvas.width = this.canvas.clientWidth;

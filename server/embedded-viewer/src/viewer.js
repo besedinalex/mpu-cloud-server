@@ -2,13 +2,21 @@ import axios from 'axios';
 
 import xeogl from './xeogl-dependencies';
 
+import AnnotationExtension from "./extentions/annotation";
+import HighlightExtension from "./extentions/highlight";
+import HidePartsExtension from "./extentions/hideParts";
+import SpacingExtension from "./extentions/spacing";
+import ClippingExtension from './extentions/clipping';
+import PresentationExtension from "./extentions/presentation";
+import OpacityExtension from "./extentions/opacity";
+
 //Global vars
-var model, scene, camera, input, cameraControl, cameraFlight, gltf;
+var model, scene, camera, input, cameraControl, gltf;
 
 var lastSpoiler = "";
-var lastBtn = ""
+var lastBtn = "";
 
-function spoilers(curSpoiler, curBtn) {
+export function spoilers(curSpoiler, curBtn) {
 
 	if (lastBtn && lastBtn !== curBtn) {
 		document.getElementById(lastBtn).click();
@@ -22,19 +30,15 @@ function spoilers(curSpoiler, curBtn) {
 		lastSpoiler = curSpoiler;
 	}
 	if (document.getElementById(curSpoiler).style.display === "block") {
-		lastBtn = curBtn;	
+		lastBtn = curBtn;
 	} else {
 		lastBtn = '';
 	}
 
 }
 
-var urlParams = new URLSearchParams(window.location.search);
-var modelId = urlParams.get('id');
-var token = urlParams.get('token');
-
-export function init() {
-	axios.get('http://127.0.0.1:4000/model/1?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTcxMzM2Nzg4LCJleHAiOjE2MDI4NzI3ODh9.9zoDCXBwQ3rV24cl7CrYBLxBmN0Wkw2EZXw9fasTXFI')
+export function init(viewerToken, modelToken) {
+	axios.get(`http://127.0.0.1:4000/model/${modelToken}?token=${viewerToken}`)
 		.then(res => {
 			gltf = res.data.model;
 
@@ -49,7 +53,6 @@ export function init() {
 				model.outline = true;
 				model.backfaces = true;
 				model.solid = true;
-				clipping = new Clipping(model);
 
 				new xeogl.AmbientLight({
 					color: [122.0 / 256.0, 164.0 / 256.0, 255.0 / 256.0],
@@ -86,17 +89,17 @@ export function init() {
 				camera.up = [0, 1, 0];
 				input = scene.input;
 
-				//Exs
-				// var annotation = new AnnotationEx(input);
-				// var highlight = new HighlightEx(cameraControl);
-				// var hidePats = new HideParts(cameraControl, camera);
-				// var spacing = new SpacingEx(model);
-				var presentation = new Presentation();
-				// var opacity = new Opacity(cameraControl, model);
+				const annotation = new AnnotationExtension(input);
+				const highlight = new HighlightExtension(cameraControl);
+				const hideParts = new HidePartsExtension(cameraControl, camera, model);
+				const spacing = new SpacingExtension(model);
+				const clipping = new ClippingExtension(model);
+				const presentation = new PresentationExtension();
+				const opacity = new OpacityExtension(cameraControl);
 
-				var timer = 0;
+				// var timer = 0;
 
-				// document.getElementById('spin').style.display = 'none';
+				document.getElementById('spin').style.display = 'none';
 
 				// scene.on('rendering', (id, pass) => {
 				// 	timer++;
@@ -124,223 +127,5 @@ export function init() {
 
 			});
 		});
-
-
-
-
-
 }
 
-class Clipping {
-
-	constructor(model) {
-
-		this.clippingMode = false;
-
-		this.rangeX = document.querySelector("#clipX");
-		this.rangeX.min = model.aabb[0];
-		this.rangeX.max = model.aabb[3];
-		this.rangeX.value = this.rangeX.min;
-
-
-
-		this.rangeY = document.querySelector("#clipY");
-		this.rangeY.min = model.aabb[1];
-		this.rangeY.max = model.aabb[4];
-		this.rangeY.value = this.rangeY.min;
-
-		this.rangeZ = document.querySelector("#clipZ");
-		this.rangeZ.min = model.aabb[2];
-		this.rangeZ.max = model.aabb[5];
-		this.rangeZ.value = this.rangeZ.min;
-
-		this.lastX = this.rangeX.min;
-		this.lastY = this.rangeY.min;
-		this.lastZ = this.rangeZ.min;
-
-		this.helperX;
-		this.helperY;
-		this.helperZ;
-
-		this.sizeX = this.rangeX.max - this.rangeX.min;
-		this.sizeY = this.rangeY.max - this.rangeY.min;
-		this.sizeZ = this.rangeZ.max - this.rangeZ.min;
-
-		this.clipX = new xeogl.Clip({
-			id: "clipX",
-			pos: [this.rangeX.min, model.center[1], model.center[2]],
-			dir: [1, 0, 0],
-			active: true
-		});
-		this.clipY = new xeogl.Clip({
-			id: "clipY",
-			pos: [model.center[0], this.rangeY.min, model.center[2]],
-			dir: [0, 1, 0],
-			active: true
-		});
-		this.clipZ = new xeogl.Clip({
-			id: "clipZ",
-			pos: [model.center[0], model.center[1], this.rangeZ.min],
-			dir: [0, 0, 1],
-			active: true
-		});
-
-		this.helperX = new xeogl.ClipHelper({
-			clip: this.clipX,
-			planeSize: [this.sizeZ, this.sizeY],
-			autoPlaneSize: false,
-			visible: false,
-			solid: true
-		});
-		this.helperY = new xeogl.ClipHelper({
-			clip: this.clipY,
-			planeSize: [this.sizeX, this.sizeZ],
-			autoPlaneSize: false,
-			visible: false,
-			solid: true
-		});
-		this.helperZ = new xeogl.ClipHelper({
-			clip: this.clipZ,
-			planeSize: [this.sizeX, this.sizeY],
-			autoPlaneSize: false,
-			visible: false,
-			solid: true
-		});
-
-		model.clippable = false;
-
-		document.querySelector("#clipping").addEventListener("click", () => {
-
-			// document.querySelector("#clipping").textContent = this.clippingMode ? "Сечение" : "Обычный режим";
-
-			model.clippable = !model.clippable;
-
-			this.helperX.visible = !this.helperX.visible;
-			this.helperY.visible = !this.helperY.visible;
-			this.helperZ.visible = !this.helperZ.visible;
-
-			this.clippingMode = !this.clippingMode;
-		})
-
-		document.querySelector("#clipX").oninput = () => this.activateClippingX();
-		document.querySelector("#clipY").oninput = () => this.activateClippingY();
-		document.querySelector("#clipZ").oninput = () => this.activateClippingZ();
-
-		document.querySelector("#clipX").onchange = () => this.createFace();
-
-		document.querySelector("#clipXCheck").onclick = () => this.reverseX();
-		document.querySelector("#clipYCheck").onclick = () => this.reverseY();
-		document.querySelector("#clipZCheck").onclick = () => this.reverseZ();
-
-	}
-
-	activateClippingX() {
-
-		this.helperX.visible = false;
-
-		if (this.clippingMode) {
-			let difX = this.rangeX.value - this.lastX;
-
-			this.clipX.pos[0] += difX;
-
-			this.lastX = this.rangeX.value;
-
-			this.helperX = new xeogl.ClipHelper({
-				clip: this.clipX,
-				planeSize: [this.sizeZ, this.sizeY],
-				autoPlaneSize: false,
-				visible: true,
-				solid: true
-			});
-		}
-	}
-
-	activateClippingY() {
-
-		this.helperY.visible = false;
-
-		if (this.clippingMode) {
-			let difY = this.rangeY.value - this.lastY;
-
-			this.clipY.pos[1] += difY;
-
-			this.lastY = this.rangeY.value;
-
-			this.helperY = new xeogl.ClipHelper({
-				clip: this.clipY,
-				planeSize: [this.sizeX, this.sizeZ],
-				autoPlaneSize: false,
-				visible: true,
-				solid: true
-			});
-		}
-
-	}
-
-	activateClippingZ() {
-
-		this.helperZ.visible = false;
-
-		if (this.clippingMode) {
-			let difZ = this.rangeZ.value - this.lastZ;
-
-			this.clipZ.pos[2] += difZ;
-
-			this.lastZ = this.rangeZ.value;
-
-			this.helperZ = new xeogl.ClipHelper({
-				clip: this.clipZ,
-				planeSize: [this.sizeX, this.sizeY],
-				autoPlaneSize: false,
-				visible: true,
-				solid: true
-			});
-		}
-
-	}
-
-	reverseX() {
-		this.clipX.dir = [this.clipX.dir[0] == 1 ? -1 : 1, 0, 0];
-	}
-	reverseY() {
-		this.clipY.dir = [0, this.clipY.dir[1] == 1 ? -1 : 1, 0];
-	}
-	reverseZ() {
-		this.clipZ.dir = [0, 0, this.clipZ.dir[2] == 1 ? -1 : 1];
-	}
-
-
-
-	createFace() {
-		if (this.clippingMode) {
-			console.log("asd");
-
-			for (let mesh of model._childList) {
-				if (this.clipX.pos[0] >= mesh.aabb[0] && this.clipX.pos[0] <= mesh.aabb[3]) {
-					// mesh.highlighted = true;
-					console.log(mesh);
-					for (let i in mesh.geometry.positions) {
-
-					}
-				} else {
-					// mesh.highlighted = false;
-				}
-			}
-
-		}
-	}
-
-}
-
-class Presentation {
-	constructor() {
-
-		this.rotationMode = false;
-
-		document.querySelector("#rotation").addEventListener("click", () => {
-			this.rotationMode = !this.rotationMode
-		})
-
-	}
-
-}

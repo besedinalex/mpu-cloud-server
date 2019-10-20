@@ -1,23 +1,19 @@
-class AnnotationEx {
+import xeogl from './../xeogl-dependencies';
 
-    constructor(input) {
-
+export default class AnnotationExtension {
+    constructor(input, scene) {
+        this.scene = scene;
         this.annotations = [];
         this.annotationMode = false;
 
         input.on("mouseclicked", (canvasPos) => {
-
-
-
-            var hit = scene.pick({
+            const hit = this.scene.pick({
                 canvasPos: canvasPos,
                 pickSurface: true
             });
 
             if (this.annotationMode && hit) {
-
-               
-                var lookat = scene.camera.view;
+                const lookat = this.scene.camera.view;
 
                 this.annotations.push(
                     new xeogl.Annotation({
@@ -32,23 +28,12 @@ class AnnotationEx {
                         glyph: this.annotations.length + 1,
                     })
                 )
-
             }
-
         });
 
         document.querySelector("#annotationMode").addEventListener('click', () => {
-            // document.querySelector("#annotationMode").textContent =
-            // this.annotationMode ? "Режим добавления" : "Обычный режим";
             this.annotationMode = !this.annotationMode;
-            document.getElementById("annotationMode").style.backgroundColor == "red" ? "#111" : "red";
-            console.log(document.getElementById("annotationMode").style.backgroundColor)
+            document.getElementById("annotationMode").style.backgroundColor == 'red' ? '#111' : 'red';
         })
-
-
     }
-
-
-
-
 }

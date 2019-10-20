@@ -5,8 +5,10 @@ module.exports = {
     // mode: 'production',
     entry: `${__dirname}/src/main.js`,
     output: {
-        filename: 'mpu-cloud-viewer.js',
+        filename: 'mpu-cloud-viewer.min.js',
         path: path.resolve(__dirname, 'public'),
+        libraryTarget: 'var',
+        library: 'MPUCloudViewer'
     },
     module: {
         rules: [

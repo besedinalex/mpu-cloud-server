@@ -1,5 +1,4 @@
-class SpacingEx {
-
+export default class SpacingExtension {
     constructor(model) {
         this.model = model;
         this.isConnected = true;
@@ -16,16 +15,16 @@ class SpacingEx {
             } else {
                 this.connecting();
             }
-        })
+        });
 
         this.spacingRate.oninput = () => this.changeSpacingRate();
     }
 
     spacing() {
         for (let el of this.model._childList) {
-            let difX = el.position[0] - model.center[0];
-            let difY = el.position[1] - model.center[1];
-            let difZ = el.position[2] - model.center[2];
+            let difX = el.position[0] - this.model.center[0];
+            let difY = el.position[1] - this.model.center[1];
+            let difZ = el.position[2] - this.model.center[2];
 
             this.difs.push({ x: difX, y: difY, z: difZ });
 
@@ -34,32 +33,24 @@ class SpacingEx {
                 el.position[1] + difY * this.factorSpacing,
                 el.position[2] + difZ * this.factorSpacing
             ]
-
         }
-
         this.isConnected = false;
-        console.log("spacing");
-
     }
-
 
     connecting() {
         for (let i in this.model._childList) {
-
             this.model._childList[i].position = [
                 this.model._childList[i].position[0] - this.difs[i].x * this.factorSpacing,
                 this.model._childList[i].position[1] - this.difs[i].y * this.factorSpacing,
                 this.model._childList[i].position[2] - this.difs[i].z * this.factorSpacing
             ]
-
         }
         this.difs = [];
         this.isConnected = true;
-        console.log("connecting");
     }
 
     changeSpacingRate() {
-        this.connecting()
+        this.connecting();
         this.factorSpacing = this.spacingRate.value;
         this.spacing();
     }

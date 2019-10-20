@@ -1,42 +1,48 @@
+'use strict';
+
 import axios from 'axios';
 
 import * as viewer from './viewer';
 
-window.onload = () => {
-    window.MPUCloudViewer = MPUCloudViewer;
-};
+const serverURL = 'http://127.0.0.1:4000';
+let viewerDiv = null;
 
-const MPUCloudViewer = {
-    serverURL: 'http://127.0.0.1:4000',
-    viewerDiv: document.getElementById('mpu-cloud-viewer'),
-
-    init: function() {
-        this.loadExternalStyles();
-        axios.get(`${this.serverURL}/viewer/viewer.html`)
-            .then(res => this.viewerDiv.innerHTML = res.data);
-        viewer.init();
-    },
-
-    loadExternalStyle: function(path) {
-        const style = document.createElement("link");
-        style.rel = 'stylesheet';
-        style.type = 'text/css';
-        style.href = path;
-        style.setAttribute('mpu-cloud', 'viewer');
-        document.getElementsByTagName("head")[0].appendChild(style);
-    },
-
-    loadExternalStyles: function() {
-        const styles = ['styles.css', 'bootstrap.min.css', 'all.min.css', 'annotation-style.css'];
-        for (const style of styles) {
-            this.loadExternalStyle(`${this.serverURL}/viewer/styles/${style}`);
-        }
-    },
-
-    unloadExternalStyles: function() {
-        const loadedStyles = document.querySelectorAll('[mpu-cloud="viewer"]');
-        for (const style of loadedStyles) {
-            style.remove();
-        }
+export function init(viewerToken, modelToken) {
+    viewerDiv = document.getElementById('mpu-cloud-viewer');
+    if (viewerDiv === null || viewerDiv === undefined) {
+        alert('Не обнаружено место для размещения элемента viewer.');
+        return;
     }
-};
+    axios.get(`${serverURL}/viewer/viewer.html`)
+        .then(res => viewerDiv.innerHTML = res.data);
+    loadExternalStyles();
+    viewer.init(viewerToken, modelToken);
+}
+
+export function destruct() {
+    const loadedStyles = document.querySelectorAll('[mpu-cloud="viewer"]');
+    for (const style of loadedStyles) {
+        style.remove();
+    }
+    window.MPUCloudViewer = null;
+}
+
+function loadExternalStyle(path) {
+    const style = document.createElement("link");
+    style.rel = 'stylesheet';
+    style.type = 'text/css';
+    style.href = path;
+    style.setAttribute('mpu-cloud', 'viewer');
+    document.getElementsByTagName("head")[0].appendChild(style);
+}
+
+function loadExternalStyles() {
+    const styles = ['styles.css', 'bootstrap.min.css', 'all.min.css', 'annotation-style.css'];
+    for (const style of styles) {
+        loadExternalStyle(`${serverURL}/viewer/styles/${style}`);
+    }
+}
+
+export function spoilers(curSpoiler, curBtn) {
+    viewer.spoilers(curSpoiler, curBtn);
+}

@@ -9,3 +9,7 @@
 ## React-Клиент
 
 `npm run start` - запуск в режиме отладки
+
+## Xeogl-viewer
+
+`npm run build-viewer` - компиляция нашего viewer

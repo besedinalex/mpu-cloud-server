@@ -1,8 +1,5 @@
-
-class HighlightEx {
-
+export default class HighlightExtension {
     constructor(cameraControl) {
-
         cameraControl.on("hoverEnter", (hit) => {
             hit.mesh.highlightMaterial.fillAlpha = 0.6;
             hit.mesh.highlightMaterial.edgeAlpha = 0;
@@ -11,6 +8,7 @@ class HighlightEx {
             hit.mesh.highlightMaterial.edgeWidth = 2;
             hit.mesh.highlighted = true;
         });
+
         cameraControl.on("hoverOut", (hit) => {
             hit.mesh.highlighted = false;
         });
@@ -20,7 +18,5 @@ class HighlightEx {
                 hit.mesh.selected = !hit.mesh.selected;
             }
         });
-
     }
-
 }
