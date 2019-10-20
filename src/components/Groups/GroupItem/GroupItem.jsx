@@ -13,7 +13,6 @@ class GroupItem extends Component {
     handleGroupClick = () => this.setState({redirect: true});
 
     render() {
-        console.log(this.props);
         if (this.state.redirect) {
             return <Redirect to={`/group/${this.props.groupId}`} />;
         } else {
