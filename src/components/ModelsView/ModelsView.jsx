@@ -47,11 +47,6 @@ class ModelsView extends Component {
 
     handleDescChange = (e) => this.setState({desc: e.target.value});
 
-    handleModelRemoved = (data) => {
-        const newModels = this.state.models.filter(model => model.model_id !== data.id);
-        this.setState({models: newModels});
-    };
-
     handleUpload = () => {
         this.setState({isUploaded: true});
         const groupId = this.props.groupId === undefined ? 'NULL' : this.props.groupId;
