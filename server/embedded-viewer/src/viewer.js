@@ -17,7 +17,6 @@ var lastSpoiler = "";
 var lastBtn = "";
 
 export function spoilers(curSpoiler, curBtn) {
-
 	if (lastBtn && lastBtn !== curBtn) {
 		document.getElementById(lastBtn).click();
 	}
@@ -34,19 +33,37 @@ export function spoilers(curSpoiler, curBtn) {
 	} else {
 		lastBtn = '';
 	}
-
 }
 
-export function init(viewerToken, modelToken) {
-	axios.get(`http://127.0.0.1:4000/model/${modelToken}?token=${viewerToken}`)
+export function init(viewerToken, modelToken, groupId) {
+	axios.get(`http://127.0.0.1:4000/model/${modelToken}?token=${viewerToken}&groupId=${groupId}`)
 		.then(res => {
 			gltf = res.data.model;
 
-			model = new xeogl.GLTFModel({
+			// scene = new xeogl.Scene({canvas: 'test'});
+
+			model = new xeogl.GLTFModel(
+				// scene,
+				{
 				id: model,
 				src: gltf,
 				pickable: true
-			})
+			});
+
+			scene = model.scene;
+
+			// const viewerCanvas = document.getElementById('test');
+			// const parentDiv = viewerCanvas.parentElement;
+			// viewerCanvas.width = parentDiv.clientWidth;
+			// viewerCanvas.height = parentDiv.clientHeight;
+			const x = scene.canvas.canvas.id;
+			const div = document.getElementById(x).parentElement;
+			const y = document.getElementById('mpu-cloud-viewer');
+			y.appendChild(div);
+			div.width = y.clientWidth;
+			div.height = y.clientHeight;
+
+
 
 			model.on("loaded", () => {
 				model.edges = true;
@@ -61,7 +78,7 @@ export function init(viewerToken, modelToken) {
 
 				cameraControl = new xeogl.CameraControl();
 
-				scene = model.scene;
+
 
 				camera = scene.camera;
 
@@ -99,8 +116,8 @@ export function init(viewerToken, modelToken) {
 
 				// var timer = 0;
 
-				document.getElementById('spin').style.display = 'none';
-
+				document.getElementById('spin').remove();
+			//
 				// scene.on('rendering', (id, pass) => {
 				// 	timer++;
 				// 	if (timer === 10) {

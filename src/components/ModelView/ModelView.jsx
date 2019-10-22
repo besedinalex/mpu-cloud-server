@@ -2,23 +2,29 @@ import React, {Component} from 'react';
 
 import {token} from "../../services/authentication";
 
-import {MPUCloudViewer} from './mpu-cloud-viewer.min';
-
 class ModelView extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            modelId: Number(this.props.match.params.id)
+            modelId: Number(this.props.match.params.id),
+            groupId: Number(this.props.location.search.split("?groupId=")[1])
         };
+
+        this.viewer = window.MPUCloudViewer;
     }
 
-    componentDidMount = () => MPUCloudViewer.init(token, this.state.modelId);
+    componentDidMount = () => this.viewer.init({
+        viewerToken: token,
+        modelToken: this.state.modelId,
+        groupId: this.state.groupId
+    });
+
+    componentWillUnmount = () => this.viewer.destruct();
 
     render() {
-        console.log(this.props);
         return (
-            <div id="mpu-cloud-viewer" />
+            <div id="mpu-cloud-viewer" style={{width: '500px', height: '500px'}} />
         );
     }
 }

@@ -33,7 +33,8 @@ class ModelItem extends Component {
 
     render() {
         if (this.state.redirect) {
-            return <Redirect to={`/model/${this.props.id}`} />;
+            const groupParam = this.props.groupId !== undefined ? `?groupId=${this.props.groupId}` : '';
+            return <Redirect to={`/model/${this.props.id}${groupParam}`} />;
         }
         return (
             <tr onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>

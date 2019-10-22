@@ -7,7 +7,7 @@ import * as viewer from './viewer';
 const serverURL = 'http://127.0.0.1:4000';
 let viewerDiv = null;
 
-export function init(viewerToken, modelToken) {
+export function init(params, viewerDiv) {
     viewerDiv = document.getElementById('mpu-cloud-viewer');
     if (viewerDiv === null || viewerDiv === undefined) {
         alert('Не обнаружено место для размещения элемента viewer.');
@@ -16,7 +16,7 @@ export function init(viewerToken, modelToken) {
     axios.get(`${serverURL}/viewer/viewer.html`)
         .then(res => viewerDiv.innerHTML = res.data);
     loadExternalStyles();
-    viewer.init(viewerToken, modelToken);
+    viewer.init(params.viewerToken, params.modelToken, params.groupId);
 }
 
 export function destruct() {
@@ -24,7 +24,7 @@ export function destruct() {
     for (const style of loadedStyles) {
         style.remove();
     }
-    window.MPUCloudViewer = null;
+    viewerDiv.innerHTML = null;
 }
 
 function loadExternalStyle(path) {
