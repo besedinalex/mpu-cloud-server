@@ -20,11 +20,11 @@ class ModelView extends Component {
         groupId: this.state.groupId
     });
 
-    componentWillUnmount = () => this.viewer.destruct();
+    componentWillUnmount = () => window.location.reload();
 
     render() {
         return (
-            <div id="mpu-cloud-viewer"/>
+            <div id="mpu-cloud-viewer" />
         );
     }
 }

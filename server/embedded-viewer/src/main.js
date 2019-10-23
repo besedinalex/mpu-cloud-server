@@ -7,7 +7,7 @@ import * as viewer from './viewer';
 const serverURL = 'http://127.0.0.1:4000';
 let viewerDiv = null;
 
-export function init(params, viewerDiv) {
+export function init(params) {
     viewerDiv = document.getElementById('mpu-cloud-viewer');
     if (viewerDiv === null || viewerDiv === undefined) {
         alert('Не обнаружено место для размещения элемента viewer.');
@@ -25,6 +25,7 @@ export function destruct() {
         style.remove();
     }
     viewerDiv.innerHTML = null;
+    viewer.destruct();
 }
 
 function loadExternalStyle(path) {

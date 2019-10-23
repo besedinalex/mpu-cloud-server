@@ -25,7 +25,7 @@ export default class AnnotationExtension {
                         eye: lookat.eye,
                         look: lookat.look,
                         up: lookat.up,
-                        glyph: this.annotations.length + 1,
+                        glyph: this.annotations.length + 1
                     })
                 )
             }

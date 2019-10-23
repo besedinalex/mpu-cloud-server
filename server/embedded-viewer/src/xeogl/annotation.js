@@ -1,4 +1,4 @@
-// import * as xeogl from './xeogl';
+import * as xeogl from './xeogl';
 
 /**
  An **Annotation** is a labeled {{#crossLink "Pin"}}{{/crossLink}} that's attached to the surface of a {{#crossLink "Mesh"}}{{/crossLink}}.

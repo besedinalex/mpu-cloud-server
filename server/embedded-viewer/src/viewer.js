@@ -13,7 +13,7 @@ import VisionExtension from "./extentions/vision";
 
 
 //Global vars
-var model, scene, camera, input, cameraControl, gltf;
+let model, scene, camera, input, cameraControl, gltf;
 
 var lastSpoiler = "";
 var lastBtn = "";
@@ -44,9 +44,7 @@ export function init(viewerToken, modelToken, groupId) {
 
 			// scene = new xeogl.Scene({canvas: 'test'});
 
-			model = new xeogl.GLTFModel(
-				// scene,
-				{
+			model = new xeogl.GLTFModel({
 				id: model,
 				src: gltf,
 				pickable: true
@@ -58,14 +56,12 @@ export function init(viewerToken, modelToken, groupId) {
 			// const parentDiv = viewerCanvas.parentElement;
 			// viewerCanvas.width = parentDiv.clientWidth;
 			// viewerCanvas.height = parentDiv.clientHeight;
-			const x = scene.canvas.canvas.id;
-			const div = document.getElementById(x).parentElement;
-			const y = document.getElementById('mpu-cloud-viewer');
-			y.appendChild(div);
-			div.width = y.clientWidth;
-			div.height = y.clientHeight;
-
-
+			// const x = scene.canvas.canvas.id;
+			// div = document.getElementById(x).parentElement;
+			// const y = document.getElementById('mpu-cloud-viewer');
+			// y.appendChild(div);
+			// div.width = y.clientWidth;
+			// div.height = y.clientHeight;
 
 			model.on("loaded", () => {
 				model.edges = true;
@@ -79,8 +75,6 @@ export function init(viewerToken, modelToken, groupId) {
 				});
 
 				cameraControl = new xeogl.CameraControl();
-
-
 
 				camera = scene.camera;
 
@@ -119,7 +113,7 @@ export function init(viewerToken, modelToken, groupId) {
 
 				// var timer = 0;
 
-				document.getElementById('spin').remove();
+				document.getElementById('spin').style.display = 'none';
 			//
 				// scene.on('rendering', (id, pass) => {
 				// 	timer++;
@@ -149,3 +143,8 @@ export function init(viewerToken, modelToken, groupId) {
 		});
 }
 
+export function destruct() {
+	model.clear();
+	model.destroy();
+	// div.remove();
+}

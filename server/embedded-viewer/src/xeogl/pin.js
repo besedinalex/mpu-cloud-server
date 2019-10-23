@@ -1,4 +1,4 @@
-// import * as xeogl from './xeogl';
+import * as xeogl from './xeogl';
 
 /**
  A **Pin** is a pinned position on the surface of a {{#crossLink "Mesh"}}{{/crossLink}}.
