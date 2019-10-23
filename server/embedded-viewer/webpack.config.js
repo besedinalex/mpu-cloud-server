@@ -1,8 +1,9 @@
 const path = require('path');
 
+const buildMode = process.argv[4] === '--prod' ? 'production' : 'development';
+
 module.exports = {
-    mode: 'development',
-    // mode: 'production',
+    mode: buildMode,
     entry: `${__dirname}/src/main.js`,
     output: {
         filename: 'mpu-cloud-viewer.min.js',

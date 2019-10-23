@@ -25,7 +25,8 @@
     "sqlite3": "^4.1.0"
   },
   "scripts": {
-    "build-viewer": "webpack --config server/embedded-viewer/webpack.config.js",
+    "dev-viewer": "webpack --config server/embedded-viewer/webpack.config.js",
+    "prod-viewer": "webpack --config server/embedded-viewer/webpack.config.js --prod",
     "start": "react-scripts start",
     "start-server": "node server/index.js",
     "test-server": "node server/index.js test",
