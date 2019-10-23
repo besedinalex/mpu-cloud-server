@@ -1,5 +1,5 @@
 export default class HighlightExtension {
-    constructor(cameraControl) {
+    constructor(cameraControl, input) {
         cameraControl.on("hoverEnter", (hit) => {
             hit.mesh.highlightMaterial.fillAlpha = 0.6;
             hit.mesh.highlightMaterial.edgeAlpha = 0;

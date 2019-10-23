@@ -9,6 +9,8 @@ import SpacingExtension from "./extentions/spacing";
 import ClippingExtension from './extentions/clipping';
 import PresentationExtension from "./extentions/presentation";
 import OpacityExtension from "./extentions/opacity";
+import VisionExtension from "./extentions/vision";
+
 
 //Global vars
 var model, scene, camera, input, cameraControl, gltf;
@@ -106,13 +108,14 @@ export function init(viewerToken, modelToken, groupId) {
 				camera.up = [0, 1, 0];
 				input = scene.input;
 
-				const annotation = new AnnotationExtension(input);
-				const highlight = new HighlightExtension(cameraControl);
-				const hideParts = new HidePartsExtension(cameraControl, camera, model);
+				const annotation = new AnnotationExtension(input, scene);
+				const highlight = new HighlightExtension(cameraControl, input);
+				const hideParts = new HidePartsExtension(cameraControl, camera, model, input);
 				const spacing = new SpacingExtension(model);
 				const clipping = new ClippingExtension(model);
 				const presentation = new PresentationExtension();
-				const opacity = new OpacityExtension(cameraControl);
+				const opacity = new OpacityExtension(cameraControl, input);
+				const vision = new VisionExtension(cameraControl, camera, model, input);
 
 				// var timer = 0;
 

@@ -201,3 +201,19 @@ p.sign {
     text-align: left;
     font-size: 14px
 }
+
+.help-tip{
+    display: none;
+    text-align: left;
+    background-color: #1E2021;
+    padding: 10px;
+    width: 650px;
+    position: fixed;
+    border-radius: 3px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    left: 20px;
+    bottom: 10px;
+    color: #FFF;
+    font-size: 16px;
+    line-height: 1.4;
+}

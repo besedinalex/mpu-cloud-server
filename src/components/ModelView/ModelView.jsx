@@ -24,7 +24,7 @@ class ModelView extends Component {
 
     render() {
         return (
-            <div id="mpu-cloud-viewer" style={{width: '500px', height: '500px'}} />
+            <div id="mpu-cloud-viewer"/>
         );
     }
 }

@@ -1,7 +1,7 @@
 import xeogl from './../xeogl-dependencies';
 
 export default class HidePartsExtension {
-    constructor(cameraControl, camera, model) {
+    constructor(cameraControl, camera, model, input) {
         this.camera = camera;
         this.model = model;
         this.hiddenParts = [];
