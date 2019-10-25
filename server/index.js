@@ -7,14 +7,6 @@ const user = require('./requests/http/user');
 const group = require('./requests/http/group');
 const model = require('./requests/http/model');
 
-const isToolKitOn = process.argv[2] !== 'test';
-let cad2gltf = {};
-if (isToolKitOn) {
-    cad2gltf = require('./cad2gltf');
-} else {
-    console.log('Test Mode without C3D Toolkit has been started!');
-}
-
 const upload = multer({storage: multer.memoryStorage()});
 
 const app = express();
@@ -83,11 +75,11 @@ app.get('/model/:id', user.checkToken, function (req, res) {
 });
 
 app.post('/model', [user.checkToken, upload.single('model')], function (req, res) {
-    model.addModel(req.user_id, req.body, req.file, __dirname, cad2gltf, res);
+    model.addModel(req.user_id, req.query.token, req.body, req.file, __dirname, res);
 });
 
 app.delete('/model/:id', user.checkToken, (req, res) => {
-    model.deleteModel(req.user_id, req.params.id, res);
+    model.deleteModel(req.user_id, req.query.groupId, req.params.id, res);
 });
 
 // Viewer requests

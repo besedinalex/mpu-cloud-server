@@ -5,8 +5,7 @@ import {token} from "./authentication";
 
 export function uploadModel(title, desc, model, groupId) {
     return new Promise((resolve, reject) => {
-        let bodyFormData = new FormData();
-
+        const bodyFormData = new FormData();
         bodyFormData.append('title', title);
         bodyFormData.append('desc', desc);
         bodyFormData.append('model', model);

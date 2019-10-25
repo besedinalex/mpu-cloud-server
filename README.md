@@ -2,15 +2,13 @@
 
 ## Сервер
 
-`npm run test-server` - запуск сервера без C3D
-
-`npm run start-server` - запуск сервера с C3D
+`npm run server` - запуск сервера.
 
 ## Viewer
 
-`npm run dev-viewer` - для отладки.
+`npm run viewer-dev` - для отладки.
 
-`npm run prod-viewer` - production.
+`npm run viewer-prod` - production.
 
 ## React-Клиент
 
