@@ -21,14 +21,11 @@ const app = express();
 
 app.use(cors());
 app.use(cookieParser());
-app.use('/view', express.static(__dirname + '/xeogl'));
-
-app.set('view engine', 'ejs');
+app.use('/viewer', express.static(__dirname + '/embedded-viewer/public'));
 
 app.listen(4000, () => console.log('Сервер запущен!'));
 
 // User data and Auth requests
-
 app.get('/token', function (req, res) {
     user.signInUser(req.query.email, req.query.password, res);
 });
@@ -93,6 +90,8 @@ app.delete('/model/:id', user.checkToken, (req, res) => {
     model.deleteModel(req.user_id, req.params.id, res);
 });
 
-app.get('/view', user.checkToken, function (req, res) { // Вьювер для модели
-    res.render(__dirname + '/view.ejs');
+// Viewer requests
+
+app.get('/embedded-viewer', function(req, res) {
+    res.send('test');
 });

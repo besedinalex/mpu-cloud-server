@@ -10,6 +10,7 @@ import SignUpView from './components/Auth/SignUpView';
 import SignInView from './components/Auth/SignInView';
 import ProfileView from "./components/ProfileView";
 import ModelsView from './components/ModelsView';
+import ModelView from "./components/ModelView";
 import GroupsView from "./components/Groups/GroupsView";
 import GroupView from "./components/Groups/GroupView";
 
@@ -54,6 +55,7 @@ class App extends Component {
                         <PublicOnlyRoute path="/login" component={SignInView} />
                         <PublicOnlyRoute path="/signup" component={SignUpView} />
                         <PrivateRoute path="/models" component={ModelsView} />
+                        <PrivateRoute path="/model/:id" component={ModelView} />
                         <PrivateRoute path="/groups" component={GroupsView} />
                         <PrivateRoute path="/group/:id" component={GroupView} />
                         {/*<PrivateRoute path="/profile/:id" component={ProfileView} />*/}

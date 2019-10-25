@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import {Redirect} from 'react-router-dom';
 
 import {serverURL} from "../../services/server-url";
 import {token} from "../../services/authentication";
@@ -14,12 +15,12 @@ class ModelItem extends Component {
         super(props);
 
         this.state = {
-            isMouseOver: false
+            isMouseOver: false,
+            redirect: false
         };
     }
 
-    handleModelClick = () =>
-        window.location.href = `${serverURL}/view?id=${this.props.id}&token=${token}&groupId=${this.props.groupId}`;
+    handleModelClick = () => this.setState({redirect: true});
 
     handleDownloadClick = () =>
         window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}&groupId=${this.props.groupId}`;
@@ -31,6 +32,10 @@ class ModelItem extends Component {
     handleMouseOut = () => this.setState({isMouseOver: false});
 
     render() {
+        if (this.state.redirect) {
+            const groupParam = this.props.groupId !== undefined ? `?groupId=${this.props.groupId}` : '';
+            return <Redirect to={`/model/${this.props.id}${groupParam}`} />;
+        }
         return (
             <tr onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
                 <td onClick={this.handleModelClick} className="filename">

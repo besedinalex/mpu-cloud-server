@@ -6,6 +6,12 @@
 
 `npm run start-server` - запуск сервера с C3D
 
+## Viewer
+
+`npm run dev-viewer` - для отладки.
+
+`npm run prod-viewer` - production.
+
 ## React-Клиент
 
 `npm run start` - запуск в режиме отладки
