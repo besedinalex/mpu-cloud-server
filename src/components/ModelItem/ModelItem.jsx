@@ -23,7 +23,7 @@ class ModelItem extends Component {
     handleModelClick = () => this.setState({redirect: true});
 
     handleDownloadClick = () =>
-        window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}&groupId=${this.props.groupId}`;
+        window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}&groupId=${this.props.groupId}&format=${this.props.type}`;
 
     handleRemoveClick = () => deleteModel(this.props.id).then(() => window.location.reload());
 

@@ -34,10 +34,28 @@ function checkAccess(userId, groupId, modelId, res, callback) {
     })
 }
 
-exports.downloadModel = function (userId, groupId, modelId, res) {
-    checkAccess(userId, groupId, modelId, res, model =>
-        res.download(model.originalPath, model.filename)
-    );
+function convertModel(token, fullPathOrig, exportFormat, callback) {
+    request({
+        method: 'POST',
+        url: `http://195.133.144.86:4001/model?token=${token}&exportFormat=${exportFormat}`,
+        headers: {'Content-Type': 'multipart/form-data'},
+        formData: {'model': fs.createReadStream(fullPathOrig)}
+    }, function (err, response, data) {
+        callback(err, response, data);
+    });
+}
+
+exports.downloadModel = function (userId, groupId, format, token, dirname, modelId, res) {
+    checkAccess(userId, groupId, modelId, res, model => {
+        convertModel(token, model.originalPath, format, (err, response, data) => {
+            if (response.statusCode === 500) {
+                res.status(500).send(data);
+            } else {
+                const tempPath = path.join(dirname, 'storage/temp');
+                fs.writeFile(tempPath, data, () => res.download(tempPath, `${model.title}.${format}`));
+            }
+        });
+    });
 };
 
 exports.getModel = function (userId, groupId, modelId, res) {
@@ -64,12 +82,7 @@ exports.addModel = function (userId, token, body, file, dirname, res) {
 
     fs.outputFileSync(fullPathOrig, file.buffer, {flag: 'wx'});
 
-    request({
-        method: 'POST',
-        url: `http://195.133.144.86:4001/model?token=${token}&exportFormat=gltf`,
-        headers: {'Content-Type': 'multipart/form-data'},
-        formData: {'model': fs.createReadStream(fullPathOrig)}
-    }, function (err, response, data) {
+    convertModel(token, fullPathOrig, 'gltf', (err, response, data) => {
         if (response.statusCode === 500) {
             res.status(500).send(data);
             fs.unlink(fullPathOrig);
