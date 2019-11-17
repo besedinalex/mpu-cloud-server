@@ -25,7 +25,7 @@ class ModelItem extends Component {
     handleDownloadClick = () =>
         window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}&groupId=${this.props.groupId}`;
 
-    handleRemoveClick = () => deleteModel(this.props.id).then(window.location.reload());
+    handleRemoveClick = () => deleteModel(this.props.id).then(() => window.location.reload());
 
     handleMouseOver = () => this.setState({isMouseOver: true});
 

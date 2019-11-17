@@ -20,9 +20,8 @@ class ModelsView extends Component {
             isDialogOpen: false,
             title: "",
             desc: "",
-            filename: "",
-            isUploaded: false,
-
+            filename: "Выберите файл",
+            isUploaded: false
         };
         this.fileInput = React.createRef();
     }
@@ -46,6 +45,8 @@ class ModelsView extends Component {
     handleTitleChange = (e) => this.setState({title: e.target.value});
 
     handleDescChange = (e) => this.setState({desc: e.target.value});
+
+    handleInputChange = (e) => this.setState({filename: e.target.value});
 
     handleUpload = () => {
         this.setState({isUploaded: true});
@@ -105,10 +106,10 @@ class ModelsView extends Component {
                                             <input
                                                 ref={this.fileInput} className="custom-file-input"
                                                 name="model" id="inputGroupFile04"
-                                                type="file" required
+                                                type="file" required onChange={this.handleInputChange}
                                             />
                                             <label className="custom-file-label text-left" htmlFor="inputGroupFile04">
-                                                Выберете файл
+                                                {this.state.filename}
                                             </label>
                                         </div>
                                     </div>
@@ -172,7 +173,7 @@ class ModelsView extends Component {
                             <tbody>
                             {this.state.models.map((model, i) => (
                                 <ModelItem
-                                    id={model.model_id} filename={model.filename} type={model.type}
+                                    id={model.model_id} filename={model.title} type={model.type}
                                     sizeKB={model.sizeKB} createdTime={model.createdTime}
                                     name={this.props.name} groupId={this.props.groupId} key={i}
                                 />
