@@ -53,7 +53,7 @@ class ModelsView extends Component {
         const groupId = this.props.groupId === undefined ? 'NULL' : this.props.groupId;
         uploadModel(this.state.title, this.state.desc, this.fileInput.current.files[0], groupId)
             .then(() => {
-                this.setState({isUploaded: false, isDialogOpen: false});
+                this.setState({isUploaded: false, isDialogOpen: false, filename: 'Выберите файл'});
                 $("#exampleModal").modal("hide");
                 this.getModels();
             });
