@@ -12,6 +12,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import ModelItemCard from "../ModelItemCard";
 
+import gridDark from "../../images/gridDark.png";
+import gridLight from "../../images/gridLight.png";
+import listDark from "../../images/listDark.png";
+import listLight from "../../images/listLight.png";
+
 class ModelsView extends Component {
     constructor(props) {
         super(props);
@@ -23,8 +28,9 @@ class ModelsView extends Component {
             desc: "",
             filename: "Выберите файл",
             isUploaded: false,
-            listIcon: "https://image.flaticon.com/icons/svg/25/25655.svg",
-            gridIcon: "https://image.flaticon.com/icons/svg/566/566001.svg"
+            listIcon: listLight,
+            gridIcon: gridDark 
+
         };
         this.fileInput = React.createRef();
     }
@@ -62,7 +68,20 @@ class ModelsView extends Component {
             });
     };
 
-
+    changeIcon = () => {
+        if (this.state.gridIcon == gridDark) {
+            this.setState({
+                listIcon: listDark,
+                gridIcon: gridLight
+            })
+        }
+        else{
+            this.setState({
+                listIcon: listLight,
+                gridIcon: gridDark
+            }) 
+        }
+    }
 
     render() {
         return (
@@ -155,24 +174,25 @@ class ModelsView extends Component {
 
 
 
-                    <div className="media-body mb-0 small lh-125">
-                        <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist" style={{ marginLeft: "10%", position: 'absolute' }}>
-                            <li className="nav-item">
-                                <a className="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
-                                    role="tab" aria-controls="pills-home" aria-selected="true">
-                                    <img src={this.state.listIcon} width="20px" alt="" />
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile"
-                                    role="tab" aria-controls="pills-profile" aria-selected="false">
-                                    <img src={this.state.gridIcon} width="20px" alt="" />
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
                     <div className="my-3 p-3 bg-white rounded shadow-sm">
+
+                        <div className="media-body mb-0 small lh-125 inline2">
+                            <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                <li className="nav-item" onClick = {this.changeIcon}>
+                                    <a className="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
+                                        role="tab" aria-controls="pills-home" aria-selected="true">
+                                        <img src={this.state.listIcon} width="20px" alt="" />
+                                    </a>
+                                </li>
+                                <li className="nav-item" onClick = {this.changeIcon}>
+                                    <a className="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile"
+                                        role="tab" aria-controls="pills-profile" aria-selected="false">
+                                        <img src={this.state.gridIcon} width="20px" alt="" />
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
                         <h3 className="inline">Модели</h3>
                         <div className="inline">
                             <FontAwesomeIcon
@@ -194,6 +214,7 @@ class ModelsView extends Component {
                                         <tr>
                                             <th scope="col">Название</th>
                                             <th scope="col" />
+                                            
                                             {this.props.groupModels ? <th scope="col">Пользователь</th> : null}
                                             <th scope="col">Тип</th>
                                             <th scope="col">Вес</th>

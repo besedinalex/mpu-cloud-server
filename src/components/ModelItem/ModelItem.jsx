@@ -48,8 +48,8 @@ class ModelItem extends Component {
                     {this.props.filename}
                 </td>
 
-                <td className="tools" style={{width: "120px"}}>
-                    <div className="icons-spacing" hidden={!this.state.isMouseOver}>
+                <td className="tools" style={{width: "130px"}}>
+                    <div className="icons" hidden={!this.state.isMouseOver}>
                         <FontAwesomeIcon onClick={this.handleModelClick} className="tool" icon={faEye} />
                         <FontAwesomeIcon onClick={this.handleDownloadClick} className="tool download" icon={faCloudDownloadAlt} />
                         <FontAwesomeIcon onClick={this.handleRemoveClick} className="tool trash" icon={faTrash} />
