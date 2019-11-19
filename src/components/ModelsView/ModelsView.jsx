@@ -68,18 +68,21 @@ class ModelsView extends Component {
             });
     };
 
-    changeIcon = () => {
+    changeIconFirst = () => {
+        if (this.state.listIcon == listDark) {
+            this.setState({
+                listIcon: listLight,
+                gridIcon: gridDark
+            });
+        }
+    }
+
+    changeIconSecond = () => {
         if (this.state.gridIcon == gridDark) {
             this.setState({
                 listIcon: listDark,
                 gridIcon: gridLight
-            })
-        }
-        else{
-            this.setState({
-                listIcon: listLight,
-                gridIcon: gridDark
-            }) 
+            });
         }
     }
 
@@ -178,13 +181,13 @@ class ModelsView extends Component {
 
                         <div className="media-body mb-0 small lh-125 inline2">
                             <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                <li className="nav-item" onClick = {this.changeIcon}>
+                                <li className="nav-item" onClick = {this.changeIconFirst}>
                                     <a className="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
                                         role="tab" aria-controls="pills-home" aria-selected="true">
                                         <img src={this.state.listIcon} width="20px" alt="" />
                                     </a>
                                 </li>
-                                <li className="nav-item" onClick = {this.changeIcon}>
+                                <li className="nav-item" onClick = {this.changeIconSecond}>
                                     <a className="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile"
                                         role="tab" aria-controls="pills-profile" aria-selected="false">
                                         <img src={this.state.gridIcon} width="20px" alt="" />
