@@ -7,7 +7,7 @@ import { deleteModel } from "../../services/models";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faCloudDownloadAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
-
+import $ from "jquery";
 import "./ModelItem.css";
 
 class ModelItem extends Component {
@@ -23,14 +23,7 @@ class ModelItem extends Component {
     handleModelClick = () => this.setState({ redirect: true });
 
     handleDownloadClick = () => {
-        return (
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Separated link</a>
-            </div>);
+        $('.dropdown-toggle').dropdown();
     }
     //window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}&groupId=${this.props.groupId}&format=${this.props.type}`;
 
@@ -40,6 +33,12 @@ class ModelItem extends Component {
 
     handleMouseOut = () => this.setState({ isMouseOver: false });
 
+    handel = () => {
+        console.log("fdfgds");
+        
+        $('.dropdown-toggle').dropdown("toggle"); 
+    }
+    
     render() {
         if (this.state.redirect) {
             const groupParam = this.props.groupId !== undefined ? `?groupId=${this.props.groupId}` : '';
@@ -60,15 +59,15 @@ class ModelItem extends Component {
                 <td className="tools" style={{ width: "130px" }}>
                     <div className="icons" hidden={!this.state.isMouseOver}>
                         <FontAwesomeIcon onClick={this.handleModelClick} className="tool" icon={faEye} />
-                        
+
                         <FontAwesomeIcon onClick={this.handleDownloadClick} className="tool download dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" icon={faCloudDownloadAlt} />
                         <div class="dropdown-menu">
-                            <a class="dropdown-item">IGES</a>
-                            <a class="dropdown-item">SAT</a>
-                            <a class="dropdown-item">SMT</a>
-                            <a class="dropdown-item">STEP</a>
-                            <a class="dropdown-item">STL</a>
-                            <a class="dropdown-item">OBJ</a>
+                            <a className="dropdown-item">IGES</a>
+                            <a className="dropdown-item">SAT</a>
+                            <a className="dropdown-item">SMT</a>
+                            <a className="dropdown-item">STEP</a>
+                            <a className="dropdown-item">STL</a>
+                            <a className="dropdown-item">OBJ</a>
                         </div>
                         <FontAwesomeIcon onClick={this.handleRemoveClick} className="tool trash" icon={faTrash} />
                     </div>

@@ -17,6 +17,8 @@ import gridLight from "../../images/gridLight.png";
 import listDark from "../../images/listDark.png";
 import listLight from "../../images/listLight.png";
 
+
+
 class ModelsView extends Component {
     constructor(props) {
         super(props);
@@ -29,11 +31,13 @@ class ModelsView extends Component {
             filename: "Выберите файл",
             isUploaded: false,
             listIcon: listLight,
-            gridIcon: gridDark 
+            gridIcon: gridDark
 
         };
         this.fileInput = React.createRef();
+
     }
+
 
     componentDidMount = () => this.getModels();
 
@@ -86,6 +90,7 @@ class ModelsView extends Component {
         }
     }
 
+   
     render() {
         return (
             <div>
@@ -175,20 +180,17 @@ class ModelsView extends Component {
 
                 <main role="main" className={this.marginAfterHeader()}>
 
-
-
                     <div className="my-3 p-3 bg-white rounded shadow-sm">
-
                         <div className="media-body mb-0 small lh-125 inline2">
                             <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                <li className="nav-item" onClick = {this.changeIconFirst}>
-                                    <a className="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
+                                <li className="nav-item" onClick={this.changeIconFirst}>
+                                    <a className="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills2-home"
                                         role="tab" aria-controls="pills-home" aria-selected="true">
                                         <img src={this.state.listIcon} width="20px" alt="" />
                                     </a>
                                 </li>
-                                <li className="nav-item" onClick = {this.changeIconSecond}>
-                                    <a className="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile"
+                                <li className="nav-item" onClick={this.changeIconSecond}>
+                                    <a className="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills2-profile"
                                         role="tab" aria-controls="pills-profile" aria-selected="false">
                                         <img src={this.state.gridIcon} width="20px" alt="" />
                                     </a>
@@ -205,11 +207,10 @@ class ModelsView extends Component {
                             />
                         </div>
 
-                        <div className="border-bottom border-gray pb-2 mb-0" />
-
+                    <div className="border-bottom border-gray pb-2 mb-0" />
                         <div className="tab-content" id="pills-tabContent">
                             <div
-                                className="tab-pane fade show active" id="pills-home"
+                                className="tab-pane fade show active" id="pills2-home"
                                 role="tabpanel" aria-labelledby="pills-home-tab"
                             >
                                 <table className="table">
@@ -217,7 +218,7 @@ class ModelsView extends Component {
                                         <tr>
                                             <th scope="col">Название</th>
                                             <th scope="col" />
-                                            
+
                                             {this.props.groupModels ? <th scope="col">Пользователь</th> : null}
                                             <th scope="col">Тип</th>
                                             <th scope="col">Вес</th>
@@ -236,17 +237,18 @@ class ModelsView extends Component {
                                 </table>
                             </div>
                             <div
-                                className="tab-pane fade" id="pills-profile"
+                                className="tab-pane fade" id="pills2-profile"
                                 role="tabpanel" aria-labelledby="pills-profile-tab"
                             >
                                 <table className="table">
-                                    {this.state.models.map((model, i) => (
-                                        <ModelItemCard id={model.model_id} filename={model.title} name={this.props.name} groupId={this.props.groupId} key={i} />
-                                    ))}
+                                    <tbody>
+                                        {this.state.models.map((model, i) => (
+                                            <ModelItemCard id={model.model_id} filename={model.title} name={this.props.name} groupId={this.props.groupId} key={i} />
+                                        ))}
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
-
                     </div>
                 </main>
             </div>

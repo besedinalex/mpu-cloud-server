@@ -40,3 +40,10 @@ tr:hover {
     justify-content: space-between;
     margin-top: 2.5px;
 }
+.dropdown-item{
+    -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
