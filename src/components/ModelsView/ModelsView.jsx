@@ -12,11 +12,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import ModelItemCard from "../ModelItemCard";
 
-import gridDark from "../../images/gridDark.png";
-import gridLight from "../../images/gridLight.png";
-import listDark from "../../images/listDark.png";
-import listLight from "../../images/listLight.png";
-
+import AppsIcon from '@material-ui/icons/Apps';
+import ListIcon from '@material-ui/icons/List';
 
 
 class ModelsView extends Component {
@@ -30,8 +27,8 @@ class ModelsView extends Component {
             desc: "",
             filename: "Выберите файл",
             isUploaded: false,
-            listIcon: listLight,
-            gridIcon: gridDark
+            listIcon: AppsIcon,
+            gridIcon: ListIcon
 
         };
         this.fileInput = React.createRef();
@@ -72,25 +69,6 @@ class ModelsView extends Component {
             });
     };
 
-    changeIconFirst = () => {
-        if (this.state.listIcon == listDark) {
-            this.setState({
-                listIcon: listLight,
-                gridIcon: gridDark
-            });
-        }
-    }
-
-    changeIconSecond = () => {
-        if (this.state.gridIcon == gridDark) {
-            this.setState({
-                listIcon: listDark,
-                gridIcon: gridLight
-            });
-        }
-    }
-
-   
     render() {
         return (
             <div>
@@ -180,19 +158,20 @@ class ModelsView extends Component {
 
                 <main role="main" className={this.marginAfterHeader()}>
 
+                    
                     <div className="my-3 p-3 bg-white rounded shadow-sm">
                         <div className="media-body mb-0 small lh-125 inline2">
                             <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                 <li className="nav-item" onClick={this.changeIconFirst}>
                                     <a className="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills2-home"
                                         role="tab" aria-controls="pills-home" aria-selected="true">
-                                        <img src={this.state.listIcon} width="20px" alt="" />
+                                        <ListIcon style={{ fontSize: 30 }}/>
                                     </a>
                                 </li>
                                 <li className="nav-item" onClick={this.changeIconSecond}>
                                     <a className="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills2-profile"
                                         role="tab" aria-controls="pills-profile" aria-selected="false">
-                                        <img src={this.state.gridIcon} width="20px" alt="" />
+                                        <AppsIcon style={{ fontSize: 30 }}/>
                                     </a>
                                 </li>
                             </ul>

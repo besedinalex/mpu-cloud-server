@@ -39,8 +39,8 @@ class ModelItemCard extends Component {
         }
         return (
 
-            <div class="card mt-3" onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut} onClick = {this.handleModelClick}>
-                <img src= {this.state.img} class="card-img-top" />
+            <div className="card mt-3" onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut} onClick = {this.handleModelClick}>
+                <img src= {this.state.img} className="card-img-top" />
 
                 <div className="icons-spacing" hidden={!this.state.isMouseOver}>
                     <FontAwesomeIcon transform="grow-5" onClick={this.handleDownloadClick} icon={faCloudDownloadAlt} className="tool download" />

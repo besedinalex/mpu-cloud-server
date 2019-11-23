@@ -12,6 +12,7 @@
 .c-body {
   text-align: left;
   padding-left: 1rem;
+  
 }
 .card:hover {
   background: #ecf0f1;
@@ -26,6 +27,7 @@
   background: black;
   opacity: 0.5;
   border-radius: 20px 20px 0 0  !important;
+  height: 85%;
 }
 .tool {
   margin-left: 1rem;
