@@ -3,7 +3,10 @@ import {Link, Redirect} from "react-router-dom";
 
 import {handleSigningIn} from "../../../services/authentication";
 
+import Notifications, { notify } from "../../Notifications";
+
 import '../Auth.css';
+import styled from "styled-components";
 
 class SignInView extends Component {
     state = {
@@ -15,18 +18,23 @@ class SignInView extends Component {
     signIn = (e) => {
         e.preventDefault();
         handleSigningIn(this.state.email, this.state.password)
-            .then(() => this.setState({redirect: true}));
+            .then(() => this.setState({redirect: true}))
+            .catch(() => notify("Неправильный пароль или email"));
+            
     };
 
     handleEmailChange = (e) => this.setState({email: e.target.value});
 
     handlePasswordChange = (e) => this.setState({password: e.target.value});
 
+    
+
     render() {
         if (this.state.redirect) {
             return <Redirect to="/models" />;
         } else {
             return (
+                <div>
                 <form className="form-auth">
                     <Link to="/">
                         <img className="mb-4" src="../../../images/logo192.png" alt="" width="72" height="72" />
@@ -43,6 +51,8 @@ class SignInView extends Component {
                     <button onClick={this.signIn} className="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
                     <p className="mt-5 mb-3 text-muted">© 2019-{new Date().getFullYear()}</p>
                 </form>
+                <Notifications/>
+                </div>
             );
         }
     }
