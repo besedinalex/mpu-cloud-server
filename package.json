@@ -28,7 +28,7 @@
     "react-scripts": "3.1.1",
     "sqlite3": "^4.1.0",
     "styled-components": "^4.4.0",
-    "request": "^2.88.0",
+    "request": "^2.88.0"
   },
   "scripts": {
     "viewer-dev": "webpack --config server/embedded-viewer/webpack.config.js",
