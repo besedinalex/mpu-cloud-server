@@ -153,7 +153,7 @@ class SignUpView extends Component {
         else {
             return (
                 <form className="form-auth">
-                    <Link to="/">
+                    <Link to="/" onClick = {this.closeAllPopovers}>
                         <img className="mb-4" src="../../../images/logo192.png" alt="" width="72" height="72" />
                     </Link>
                     <h1 className="h3 mb-3 font-weight-normal">Регистрация</h1>
