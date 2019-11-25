@@ -4,6 +4,7 @@ import { Link, Redirect } from "react-router-dom";
 import { handleSigningUp } from "../../../services/authentication";
 import $ from "jquery";
 import '../Auth.css';
+import Cloud from "../../../images/cloud-computing.svg";
 
 class SignUpView extends Component {
 
@@ -154,7 +155,7 @@ class SignUpView extends Component {
             return (
                 <form className="form-auth">
                     <Link to="/" onClick = {this.closeAllPopovers}>
-                        <img className="mb-4" src="../../../images/logo192.png" alt="" width="72" height="72" />
+                        <img className="mb-4" src={Cloud} alt="" width="100" />
                     </Link>
                     <h1 className="h3 mb-3 font-weight-normal">Регистрация</h1>
                     {/* Поле name для создание единого метода handleUserInput */}
