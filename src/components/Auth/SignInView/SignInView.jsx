@@ -6,8 +6,7 @@ import {handleSigningIn} from "../../../services/authentication";
 import Notifications, { notify } from "../../Notifications";
 
 import '../Auth.css';
-import styled from "styled-components";
-
+import Cloud from "../../../images/cloud-computing.svg";
 class SignInView extends Component {
     state = {
         email: '',
@@ -37,7 +36,7 @@ class SignInView extends Component {
                 <div>
                 <form className="form-auth">
                     <Link to="/">
-                        <img className="mb-4" src="../../../images/logo192.png" alt="" width="72" height="72" />
+                        <img className="mb-4" src={Cloud} alt="" width="100" />
                     </Link>
                     <h1 className="h3 mb-3 font-weight-normal">Вход</h1>
                     <input onChange={this.handleEmailChange} type="email" className="form-control" placeholder="Электронная почта" required autoFocus />
