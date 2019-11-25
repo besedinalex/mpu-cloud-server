@@ -25,7 +25,14 @@ class SignUpView extends Component {
             formValid: false,
             hasError: {
                 border: '1px solid red'
-            }
+            },
+            isValidated: false,
+            popovers: [
+                'email',
+                'firstName',
+                'lastName',
+                'password'
+            ]
         };
         $('[data-toggle="popover"]').popover({
             html: true
@@ -34,22 +41,21 @@ class SignUpView extends Component {
 
     signUp = (e) => {
         e.preventDefault();
-        $('#popEmail').popover('show');
-        $('#popPassword').popover('show');
-        $('#popLastName').popover('show');
-        $('#popFirstName').popover('show');
+        this.setState({
+            isValidated: true
+        });
+        this.state.isValidated = true;
         if (this.state.formValid) {
             e.preventDefault();
             handleSigningUp(this.state.firstName, this.state.lastName, this.state.email, this.state.password)
                 .then(() => this.setState({ redirect: true }));
         }
-
+        this.setFocus();
     };
 
     //Validation functions
 
     handleUserInput = (e) => {
-
         const name = e.target.name;
         const value = e.target.value;
         this.setState({ [name]: value },
@@ -63,18 +69,25 @@ class SignUpView extends Component {
         let firstNameValid = this.state.firstNameValid;
         let lastNameValid = this.state.lastNameValid;
 
+        // (?=.*[0-9]) - строка содержит хотя бы одно число;
+        // (?=.*[!@#$%^&*]) - строка содержит хотя бы один спецсимвол;
+        // (?=.*[a-z]) - строка содержит хотя бы одну латинскую букву в нижнем регистре;
+        // (?=.*[A-Z]) - строка содержит хотя бы одну латинскую букву в верхнем регистре;
+        // [0-9a-zA-Z!@#$%^&*]{6,} - строка состоит не менее, чем из 6 вышеупомянутых символов.
+
+        //Имена только на кириллице 
         switch (fieldName) {
             case 'email':
                 emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
                 break;
             case 'password':
-                passwordValid = value.length >= 6;
+                passwordValid = value.match(/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}/g);
                 break;
             case 'firstName':
-                firstNameValid = value.length >= 3;
+                firstNameValid = value.match(/(?=.*[а-я])(?=.*[А-Я])[а-яА-Я]{3,}/g);
                 break;
             case 'lastName':
-                lastNameValid = value.length >= 3;
+                lastNameValid = value.match(/(?=.*[а-я])(?=.*[А-Я])[а-яА-Я]{3,}/g);
                 break;
             default:
                 break;
@@ -83,8 +96,8 @@ class SignUpView extends Component {
             formErrors: fieldValidationErrors,
             emailValid: emailValid,
             passwordValid: passwordValid,
-            lastNameValid: firstNameValid,
-            firstNameValid: lastNameValid,
+            firstNameValid: firstNameValid,
+            lastNameValid: lastNameValid,
         }, this.validateForm);
     }
     validateForm() {
@@ -94,6 +107,43 @@ class SignUpView extends Component {
                 this.state.lastNameValid &&
                 this.state.firstNameValid
         });
+    }
+
+    //Работа с popovers
+    closeAllPopovers = ()=> {
+        for (let i = 0; i < this.state.popovers.length; i++) {
+             $("#"+this.state.popovers[i]).popover('dispose');
+        }
+    }
+
+    handleFocus = (e) =>{
+        if (this.state.isValidated) {
+            const name = e.target.name; 
+            for (let i = 0; i < this.state.popovers.length; i++) {
+                if(this.state.popovers[i] == name){
+                    $("#"+name).popover('show');
+                }
+                else{
+                    $("#"+this.state.popovers[i]).popover('dispose');
+                }
+            }   
+        }
+    }
+
+    setFocus = () =>{
+        //Hard Codding
+        if (!this.state.emailValid) {
+            $('#email').focus();
+        }
+        else if (!this.state.firstNameValid) {
+            $('#firstName').focus();
+        }
+        else if (!this.state.lastNameValid) {
+            $('#lastName').focus();
+        }
+        else if (!this.state.passwordValid) {
+            $('#password').focus();
+        } 
     }
 
     render() {
@@ -108,62 +158,69 @@ class SignUpView extends Component {
                     </Link>
                     <h1 className="h3 mb-3 font-weight-normal">Регистрация</h1>
                     {/* Поле name для создание единого метода handleUserInput */}
-
                     <input
                         onChange={this.handleUserInput}
-                        type="email" name="email"
-                        className="form-control"
-                        //className={`form-control ${this.state.emailValid ? 'blank' : 'has-error'}`}
+                        type="email" 
+                        name="email"
+                        className={`form-control ${(!this.state.emailValid && this.state.isValidated) ? 'has-error' : 'blank'}`}
                         placeholder="Электронная почта"
                         required
                         autoFocus
+                        onFocus ={this.handleFocus}
+                        data-trigger="manual"
                         data-placement="right"
                         data-content="Введите корректный Email"
-                        id="popEmail" 
+                        id="email"
                     />
                     <input
                         onChange={this.handleUserInput}
                         id="validationTooltip01"
-                        type="text" 
+                        type="text"
                         name="firstName"
-                        className="form-control"
+                        className={`form-control ${(!this.state.firstNameValid && this.state.isValidated) ? 'has-error' : 'blank'}`}
                         placeholder="Имя"
                         required
-                        data-placement="right"
-                        //title="Пожалуйста, укажите Ваше имя и фамилию"
-                        //data-content="Чтобы облегчить общение и поиск друзей, у нас приняты настоящие имена и фамилии"
-                        data-content="ИМЯ СОБАКА"
-                        id="popFirstName" 
+                        onFocus ={this.handleFocus}
+                        data-trigger="manual"
+                        data-placement="left"
+                        title="Пожалуйста, укажите Ваше имя и фамилию, используя кириллицу"
+                        data-content="Чтобы облегчить общение и поиск друзей, у нас приняты настоящие имена и фамилии"
+                        id="firstName"
                     />
                     <input
                         onChange={this.handleUserInput}
                         type="text"
                         name="lastName"
-                        className="form-control"
+                        className={`form-control ${(!this.state.lastNameValid && this.state.isValidated) ? 'has-error' : 'blank'}`}
                         placeholder="Фамилия"
-                        required 
+                        required
+                        onFocus ={this.handleFocus}
+                        data-trigger="manual"
                         data-placement="right"
-                        data-content="Фамилия не фамилия"
-                        id="popLastName" 
-                        />
+                        title="Пожалуйста, укажите Ваше имя и фамилию, используя кириллицу"
+                        data-content="Чтобы облегчить общение и поиск друзей, у нас приняты настоящие имена и фамилии"
+                        id="lastName"
+                    />
                     <input
                         onChange={this.handleUserInput}
                         type="password"
                         name="password"
-                        className="form-control"
+                        className={`form-control ${(!this.state.passwordValid && this.state.isValidated) ? 'has-error' : 'blank'}`}
                         placeholder="Пароль"
-                        required 
-                        data-placement="right"
-                        data-content="Мудак"
-                        id="popPassword" 
-                        />
+                        required
+                        onFocus ={this.handleFocus}
+                        data-trigger="manual"
+                        data-placement="left"
+                        data-content="Ваш пароль должен содержать символы верхнего и нижнего регистров, а так же цифры"
+                        id="password"
+                    />
 
                     <div className="checkbox">
                         <label>
                             <input type="checkbox" value="remember-me" /> Запомнить меня
                         </label>
                     </div>
-                    <Link to="/login" className="link">Уже есть аккаунт? Войди!</Link>
+                    <Link to="/login" className="link" onClick={this.closeAllPopovers}>Уже есть аккаунт? Войди!</Link>
                     <button onClick={this.signUp} className="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>
                     <p className="mt-5 mb-3 text-muted">© 2019-{new Date().getFullYear()}</p>
                 </form>

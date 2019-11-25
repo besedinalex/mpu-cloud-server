@@ -53,7 +53,7 @@
 }
 
 .has-error{
-    border: 1px solid red !important;
+    border-color: indianred !important;
 }
 .popover-header{
     color:white !important;
