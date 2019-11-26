@@ -14,6 +14,7 @@ const app = express();
 app.use(cors());
 app.use(cookieParser());
 app.use('/viewer', express.static(__dirname + '/embedded-viewer/public'));
+app.use('/preview', express.static(__dirname + '/storage/preview'));
 
 app.listen(4000, () => console.log('Сервер запущен!'));
 
@@ -76,6 +77,10 @@ app.get('/model/:id', user.checkToken, function (req, res) {
 
 app.post('/model', [user.checkToken, upload.single('model')], function (req, res) {
     model.addModel(req.user_id, req.query.token, req.body, req.file, __dirname, res);
+});
+
+app.post('/model/preview/:id', [user.checkToken, upload.single('canvasImage')], function (req, res) {
+    model.addModelPreview(req.user_id, req.query.groupId, req.params.id, req.file, __dirname, res);
 });
 
 app.delete('/model/:id', user.checkToken, (req, res) => {

@@ -17,7 +17,7 @@ class ModelItemCard extends Component {
         this.state = {
             isMouseOver: false,
             redirect: false,
-            img: "https://sun9-63.userapi.com/c857020/v857020868/4f08b/bsiKjLp__Zw.jpg"
+            img: `${serverURL}/preview/${this.props.preview}`
         };
     }
 

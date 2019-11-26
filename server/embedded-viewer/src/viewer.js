@@ -1,4 +1,5 @@
 import axios from 'axios';
+import $ from 'jquery';
 
 import xeogl from './xeogl-dependencies';
 
@@ -10,7 +11,6 @@ import ClippingExtension from './extentions/clipping';
 import PresentationExtension from "./extentions/presentation";
 import OpacityExtension from "./extentions/opacity";
 import VisionExtension from "./extentions/vision";
-
 
 //Global vars
 let model, scene, camera, input, cameraControl, gltf;
@@ -111,33 +111,40 @@ export function init(viewerToken, modelToken, groupId) {
 				const opacity = new OpacityExtension(cameraControl, input);
 				const vision = new VisionExtension(cameraControl, camera, model, input);
 
-				// var timer = 0;
+				let timer = 0;
 
 				document.getElementById('spin').style.display = 'none';
-			//
-				// scene.on('rendering', (id, pass) => {
-				// 	timer++;
-				// 	if (timer === 10) {
-				// 		$.ajax({
-				// 			type: 'POST',
-				// 			data: JSON.stringify({
-				// 				png: scene.canvas.canvas.toDataURL('png')
-				// 			}),
-				// 			processData: false,
-				// 			contentType: false,
-				// 			cache: false,
-				// 			dataType: 'json',
-				// 			contentType: "application/json; charset=utf-8",
-				// 			url: '/preview/' + modelId,
-				// 			success: function (data) {
-				// 				console.log(data)
-				// 			},
-				// 			error: function (err) {
-				// 				console.error(err);
-				// 			}
-				// 		});
-				// 	}
-				// })
+				scene.on('rendering', (id, pass) => {
+					timer++;
+					if (timer === 10) {
+						function dataURItoBlob(dataURI) {
+							var binary = atob(dataURI.split(',')[1]);
+							var array = [];
+							for(var i = 0; i < binary.length; i++) {
+								array.push(binary.charCodeAt(i));
+							}
+							return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+						}
+						const dataURL = scene.canvas.canvas.toDataURL('image/jpeg', 0.5);
+						const blob = dataURItoBlob(dataURL);
+						const fd = new FormData();
+						fd.append("canvasImage", blob);
+						$.ajax({
+							type: 'POST',
+							data: fd,
+							processData: false,
+							cache: false,
+							contentType: false,
+							url: `http://127.0.0.1:4000/model/preview/${modelToken}?token=${viewerToken}&groupId=${groupId}`,
+							success: function (data) {
+								console.log(data)
+							},
+							error: function (err) {
+								console.error(err);
+							}
+						});
+					}
+				})
 
 			});
 		});

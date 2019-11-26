@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Redirect } from 'react-router-dom';
 
 import $ from "jquery";
 
@@ -15,7 +16,6 @@ import ModelItemCard from "../ModelItemCard";
 import AppsIcon from '@material-ui/icons/Apps';
 import ListIcon from '@material-ui/icons/List';
 
-
 class ModelsView extends Component {
     constructor(props) {
         super(props);
@@ -27,14 +27,13 @@ class ModelsView extends Component {
             desc: "",
             filename: "Выберите файл",
             isUploaded: false,
+            redirect: false,
+            modelId: null,
             listIcon: AppsIcon,
             gridIcon: ListIcon
-
         };
         this.fileInput = React.createRef();
-
     }
-
 
     componentDidMount = () => this.getModels();
 
@@ -62,14 +61,16 @@ class ModelsView extends Component {
         this.setState({ isUploaded: true });
         const groupId = this.props.groupId === undefined ? 'NULL' : this.props.groupId;
         uploadModel(this.state.title, this.state.desc, this.fileInput.current.files[0], groupId)
-            .then(() => {
-                this.setState({ isUploaded: false, isDialogOpen: false, filename: 'Выберите файл' });
+            .then(data => {
                 $("#exampleModal").modal("hide");
-                this.getModels();
+                this.setState({redirect: true, modelId: data.data});
             });
     };
 
     render() {
+        if (this.state.redirect) {
+            return <Redirect to={`/model/${this.state.modelId}`} />;
+        }
         return (
             <div>
                 <div
@@ -222,7 +223,10 @@ class ModelsView extends Component {
                                 <table className="table">
                                     <tbody>
                                         {this.state.models.map((model, i) => (
-                                            <ModelItemCard id={model.model_id} filename={model.title} name={this.props.name} groupId={this.props.groupId} key={i} />
+                                            <ModelItemCard
+                                                id={model.model_id} filename={model.title} name={this.props.name}
+                                                groupId={this.props.groupId} preview={model.previewPath} key={i}
+                                            />
                                         ))}
                                     </tbody>
                                 </table>

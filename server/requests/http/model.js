@@ -74,26 +74,38 @@ exports.addModel = function (userId, token, body, file, dirname, res) {
     const modelCode = generator.generate({length: 20, numbers: true});
     const cellPath = path.join(dirname, 'storage', modelCode);
 
+    const fileNamePreview = modelCode + '.jpg';
+    const fullPathPreview = path.join(dirname, 'storage/preview', fileNamePreview);
+    fs.outputFileSync(fullPathPreview, null);
+
     const fileNameOrig = modelCode + path.extname(file.originalname);
     const fullPathOrig = path.join(cellPath, fileNameOrig);
+    fs.outputFileSync(fullPathOrig, file.buffer, {flag: 'wx'});
 
     const fileNameGLTF = modelCode + '.gltf';
     const fullPathGLTF = path.join(cellPath, fileNameGLTF);
 
-    fs.outputFileSync(fullPathOrig, file.buffer, {flag: 'wx'});
-
     convertModel(token, fullPathOrig, 'gltf', (err, response, data) => {
         if (response.statusCode === 500) {
-            res.status(500).send(data);
             fs.unlink(fullPathOrig);
+            res.status(500).send(data);
         } else {
             fs.outputFileSync(fullPathGLTF, data, {flag: 'wx'});
-            modelData.addModel(body.title, body.desc, file.originalname,
+            modelData.addModel(
+                body.title, body.desc, file.originalname,
                 fullPathGLTF.replace(/\\/g, '/'),
                 fullPathOrig.replace(/\\/g, '/'),
-                file.size, path.extname(file.originalname).split('.')[1], userId, body.groupId);
-            res.sendStatus(200);
+                fileNamePreview,
+                file.size, path.extname(file.originalname).split('.')[1], userId, body.groupId
+            ).then(data => res.json(data));
         }
+    });
+};
+
+exports.addModelPreview = function(userId, groupId, modelId, body, dirname, res) {
+    checkAccess(userId, groupId, modelId, res,model => {
+        const previewPath = path.join(dirname, 'storage/preview', model.previewPath);
+        fs.writeFile(previewPath, body.buffer, () => res.sendStatus(200))
     });
 };
 
@@ -101,6 +113,7 @@ exports.deleteModel = function (userId, groupId, modelId, res) {
     checkAccess(userId, groupId, modelId, res, model => {
         fs.unlink(model.originalPath);
         fs.unlink(model.gltfPath);
+        fs.unlink(model.previewPath);
         modelData.removeModel(modelId, userId).then(deleted => res.json({deleted}))
     })
 };
