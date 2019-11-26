@@ -63,7 +63,7 @@ class ModelsView extends Component {
         uploadModel(this.state.title, this.state.desc, this.fileInput.current.files[0], groupId)
             .then(data => {
                 $("#exampleModal").modal("hide");
-                this.setState({redirect: true, modelId: data.data});
+                this.setState({ redirect: true, modelId: data.data });
             });
     };
 
@@ -159,35 +159,59 @@ class ModelsView extends Component {
 
                 <main role="main" className={this.marginAfterHeader()}>
 
-                    
+
                     <div className="my-3 p-3 bg-white rounded shadow-sm">
-                        <div className="media-body mb-0 small lh-125 inline2">
-                            <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                <li className="nav-item" onClick={this.changeIconFirst}>
-                                    <a className="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills2-home"
-                                        role="tab" aria-controls="pills-home" aria-selected="true">
-                                        <ListIcon style={{ fontSize: 30 }}/>
-                                    </a>
-                                </li>
-                                <li className="nav-item" onClick={this.changeIconSecond}>
-                                    <a className="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills2-profile"
-                                        role="tab" aria-controls="pills-profile" aria-selected="false">
-                                        <AppsIcon style={{ fontSize: 30 }}/>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                        <div className="border-bottom border-gray pb-2 mb-0">
 
-                        <h3 className="inline">Модели</h3>
-                        <div className="inline">
-                            <FontAwesomeIcon
-                                className="tool" onClick={this.handleOpenDialog}
-                                transform="grow-7 left-1.5 up-2.2" data-toggle="modal"
-                                data-target="#exampleModal" icon={faUpload}
-                            />
-                        </div>
 
-                    <div className="border-bottom border-gray pb-2 mb-0" />
+
+                            <div className="container">
+                                <div className="row">
+                                    <div className="col-sm">
+                                        <div className="media-body mb-0 small lh-125 float-left">
+                                            <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                                <li className="nav-item" onClick={this.changeIconFirst}>
+                                                    <a className="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills2-home"
+                                                        role="tab" aria-controls="pills-home" aria-selected="true">
+                                                        <ListIcon style={{ fontSize: 30 }} />
+                                                    </a>
+                                                </li>
+                                                <li className="nav-item" onClick={this.changeIconSecond}>
+                                                    <a className="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills2-profile"
+                                                        role="tab" aria-controls="pills-profile" aria-selected="false">
+                                                        <AppsIcon style={{ fontSize: 30 }} />
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                    <div className="col-sm">
+                                        <h2>Модели</h2>
+                                    </div>
+                                    <div className="col-sm">
+                                        <div className="float-right">
+                                            <FontAwesomeIcon
+                                                className="tool" onClick={this.handleOpenDialog}
+                                                transform="grow-10" data-toggle="modal"
+                                                data-target="#exampleModal" icon={faUpload}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
+
+
+
+
+
+
+                        </div>
                         <div className="tab-content" id="pills-tabContent">
                             <div
                                 className="tab-pane fade show active" id="pills2-home"

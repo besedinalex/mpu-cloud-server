@@ -46,12 +46,12 @@ class UserItem extends Component {
                             <strong className="text-gray-dark">
                                 {this.props.user.firstName} {this.props.user.lastName}
                             </strong>
-                            <div className="tools" style={{position: "absolute", right: "30%"}}>
-                                <div className="icons-spacing" hidden={!this.state.isMouseOver}>
+                            <div className="tools float-left" style={{position:"absolute", right:"30%" }}>
+                                <div className="icons" hidden={!this.state.isMouseOver}>
                                     <FontAwesomeIcon
                                         icon={faUserMinus}
                                         className="tool"
-                                        transform="grow-10 left-2 up-2.2"
+                                        transform="grow-10"
                                         onClick={this.deleteUser}
                                     />
                                 </div>

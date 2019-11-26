@@ -1,21 +1,20 @@
 .card {
   width: 15rem;
   height: 13rem;
-  background: #ecf0f1;
   float: left;
   box-shadow: 0 0px 0px rgba(0, 0, 0, 0.25), 0 0px 3px rgba(0, 0, 0, 0.22);
   border: 2px solid #dee2e6 !important; 
   border-radius: 20px !important;
   box-sizing: border-box;
   margin-left: 23px;
+  background: ghostwhite !important;
 }
 .c-body {
   text-align: left;
   padding-left: 1rem;
-  
 }
-.card:hover {
-  background: #ecf0f1;
+.card:hover .card-img-top, .card:hover .c-body {
+  opacity: 0.90;
 }
 .icons-spacing {
   position: absolute;
@@ -24,8 +23,6 @@
   right: 1rem;
 }
 .card-img-top {
-  background: black;
-  opacity: 0.5;
   border-radius: 20px 20px 0 0  !important;
   height: 85%;
 }
@@ -35,8 +32,11 @@
 }
 h6{
     display: inline-block;
-    margin-left: 1rem;
+    margin-left: 6px;
 }
 .card-img-top:hover{
     cursor: pointer;
+}
+.sp-color{
+  color:ghostwhite ;
 }

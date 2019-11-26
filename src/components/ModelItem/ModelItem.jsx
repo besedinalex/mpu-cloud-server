@@ -7,7 +7,6 @@ import { deleteModel } from "../../services/models";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faCloudDownloadAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
-import $ from "jquery";
 import "./ModelItem.css";
 import DropDown from "../DropDown";
 
@@ -37,7 +36,8 @@ class ModelItem extends Component {
         this.setState({ isDownloadClicked: false });
         console.log(this.state.isDownloadClicked);
     }
-    handleDownloadClick = () => {
+    handleDownloadClick = (e) => {
+        e.preventDefault();
         if (this.state.isDownloadClicked) {
             this.setState({ isDownloadClicked: false });
         }
@@ -74,7 +74,7 @@ class ModelItem extends Component {
                 <td className="tools" style={{ width: "130px" }}>
                     <div className="icons" hidden={!this.state.isMouseOver}>
                         <FontAwesomeIcon onClick={this.handleModelClick} className="tool" icon={faEye} />
-                        <FontAwesomeIcon onClick={this.handleDownloadClick} id="ref" className="tool download dropdown-toggle" icon={faCloudDownloadAlt} />
+                        <FontAwesomeIcon onClick={this.handleDownloadClick} className="tool download dropdown-toggle" icon={faCloudDownloadAlt} />
                         <div hidden={!this.state.isDownloadClicked} onMouseLeave={this.handleMouseLeave}>
                             <DropDown updateFormatData={this.updateFormatData}/>
                         </div>
