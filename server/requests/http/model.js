@@ -113,7 +113,6 @@ exports.deleteModel = function (userId, groupId, modelId, res) {
     checkAccess(userId, groupId, modelId, res, model => {
         fs.unlink(model.originalPath);
         fs.unlink(model.gltfPath);
-        fs.unlink(model.previewPath);
         modelData.removeModel(modelId, userId).then(deleted => res.json({deleted}))
     })
 };
