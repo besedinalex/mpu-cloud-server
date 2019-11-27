@@ -26,8 +26,6 @@ class SignInView extends Component {
 
     handlePasswordChange = (e) => this.setState({password: e.target.value});
 
-    
-
     render() {
         if (this.state.redirect) {
             return <Redirect to="/models" />;

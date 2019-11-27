@@ -1,15 +1,25 @@
-# Как запустить?
+# Инструкция
 
-## Сервер
+## Разработка
 
 `npm run server` - запуск сервера.
 
-## Viewer
+`npm run viewer-dev` - сборка viewer для отладки.
 
-`npm run viewer-dev` - для отладки.
+`npm run start` - запуск React приложения для отладки.
 
-`npm run viewer-prod` - production.
+## Продакшн
 
-## React-Клиент
+Обязательно пройтись по всем TODO, которые требуют изменения IP и порта.
 
-`npm run start` - запуск в режиме отладки
+`npm run viewer-prod` - сборка viewer.
+
+`npm run build` - сборка React приложения.
+
+В папке /server/embedded-viewer удалить всё кроме /public.
+
+Папку /build перенести в /server и переименовать в /public.
+
+На сам сервер перенести /server, /node_modules, package.json, package-lock.json
+
+`npm run server` - запуск сервера.

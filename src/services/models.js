@@ -13,7 +13,7 @@ export function uploadModel(title, desc, model, groupId) {
 
         axios({
             method: 'post',
-            url: `${serverURL}/model?token=${token}`,
+            url: `${serverURL}/user-model?token=${token}`,
             data: bodyFormData,
             config: {headers: {'Content-Type': 'multipart/form-data'}}
         }).then(resolve).catch(reject);
@@ -22,7 +22,7 @@ export function uploadModel(title, desc, model, groupId) {
 
 export function deleteModel(id) {
     return new Promise((resolve, reject) => {
-        axios.delete(`${serverURL}/model/${id}?token=${token}`)
+        axios.delete(`${serverURL}/user-model/${id}?token=${token}`)
             .then(resolve).catch(reject);
     })
 }
