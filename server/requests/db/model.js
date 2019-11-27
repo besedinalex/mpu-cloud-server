@@ -1,10 +1,10 @@
 const db = require('./main').db;
 
-exports.addModel = function (title, desc, filename, gltfPath, originalPath, sizeKB, type, ownerUser, ownerGroup) {
+exports.addModel = function (title, desc, filename, gltfPath, originalPath, previewPath, sizeKB, type, ownerUser, ownerGroup) {
     return new Promise((resolve, reject) => {
         const sql =
-        `INSERT INTO Models (title, desc, filename, gltfPath, originalPath, sizeKB, type, ownerUser, ownerGroup) 
-        VALUES  ('${title}','${desc}', '${filename}', '${gltfPath}', '${originalPath}', '${sizeKB}', '${type}', '${ownerUser}', '${ownerGroup}')`;
+        `INSERT INTO Models (title, desc, filename, gltfPath, originalPath, previewPath, sizeKB, type, ownerUser, ownerGroup) 
+        VALUES ('${title}','${desc}', '${filename}', '${gltfPath}', '${originalPath}', '${previewPath}', '${sizeKB}', '${type}', '${ownerUser}', '${ownerGroup}')`;
         db.run(sql, [], function(err) {
             if (err) {
                 reject(err);

@@ -3,8 +3,10 @@ import {Link, Redirect} from "react-router-dom";
 
 import {handleSigningIn} from "../../../services/authentication";
 
-import '../Auth.css';
+import Notifications, { notify } from "../../Notifications";
 
+import '../Auth.css';
+import Cloud from "../../../images/cloud-computing.svg";
 class SignInView extends Component {
     state = {
         email: '',
@@ -15,7 +17,9 @@ class SignInView extends Component {
     signIn = (e) => {
         e.preventDefault();
         handleSigningIn(this.state.email, this.state.password)
-            .then(() => this.setState({redirect: true}));
+            .then(() => this.setState({redirect: true}))
+            .catch(() => notify("Неправильный пароль или email"));
+            
     };
 
     handleEmailChange = (e) => this.setState({email: e.target.value});
@@ -27,9 +31,10 @@ class SignInView extends Component {
             return <Redirect to="/models" />;
         } else {
             return (
+                <div>
                 <form className="form-auth">
                     <Link to="/">
-                        <img className="mb-4" src="../../../images/logo192.png" alt="" width="72" height="72" />
+                        <img className="mb-4" src={Cloud} alt="" width="100" />
                     </Link>
                     <h1 className="h3 mb-3 font-weight-normal">Вход</h1>
                     <input onChange={this.handleEmailChange} type="email" className="form-control" placeholder="Электронная почта" required autoFocus />
@@ -43,6 +48,8 @@ class SignInView extends Component {
                     <button onClick={this.signIn} className="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
                     <p className="mt-5 mb-3 text-muted">© 2019-{new Date().getFullYear()}</p>
                 </form>
+                <Notifications/>
+                </div>
             );
         }
     }

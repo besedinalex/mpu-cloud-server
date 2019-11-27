@@ -1,6 +1,7 @@
 const generator = require('generate-password');
-const path = require('path');
 const fs = require('fs-extra');
+const path = require('path');
+const request = require('request');
 
 const userData = require('../db/user');
 const groupData = require('../db/group');
@@ -33,10 +34,28 @@ function checkAccess(userId, groupId, modelId, res, callback) {
     })
 }
 
-exports.downloadModel = function (userId, groupId, modelId, res) {
-    checkAccess(userId, groupId, modelId, res, model =>
-        res.download(model.originalPath, model.filename)
-    );
+function convertModel(token, fullPathOrig, exportFormat, callback) {
+    request({
+        method: 'POST',
+        url: `http://195.133.144.86:4001/model?token=${token}&exportFormat=${exportFormat}`,
+        headers: {'Content-Type': 'multipart/form-data'},
+        formData: {'model': fs.createReadStream(fullPathOrig)}
+    }, function (err, response, data) {
+        callback(err, response, data);
+    });
+}
+
+exports.downloadModel = function (userId, groupId, format, token, dirname, modelId, res) {
+    checkAccess(userId, groupId, modelId, res, model => {
+        convertModel(token, model.originalPath, format, (err, response, data) => {
+            if (response.statusCode === 500) {
+                res.status(500).send(data);
+            } else {
+                const tempPath = path.join(dirname, 'storage/temp');
+                fs.writeFile(tempPath, data, () => res.download(tempPath, `${model.title}.${format}`));
+            }
+        });
+    });
 };
 
 exports.getModel = function (userId, groupId, modelId, res) {
@@ -45,55 +64,55 @@ exports.getModel = function (userId, groupId, modelId, res) {
     );
 };
 
-exports.addModel = function (userId, body, file, dirname, cad2gltf, res) {
+exports.addModel = function (userId, token, body, file, dirname, res) {
     if (!body || !file) {
         console.error('Bad Request. File is required!');
         res.status(500).send('Bad request!');
         return;
     }
 
-    let modelCode = generator.generate({length: 20, numbers: true});
-    let cellPath = path.join(dirname, 'storage', modelCode); // Путь к физической папке
+    const modelCode = generator.generate({length: 20, numbers: true});
+    const cellPath = path.join(dirname, 'storage', modelCode);
 
-    let fileNameOrig = modelCode + path.extname(file.originalname);
-    let fullPathOrig = path.join(cellPath, fileNameOrig);
+    const fileNamePreview = modelCode + '.jpg';
+    const fullPathPreview = path.join(dirname, 'storage/preview', fileNamePreview);
+    fs.outputFileSync(fullPathPreview, null);
 
-    let fileNameGLTF = modelCode + '.gltf'; // Название файла
-    let fullPathGLTF = path.join(cellPath, fileNameGLTF);
+    const fileNameOrig = modelCode + path.extname(file.originalname);
+    const fullPathOrig = path.join(cellPath, fileNameOrig);
+    fs.outputFileSync(fullPathOrig, file.buffer, {flag: 'wx'});
 
-    console.log(body, file, fullPathGLTF);
+    const fileNameGLTF = modelCode + '.gltf';
+    const fullPathGLTF = path.join(cellPath, fileNameGLTF);
 
-    cad2gltf(file.buffer, (gltf, err) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Import error!');
-            return;
-        }
-
-        let plainGLTF = JSON.stringify(gltf);
-
-        try {
-            fs.outputFileSync(fullPathGLTF, plainGLTF, {flag: 'wx'});
-            fs.outputFileSync(fullPathOrig, file.buffer, {flag: 'wx'});
-
+    convertModel(token, fullPathOrig, 'gltf', (err, response, data) => {
+        if (response.statusCode === 500) {
+            fs.unlink(fullPathOrig);
+            res.status(500).send(data);
+        } else {
+            fs.outputFileSync(fullPathGLTF, data, {flag: 'wx'});
             modelData.addModel(
                 body.title, body.desc, file.originalname,
-                fullPathGLTF.replace(/\\/g, "/"),
-                fullPathOrig.replace(/\\/g, "/"),
-                file.size, 'STEP', userId, body.groupId
-            ).then(model_id =>
-                res.json({model_id: model_id, filename: file.originalname, type: 'STEP', sizeKB: file.size})
-            );
-        } catch (err) {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Server failed!');
-                return;
-            }
+                fullPathGLTF.replace(/\\/g, '/'),
+                fullPathOrig.replace(/\\/g, '/'),
+                fileNamePreview,
+                file.size, path.extname(file.originalname).split('.')[1], userId, body.groupId
+            ).then(data => res.json(data));
         }
-    })
+    });
 };
 
-exports.deleteModel = function (userId, modelId, res) {
-    modelData.removeModel(modelId, userId).then(deleted => res.json({deleted}))
+exports.addModelPreview = function(userId, groupId, modelId, body, dirname, res) {
+    checkAccess(userId, groupId, modelId, res,model => {
+        const previewPath = path.join(dirname, 'storage/preview', model.previewPath);
+        fs.writeFile(previewPath, body.buffer, () => res.sendStatus(200))
+    });
+};
+
+exports.deleteModel = function (userId, groupId, modelId, res) {
+    checkAccess(userId, groupId, modelId, res, model => {
+        fs.unlink(model.originalPath);
+        fs.unlink(model.gltfPath);
+        modelData.removeModel(modelId, userId).then(deleted => res.json({deleted}))
+    })
 };

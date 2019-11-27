@@ -9,6 +9,14 @@
 }
 
 .inline {
-    display: inline;
-    padding-left: 40%;
+    display: inline-block;
 }
+.inline2{
+    display: inline-block;
+}
+.activeIcon{
+    background: red !important;
+}
+
+
+

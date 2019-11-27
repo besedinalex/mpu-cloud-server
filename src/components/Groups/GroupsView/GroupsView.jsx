@@ -1,13 +1,13 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 
-import {addGroup, getGroups} from "../../../services/groups";
+import { addGroup, getGroups } from "../../../services/groups";
 
 import HeaderComponent from "../../HeaderComponent";
 import GroupItem from "../GroupItem";
 
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFolderPlus} from "@fortawesome/free-solid-svg-icons";
-import {getUser} from "../../../services/profile";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFolderPlus } from "@fortawesome/free-solid-svg-icons";
+import { getUser } from "../../../services/profile";
 
 class GroupsView extends Component {
     constructor(props) {
@@ -30,20 +30,20 @@ class GroupsView extends Component {
         groups.map(group =>
             getUser(group.owner).then(userRes => {
                 group.ownerName = `${userRes.data[0].firstName} ${userRes.data[0].lastName}`;
-                this.setState({groups})
+                this.setState({ groups })
             })
         );
     });
 
-    handleCloseDialog = () => this.setState({isDialogOpen: false});
+    handleCloseDialog = () => this.setState({ isDialogOpen: false });
 
-    handleOpenDialog = () => this.setState({isDialogOpen: true});
+    handleOpenDialog = () => this.setState({ isDialogOpen: true });
 
-    handleTitleChange = ({target: {value}}) => this.setState({title: value});
+    handleTitleChange = ({ target: { value } }) => this.setState({ title: value });
 
-    handleFileSelection = ({target: {value}}) => this.setState({filename: value});
+    handleFileSelection = ({ target: { value } }) => this.setState({ filename: value });
 
-    handleDescChange = ({target: {value}}) => this.setState({description: value});
+    handleDescChange = ({ target: { value } }) => this.setState({ description: value });
 
     handleCreate = event => {
         event.preventDefault();
@@ -72,7 +72,7 @@ class GroupsView extends Component {
                             </div>
 
                             <div className="modal-body">
-                                <div className="input-group" style={{marginBottom: "16px"}}>
+                                <div className="input-group" style={{ marginBottom: "16px" }}>
                                     <div className="input-group-prepend">
                                         <span className="input-group-text">Имя группы</span>
                                     </div>
@@ -83,8 +83,8 @@ class GroupsView extends Component {
                                     />
                                 </div>
 
-                                <div className="form-group" style={{textAlign: "left"}}>
-                                    <label style={{textAlign: "left"}} htmlFor="exampleFormControlTextarea1">
+                                <div className="form-group" style={{ textAlign: "left" }}>
+                                    <label style={{ textAlign: "left" }} htmlFor="exampleFormControlTextarea1">
                                         Описание
                                     </label>
                                     <textarea
@@ -139,31 +139,41 @@ class GroupsView extends Component {
 
                 <main role="main" className="container margin-after-header">
                     <div className="my-3 p-3 bg-white rounded shadow-sm">
-                        <h3 className="inline">Группы</h3>
-                        <div className="inline">
-                            <FontAwesomeIcon
-                                className="tool" onClick={this.handleOpenDialog} transform="grow-10 left-2 up-2.2"
-                                data-toggle="modal" data-target="#exampleModal" icon={faFolderPlus}
-                            />
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-sm">
+                                </div>
+                                <div className="col-sm">
+                                    <h2>Группы</h2>
+                                </div>
+                                <div className="col-sm">
+                                    <div className="float-right">
+                                        <FontAwesomeIcon
+                                            className="tool" onClick={this.handleOpenDialog} transform="grow-15 down-4"
+                                            data-toggle="modal" data-target="#exampleModal" icon={faFolderPlus}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div className="border-bottom border-gray pb-2 mb-0" />
 
                         <table className="table">
                             <thead>
-                            <tr>
-                                <th scope="col">Название</th>
-                                <th scope="col" />
-                                <th scope="col">Создано</th>
-                                <th scope="col">Дата создания</th>
-                            </tr>
+                                <tr>
+                                    <th scope="col">Название</th>
+                                    <th scope="col" />
+                                    <th scope="col">Создано</th>
+                                    <th scope="col">Дата создания</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {this.state.groups.map((group, i) => (
-                                <GroupItem
-                                    groupId={group.group_id} title={group.title} ownerName={group.ownerName}
-                                    createdTime={group.createdTime} key={i}
-                                />
-                            ))}
+                                {this.state.groups.map((group, i) => (
+                                    <GroupItem
+                                        groupId={group.group_id} title={group.title} ownerName={group.ownerName}
+                                        createdTime={group.createdTime} key={i}
+                                    />
+                                ))}
                             </tbody>
                         </table>
                     </div>

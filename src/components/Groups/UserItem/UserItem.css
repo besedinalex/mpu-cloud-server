@@ -1,5 +1,7 @@
 .icons-spacing {
     display: flex;
     justify-content: space-between;
-    margin-top: 4px;
+}
+.w-100{
+    padding: 0 !important;
 }

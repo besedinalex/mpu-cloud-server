@@ -35,3 +35,29 @@
 .margin-after-header {
     margin-top: 70px;
 }
+
+.popover {
+    background: indianred !important;
+}
+
+.bs-popover-right .arrow::after{
+    border-right-color: indianred !important;
+}
+
+.bs-popover-left .arrow::after{
+    border-left-color: indianred !important;
+}
+
+.popover-body{
+    color:white !important;
+}
+
+.has-error{
+    border-color: indianred !important;
+}
+.popover-header{
+    color:white !important;
+    background: indianred !important;
+    font-size: 0.9rem !important;
+    border-bottom: transparent !important;
+}

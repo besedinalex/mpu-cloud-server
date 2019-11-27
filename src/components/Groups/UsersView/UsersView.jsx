@@ -1,11 +1,11 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 
-import {getGroupUsers, addGroupUser} from "../../../services/groups";
+import { getGroupUsers, addGroupUser } from "../../../services/groups";
 
 import UserItem from "../UserItem";
 
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUserPlus} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 
 class UsersView extends Component {
     constructor(props) {
@@ -20,15 +20,15 @@ class UsersView extends Component {
     }
 
     componentDidMount = () => getGroupUsers(this.props.group)
-        .then(res => this.setState({users: res.data.reverse()}));
+        .then(res => this.setState({ users: res.data.reverse() }));
 
-    handleOpenDialog = () => this.setState({isDialogOpen: true});
+    handleOpenDialog = () => this.setState({ isDialogOpen: true });
 
-    handleCloseDialog = () => this.setState({isDialogOpen: false});
+    handleCloseDialog = () => this.setState({ isDialogOpen: false });
 
-    handleMailChange = ({target: {value}}) => this.setState({email: value});
+    handleMailChange = ({ target: { value } }) => this.setState({ email: value });
 
-    handleAccessChange = ({target: {value}}) => this.setState({access: value});
+    handleAccessChange = ({ target: { value } }) => this.setState({ access: value });
 
     handleAdd = event => {
         event.preventDefault();
@@ -78,10 +78,10 @@ class UsersView extends Component {
                                 </div>
                             </div>
 
-                            <div style={{marginBottom: "16px"}}>
+                            <div style={{ marginBottom: "16px" }}>
                                 <div className="col-auto my-1">
                                     <select className="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref"
-                                            onChange={this.handleAccessChange}>
+                                        onChange={this.handleAccessChange}>
                                         <option defaultValue="USER">User</option>
                                         <option value="MODERATOR">Moderator</option>
                                     </select>
@@ -112,18 +112,26 @@ class UsersView extends Component {
 
                 <main role="main" className="container">
                     <div className="my-3 p-3 bg-white rounded shadow-sm">
-                        <h5 className="inline pb-2 mb-0">Пользователи</h5>
-                        <div className="inline">
-                            <FontAwesomeIcon
-                                className="tool"
-                                onClick={this.handleOpenDialog}
-                                transform="grow-9 left-2 up-2.2"
-                                data-toggle="modal"
-                                data-target="#exampleModal1"
-                                icon={faUserPlus}
-                            />
+                        <div className="container border-bottom border-gray pb-2 mb-0">
+                            <div className="row">
+                                <div className="col-sm"></div>
+                                <div class="col-sm">
+                                    <h2 className="pb-2 mb-0">Пользователи</h2>
+                                </div>
+                                <div className="col-sm">
+                                    <div className="float-right">
+                                        <FontAwesomeIcon
+                                            className="tool"
+                                            onClick={this.handleOpenDialog}
+                                            transform="grow-9"
+                                            data-toggle="modal"
+                                            data-target="#exampleModal1"
+                                            icon={faUserPlus}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className="border-bottom border-gray pb-2 mb-0" />
                         <div>
                             {this.state.users.map((user, i) => <UserItem user={user} group={this.props.group} key={i} />)}
                         </div>

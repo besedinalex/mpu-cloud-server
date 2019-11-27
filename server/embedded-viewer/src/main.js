@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import * as viewer from './viewer';
 
+// TODO: Update IP and Port before Prod
 const serverURL = 'http://127.0.0.1:4000';
 let viewerDiv = null;
 
