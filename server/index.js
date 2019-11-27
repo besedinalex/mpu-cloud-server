@@ -17,6 +17,7 @@ app.use('/viewer', express.static(__dirname + '/embedded-viewer/public'));
 app.use('/preview', express.static(__dirname + '/storage/preview'));
 app.use('/', express.static(__dirname + '/public'));
 
+// TODO: Update port before prod
 app.listen(4000, () => console.log('Сервер запущен!'));
 
 // User data and Auth requests
