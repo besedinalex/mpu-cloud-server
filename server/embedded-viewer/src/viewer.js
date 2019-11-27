@@ -136,6 +136,7 @@ export function init(viewerToken, modelToken, groupId) {
 							processData: false,
 							cache: false,
 							contentType: false,
+							// TODO: Update IP and Port before Prod
 							url: `http://127.0.0.1:4000/user-model/preview/${modelToken}?token=${viewerToken}&groupId=${groupId}`,
 							success: function (data) {
 								console.log(data)
