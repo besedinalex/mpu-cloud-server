@@ -45,8 +45,8 @@ class SignUpView extends Component {
         this.setState({
             isValidated: true
         });
-        this.state.isValidated = true;
         if (this.state.formValid) {
+            this.closeAllPopovers();
             e.preventDefault();
             handleSigningUp(this.state.firstName, this.state.lastName, this.state.email, this.state.password)
                 .then(() => this.setState({ redirect: true }));
@@ -82,7 +82,7 @@ class SignUpView extends Component {
                 emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
                 break;
             case 'password':
-                passwordValid = value.match(/(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}/g);
+                passwordValid = value.length >= 6;
                 break;
             case 'firstName':
                 firstNameValid = value.match(/(?=.*[а-я])(?=.*[А-Я])[а-яА-Я]{3,}/g);
@@ -163,7 +163,7 @@ class SignUpView extends Component {
                         onChange={this.handleUserInput}
                         type="email" 
                         name="email"
-                        className={`form-control ${(!this.state.emailValid && this.state.isValidated) ? 'has-error' : 'blank'}`}
+                        className={`form-control ${(!this.state.firstNameValid && this.state.isValidated) ? 'has-error' : 'blank'}`}
                         placeholder="Электронная почта"
                         required
                         autoFocus
@@ -212,7 +212,7 @@ class SignUpView extends Component {
                         onFocus ={this.handleFocus}
                         data-trigger="manual"
                         data-placement="left"
-                        data-content="Ваш пароль должен содержать символы верхнего и нижнего регистров, а так же цифры"
+                        data-content="Ваш пароль должен содержать не менее 6 символов"
                         id="password"
                     />
 
