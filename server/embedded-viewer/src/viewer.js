@@ -39,7 +39,7 @@ export function spoilers(curSpoiler, curBtn) {
 
 export function init(viewerToken, modelToken, groupId) {
 	// TODO: Update IP and Port before prod
-	axios.get(`http://127.0.0.1:4000/user-model/${modelToken}?token=${viewerToken}&groupId=${groupId}`)
+	axios.get(`http://127.0.0.1:4000/model/view/${modelToken}?token=${viewerToken}&groupId=${groupId}`)
 		.then(res => {
 			gltf = res.data.model;
 
@@ -137,7 +137,7 @@ export function init(viewerToken, modelToken, groupId) {
 							cache: false,
 							contentType: false,
 							// TODO: Update IP and Port before Prod
-							url: `http://127.0.0.1:4000/user-model/preview/${modelToken}?token=${viewerToken}&groupId=${groupId}`,
+							url: `http://127.0.0.1:4000/model/preview/${modelToken}?token=${viewerToken}&groupId=${groupId}`,
 							success: function (data) {
 								console.log(data)
 							},

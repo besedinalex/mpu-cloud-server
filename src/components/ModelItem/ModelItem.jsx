@@ -50,7 +50,7 @@ class ModelItem extends Component {
     }
 
     updateFormatData = (value) => {
-        window.location.href = `${serverURL}/user-model/original/${this.props.id}?token=${token}&groupId=${this.props.groupId}&format=${value}`;
+        window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}&groupId=${this.props.groupId}&format=${value}`;
     }
 
     render() {
