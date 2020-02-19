@@ -31,8 +31,7 @@ class ModelsView extends Component {
             modelId: null,
             listIcon: AppsIcon,
             gridIcon: ListIcon,
-            filterText: "",
-            isSearchBarOpen: false
+            filterText: ""
         };
         this.fileInput = React.createRef();
     }
@@ -53,11 +52,11 @@ class ModelsView extends Component {
 
     handleOpenDialog = () => this.setState({ isDialogOpen: true });
 
-    //handleOpenSearchBar = () => this.isSearchBarOpen ? this.setState({ isSearchBarOpen: false }) : this.setState({ isSearchBarOpen: true })
 
-    handleOpenSearchBar = (e) => {
+    handleOpenSearchBar = () => {
         let searchBar = document.querySelector('.searchBarBefore');
         if (searchBar.classList.contains("searchBarAfter")) {
+            this.setState({filterText:""})
             searchBar.classList.remove("searchBarAfter")
         } else{
             searchBar.classList.add("searchBarAfter")
@@ -209,7 +208,7 @@ class ModelsView extends Component {
                                     <div className="col-sm">
                                         <div className="float-right">
                                             <div className="row">
-                                                <div className="col-6 searchBarBefore" style={{'padding':"0px"}} >
+                                                <div className="col-6 p-0 searchBarBefore" >
                                                         <input 
                                                             type="text" 
                                                             className="form-control" 
@@ -217,7 +216,7 @@ class ModelsView extends Component {
                                                             onChange={this.handleSearchBarChange}
                                                         />
                                                 </div>
-                                                <div style={{'padding':"0px", 'z-index': '100'}}>
+                                                <div className = "p-0" style={{ 'zIndex': '100'}}>
                                                     <FontAwesomeIcon
                                                         className="tool"
                                                         onClick={this.handleOpenSearchBar}
@@ -289,7 +288,7 @@ class ModelsView extends Component {
                                         {this.state.models
                                             .filter(model => {
                                                 // remove names that do not match
-                                                return model.title.indexOf(this.state.filterText) >= 0
+                                                return model.title.toLowerCase().indexOf(this.state.filterText.toLowerCase()) >= 0
                                             })
                                             .map((model, i) => (
                                                 <ModelItemCard
