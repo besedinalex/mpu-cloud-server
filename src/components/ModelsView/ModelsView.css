@@ -18,5 +18,17 @@
     background: red !important;
 }
 
+.searchBarBefore {
+    position: relative;
+    left: 50px;
+    transition: left .2s linear, opacity .4s;
+    opacity: 0;
+  }
+  
+.searchBarAfter {
+    left: 0px;
+    opacity: 1;
+  }
+
 
 
