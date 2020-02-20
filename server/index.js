@@ -15,9 +15,8 @@ app.use('/user', user);
 app.use('/group', group);
 app.use('/file', file);
 
-// Files
-app.use('/viewer', express.static(__dirname + '/embedded-viewer/public')); // Models
-app.use('/preview', express.static(__dirname + '/storage/preview')); // Model previews
+// Public access files
+app.use('/viewer', express.static(__dirname + '/embedded-viewer/public')); // 3D viewer
 app.use('/', express.static(__dirname + '/public')); // React app
 
 app.get('/*', (req, res) => res.sendFile(__dirname + '/public/index.html')); // React app

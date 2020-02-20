@@ -129,11 +129,16 @@ files.delete('/original/:id', token.check, (req, res) => {
     });
 });
 
-// Downloading file for viewer
+// Accessing server file
 files.get('/view/:id', token.check, function (req, res) {
-    checkAccess(req.user_id, req.query.groupId, req.params.id, res, model => {
-        const modelPath = path.join(filesPath, model.code, model.code + '.' + req.query.format);
-        res.json({model: JSON.parse(fs.readFileSync(modelPath))});
+    checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
+        const format = req.query.format;
+        const filePath = path.join(filesPath, file.code, file.code + '.' + format);
+        if (format === 'gltf') {
+            res.json({model: JSON.parse(fs.readFileSync(filePath))});
+        } else {
+            res.sendFile(filePath);
+        }
     });
 });
 
