@@ -10,7 +10,7 @@ import ModelItem from "../ModelItem/ModelItem";
 
 import "./ModelsView.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faUpload, faSearch } from "@fortawesome/free-solid-svg-icons";
 import ModelItemCard from "../ModelItemCard";
 
 import AppsIcon from '@material-ui/icons/Apps';
@@ -30,7 +30,8 @@ class ModelsView extends Component {
             redirect: false,
             modelId: null,
             listIcon: AppsIcon,
-            gridIcon: ListIcon
+            gridIcon: ListIcon,
+            filterText: ""
         };
         this.fileInput = React.createRef();
     }
@@ -50,6 +51,21 @@ class ModelsView extends Component {
     handleCloseDialog = () => this.setState({ isDialogOpen: false });
 
     handleOpenDialog = () => this.setState({ isDialogOpen: true });
+
+
+    handleOpenSearchBar = () => {
+        let searchBar = document.querySelector('.searchBarBefore');
+        if (searchBar.classList.contains("searchBarAfter")) {
+            this.setState({filterText:""})
+            searchBar.classList.remove("searchBarAfter")
+        } else{
+            searchBar.classList.add("searchBarAfter")
+        }
+        
+    }
+    handleSearchBarChange = (e) => {
+        this.setState({ filterText: e.target.value });  
+    }
 
     handleTitleChange = (e) => this.setState({ title: e.target.value });
 
@@ -164,7 +180,6 @@ class ModelsView extends Component {
                         <div className="border-bottom border-gray pb-2 mb-0">
 
 
-
                             <div className="container">
                                 <div className="row">
                                     <div className="col-sm">
@@ -189,13 +204,33 @@ class ModelsView extends Component {
                                     <div className="col-sm">
                                         <h2>Модели</h2>
                                     </div>
+
                                     <div className="col-sm">
                                         <div className="float-right">
-                                            <FontAwesomeIcon
-                                                className="tool" onClick={this.handleOpenDialog}
-                                                transform="grow-10" data-toggle="modal"
-                                                data-target="#exampleModal" icon={faUpload}
-                                            />
+                                            <div className="row">
+                                                <div className="col-6 p-0 searchBarBefore" >
+                                                        <input 
+                                                            type="text" 
+                                                            className="form-control" 
+                                                            value={this.state.filterText} 
+                                                            onChange={this.handleSearchBarChange}
+                                                        />
+                                                </div>
+                                                <div className = "p-0" style={{ 'zIndex': '100'}}>
+                                                    <FontAwesomeIcon
+                                                        className="tool"
+                                                        onClick={this.handleOpenSearchBar}
+                                                        transform="grow-10"
+                                                        data-toggle="modal"
+                                                        icon={faSearch}
+                                                    />
+                                                    <FontAwesomeIcon
+                                                        className="tool" onClick={this.handleOpenDialog}
+                                                        transform="grow-10" data-toggle="modal"
+                                                        data-target="#exampleModal" icon={faUpload}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -222,7 +257,6 @@ class ModelsView extends Component {
                                         <tr>
                                             <th scope="col">Название</th>
                                             <th scope="col" />
-
                                             {this.props.groupModels ? <th scope="col">Пользователь</th> : null}
                                             <th scope="col">Тип</th>
                                             <th scope="col">Вес</th>
@@ -230,7 +264,12 @@ class ModelsView extends Component {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {this.state.models.map((model, i) => (
+                                        {this.state.models
+                                        .filter(model => {
+                                            // remove names that do not match
+                                            return model.title.toLowerCase().indexOf(this.state.filterText.toLowerCase()) >= 0
+                                        })
+                                        .map((model, i) => (
                                             <ModelItem
                                                 id={model.file_id} filename={model.title} type={model.type}
                                                 sizeKB={model.sizeKB} createdTime={model.createdTime}
@@ -246,12 +285,17 @@ class ModelsView extends Component {
                             >
                                 <table className="table">
                                     <tbody>
-                                        {this.state.models.map((model, i) => (
-                                            <ModelItemCard
-                                                id={model.model_id} filename={model.title} name={this.props.name}
-                                                groupId={this.props.groupId} preview={model.previewPath} key={i}
-                                            />
-                                        ))}
+                                        {this.state.models
+                                            .filter(model => {
+                                                // remove names that do not match
+                                                return model.title.toLowerCase().indexOf(this.state.filterText.toLowerCase()) >= 0
+                                            })
+                                            .map((model, i) => (
+                                                <ModelItemCard
+                                                    id={model.model_id} filename={model.title} name={this.props.name}
+                                                    groupId={this.props.groupId} preview={model.previewPath} key={i}
+                                                />
+                                            ))}
                                     </tbody>
                                 </table>
                             </div>
