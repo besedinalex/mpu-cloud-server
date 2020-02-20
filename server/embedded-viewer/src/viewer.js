@@ -1,8 +1,6 @@
 import axios from 'axios';
 import $ from 'jquery';
-
 import xeogl from './xeogl-dependencies';
-
 import AnnotationExtension from "./extentions/annotation";
 import HighlightExtension from "./extentions/highlight";
 import HidePartsExtension from "./extentions/hideParts";
@@ -11,6 +9,7 @@ import ClippingExtension from './extentions/clipping';
 import PresentationExtension from "./extentions/presentation";
 import OpacityExtension from "./extentions/opacity";
 import VisionExtension from "./extentions/vision";
+import {serverURL} from './server-url';
 
 //Global vars
 let model, scene, camera, input, cameraControl, gltf;
@@ -38,8 +37,7 @@ export function spoilers(curSpoiler, curBtn) {
 }
 
 export function init(viewerToken, modelToken, groupId) {
-	// TODO: Update IP and Port before prod
-	axios.get(`http://127.0.0.1:4000/file/view/${modelToken}?token=${viewerToken}&groupId=${groupId}`)
+	axios.get(`${serverURL}/file/view/${modelToken}?token=${viewerToken}&groupId=${groupId}&format=gltf`)
 		.then(res => {
 			gltf = res.data.model;
 
@@ -136,8 +134,7 @@ export function init(viewerToken, modelToken, groupId) {
 							processData: false,
 							cache: false,
 							contentType: false,
-							// TODO: Update IP and Port before Prod
-							url: `http://127.0.0.1:4000/file/preview/${modelToken}?token=${viewerToken}&groupId=${groupId}`,
+							url: `${serverURL}/file/preview/${modelToken}?token=${viewerToken}&groupId=${groupId}`,
 							success: function (data) {
 								console.log(data)
 							},

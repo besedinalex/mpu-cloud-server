@@ -58,16 +58,16 @@ function convertModel(token, modelPath, exportFormat, callback) {
 files.get('/original/:id', token.check, function (req, res) {
     checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
         const format = req.query.format.toLowerCase();
-        const modelPath = path.join(filesPath, file.code, file.code + '.' + format);
-        if (fs.existsSync(modelPath)) {
-            res.download(modelPath, `${file.title}.${format}`);
+        const filePath = path.join(filesPath, file.code, file.code + '.' + format);
+        if (fs.existsSync(filePath)) {
+            res.download(filePath, `${file.title}.${format}`);
         } else {
-            const origPath = modelPath.replace('.' + format, '.' + file.format);
+            const origPath = filePath.replace('.' + format, '.' + file.format);
             convertModel(req.query.token, origPath, req.query.format, (err, response, data) => {
                 if (response === undefined || response.statusCode === 500) {
                     res.status(500).send();
                 } else {
-                    fs.writeFile(modelPath, data, () => res.download(modelPath, `${file.title}.${format}`));
+                    fs.writeFile(filePath, data, () => res.download(filePath, `${file.title}.${format}`));
                 }
             });
         }
@@ -129,10 +129,10 @@ files.delete('/original/:id', token.check, (req, res) => {
     });
 });
 
-// Downloading model for viewer
+// Downloading file for viewer
 files.get('/view/:id', token.check, function (req, res) {
     checkAccess(req.user_id, req.query.groupId, req.params.id, res, model => {
-        const modelPath = path.join(filesPath, model.code, model.code + '.gltf');
+        const modelPath = path.join(filesPath, model.code, model.code + '.' + req.query.format);
         res.json({model: JSON.parse(fs.readFileSync(modelPath))});
     });
 });
