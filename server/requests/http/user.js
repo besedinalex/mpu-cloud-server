@@ -32,7 +32,8 @@ user.post('/data', function (req, res) {
             const token = jwt.sign(payload, secret, {expiresIn: '365d'});
             let expiresAt = Date.now() + +365 * 24 * 60 * 60 * 1000;
             res.json({token, expiresAt: expiresAt, userId: userId});
-        });
+        })
+        .catch(() => res.status(401).send());
 });
 
 user.get('/files', token.check, function (req, res) {
