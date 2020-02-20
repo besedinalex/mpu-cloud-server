@@ -1,19 +1,15 @@
 import React, {Component} from 'react';
 import {BrowserRouter as Router, Link, Redirect, Route, Switch} from "react-router-dom";
-
 import 'jquery';
-
 import {isAuthenticated} from "./services/authentication";
-
 import LandingView from "./components/LandingView";
 import SignUpView from './components/Auth/SignUpView';
 import SignInView from './components/Auth/SignInView';
-import ProfileView from "./components/ProfileView";
 import ModelsView from './components/ModelsView';
 import ModelView from "./components/ModelView";
 import GroupsView from "./components/Groups/GroupsView";
 import GroupView from "./components/Groups/GroupView";
-
+import PDFView from './components/PDFView';
 import './App.css';
 import 'bootstrap/dist/js/bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -58,7 +54,7 @@ class App extends Component {
                         <PrivateRoute path="/model/:id" component={ModelView} />
                         <PrivateRoute path="/groups" component={GroupsView} />
                         <PrivateRoute path="/group/:id" component={GroupView} />
-                        {/*<PrivateRoute path="/profile/:id" component={ProfileView} />*/}
+                        <PrivateRoute path="/document/:id" component={PDFView} />
                         <Route component={Page404} />
                     </Switch>
                 </div>
