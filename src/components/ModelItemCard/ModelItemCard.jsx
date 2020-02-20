@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 
 import { serverURL } from "../../services/server-url";
 import { token } from "../../services/authentication";
-import { deleteModel } from "../../services/models";
+import { deleteFile } from "../../services/files";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faCloudDownloadAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -35,7 +35,7 @@ class ModelItemCard extends Component {
   //  }
        // window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}&groupId=${this.props.groupId}&format=${this.props.type}`;
 
-    handleRemoveClick = () => deleteModel(this.props.id).then(() => window.location.reload());
+    handleRemoveClick = () => deleteFile(this.props.id).then(() => window.location.reload());
 
     handleMouseOver = () => this.setState({ isMouseOver: true });
 

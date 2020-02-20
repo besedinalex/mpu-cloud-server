@@ -35,8 +35,8 @@ user.post('/data', function (req, res) {
         });
 });
 
-user.get('/models', token.check, function (req, res) {
-    userData.getUserModels(req.user_id).then(data => res.json(data));
+user.get('/files', token.check, function (req, res) {
+    userData.getUserFiles(req.user_id).then(data => res.json(data));
 });
 
 module.exports = user;

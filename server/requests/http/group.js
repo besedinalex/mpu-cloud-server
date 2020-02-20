@@ -84,13 +84,13 @@ group.get('/users', token.check, function (req, res) {
     });
 });
 
-group.get('/models', token.check, function (req, res) {
+group.get('/files', token.check, function (req, res) {
     const groupId = req.query.groupId;
     groupData.getGroup(req.user_id, groupId).then(group => {
         if (group.length === 0) {
             res.status(401).send();
         } else {
-            groupData.getGroupModels(groupId).then(data => res.json(data));
+            groupData.getGroupFiles(groupId).then(data => res.json(data));
         }
     });
 });

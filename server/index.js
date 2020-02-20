@@ -3,7 +3,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const user = require('./requests/http/user');
 const group = require('./requests/http/group');
-const model = require('./requests/http/model');
+const file = require('./requests/http/file');
 
 const app = express();
 
@@ -13,7 +13,7 @@ app.use(cookieParser());
 // Requests
 app.use('/user', user);
 app.use('/group', group);
-app.use('/model', model);
+app.use('/file', file);
 
 // Files
 app.use('/viewer', express.static(__dirname + '/embedded-viewer/public')); // Models

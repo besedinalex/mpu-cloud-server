@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 
 import { serverURL } from "../../services/server-url";
 import { token } from "../../services/authentication";
-import { deleteModel } from "../../services/models";
+import { deleteFile } from "../../services/files";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faCloudDownloadAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -24,7 +24,7 @@ class ModelItem extends Component {
 
     handleModelClick = () => this.setState({ redirect: true });
 
-    handleRemoveClick = () => deleteModel(this.props.id).then(() => window.location.reload());
+    handleRemoveClick = () => deleteFile(this.props.id).then(() => window.location.reload());
 
     handleMouseOver = () => this.setState({ isMouseOver: true });
 
@@ -50,7 +50,7 @@ class ModelItem extends Component {
     }
 
     updateFormatData = (value) => {
-        window.location.href = `${serverURL}/model/original/${this.props.id}?token=${token}&groupId=${this.props.groupId}&format=${value}`;
+        window.location.href = `${serverURL}/file/original/${this.props.id}?token=${token}&groupId=${this.props.groupId}&format=${value}`;
     }
 
     render() {

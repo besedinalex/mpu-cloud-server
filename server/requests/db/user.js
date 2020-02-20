@@ -66,9 +66,9 @@ exports.getIdByEmail = function (email) {
     })
 };
 
-exports.getUserModels = function (userId) {
+exports.getUserFiles = function (userId) {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM Models WHERE ownerUser = '${userId}'`;
+        const sql = `SELECT * FROM Files WHERE ownerUser = '${userId}'`;
         db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);

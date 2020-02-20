@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 
 import $ from "jquery";
 
-import { getGroupModels, getUserModels, uploadModel } from "../../services/models";
+import { getGroupFiles, getUserFiles, uploadFile } from "../../services/files";
 
 import HeaderComponent from "../HeaderComponent";
 import ModelItem from "../ModelItem/ModelItem";
@@ -39,9 +39,9 @@ class ModelsView extends Component {
 
     getModels = () => {
         if (this.props.groupId !== undefined) {
-            getGroupModels(this.props.groupId).then(res => this.setState({ models: res.data.reverse() }));
+            getGroupFiles(this.props.groupId).then(res => this.setState({ models: res.data.reverse() }));
         } else {
-            getUserModels().then(res => this.setState({ models: res.data.reverse() }));
+            getUserFiles().then(res => this.setState({ models: res.data.reverse() }));
         }
     };
 
@@ -60,7 +60,7 @@ class ModelsView extends Component {
     handleUpload = () => {
         this.setState({ isUploaded: true });
         const groupId = this.props.groupId === undefined ? 'NULL' : this.props.groupId;
-        uploadModel(this.state.title, this.state.desc, this.fileInput.current.files[0], groupId)
+        uploadFile(this.state.title, this.state.desc, this.fileInput.current.files[0], groupId)
             .then(data => {
                 $("#exampleModal").modal("hide");
                 this.setState({ redirect: true, modelId: data.data });
@@ -232,7 +232,7 @@ class ModelsView extends Component {
                                     <tbody>
                                         {this.state.models.map((model, i) => (
                                             <ModelItem
-                                                id={model.model_id} filename={model.title} type={model.type}
+                                                id={model.file_id} filename={model.title} type={model.type}
                                                 sizeKB={model.sizeKB} createdTime={model.createdTime}
                                                 name={this.props.name} groupId={this.props.groupId} key={i}
                                             />

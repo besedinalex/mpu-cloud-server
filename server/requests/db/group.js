@@ -54,9 +54,9 @@ exports.getGroups = function (userId) {
     })
 };
 
-exports.getGroupModels = function (groupId) {
+exports.getGroupFiles = function (groupId) {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM Models WHERE ownerGroup = '${groupId}'`;
+        const sql = `SELECT * FROM Files WHERE ownerGroup = '${groupId}'`;
         db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);
