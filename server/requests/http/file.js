@@ -4,43 +4,13 @@ const fs = require('fs-extra');
 const path = require('path');
 const request = require('request');
 const multer = require('multer');
-const token = require('../http/token');
-const userData = require('../db/user');
-const groupData = require('../db/group');
+const accessCheck = require('./access-check');
 const fileData = require('../db/file');
 
 const files = express.Router();
 const upload = multer({storage: multer.memoryStorage()});
 
 const filesPath = path.join(__dirname.replace('/requests/http', ''), 'storage'); // Temp
-
-// Checks if it's user file or from his groups
-function checkAccess(userId, groupId, fileId, res, callback) {
-    userData.getUserFiles(userId).then(userFiles => {
-        let found = false;
-        for (let file of userFiles) {
-            if (file.file_id == fileId && file.ownerUser == userId) {
-                found = true;
-                callback(file);
-            }
-        }
-        if (!found) {
-            groupData.getGroup(userId, groupId).then(group => {
-                if (group.length === 0) {
-                    res.status(401).send();
-                } else {
-                    groupData.getGroupFiles(groupId).then(groupFiles => {
-                        for (let file of groupFiles) {
-                            if (file.file_id == fileId && file.ownerGroup == groupId) {
-                                callback(file);
-                            }
-                        }
-                    })
-                }
-            })
-        }
-    })
-}
 
 // Sends model to converter and await for converted one
 function convertModel(token, modelPath, exportFormat, callback) {
@@ -55,8 +25,8 @@ function convertModel(token, modelPath, exportFormat, callback) {
 }
 
 // Download file from server
-files.get('/original/:id', token.check, function (req, res) {
-    checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
+files.get('/original/:id', accessCheck.tokenCheck, function (req, res) {
+    accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
         const format = req.query.format.toLowerCase();
         const filePath = path.join(filesPath, file.code, file.code + '.' + format);
         if (fs.existsSync(filePath)) {
@@ -75,7 +45,7 @@ files.get('/original/:id', token.check, function (req, res) {
 });
 
 // Uploading file to server
-files.post('/original', [token.check, upload.single('model')], function (req, res) {
+files.post('/original', [accessCheck.tokenCheck, upload.single('model')], function (req, res) {
     const body = req.body;
     const file = req.file;
 
@@ -122,16 +92,16 @@ files.post('/original', [token.check, upload.single('model')], function (req, re
 });
 
 // Removing file from server
-files.delete('/original/:id', token.check, (req, res) => {
-    checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
+files.delete('/original/:id', accessCheck.tokenCheck, (req, res) => {
+    accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
         fs.removeSync(path.join(filesPath, file.code));
         fileData.removeFile(req.params.id, req.user_id).then(deleted => res.json({deleted}));
     });
 });
 
 // Accessing server file
-files.get('/view/:id', token.check, function (req, res) {
-    checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
+files.get('/view/:id', accessCheck.tokenCheck, function (req, res) {
+    accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
         const format = req.query.format;
         const filePath = path.join(filesPath, file.code, file.code + '.' + format);
         if (format === 'gltf') {
@@ -143,8 +113,8 @@ files.get('/view/:id', token.check, function (req, res) {
 });
 
 // Adding preview of file
-files.post('/preview/:id', [token.check, upload.single('canvasImage')], function (req, res) {
-    checkAccess(req.user_id, req.query.groupId, req.params.id, res,file => {
+files.post('/preview/:id', [accessCheck.tokenCheck, upload.single('canvasImage')], function (req, res) {
+    accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res,file => {
         const previewPath = path.join(filesPath, file.code, file.code + '.jpg');
         fs.writeFile(previewPath, req.file.buffer, () => res.sendStatus(200))
     });

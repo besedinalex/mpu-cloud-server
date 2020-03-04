@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const token = require('../http/token');
+const accessCheck = require('./access-check');
 const userData = require('../db/user');
 
 const user = express.Router();
@@ -36,7 +36,7 @@ user.post('/data', function (req, res) {
         .catch(() => res.status(401).send());
 });
 
-user.get('/files', token.check, function (req, res) {
+user.get('/files', accessCheck.tokenCheck, function (req, res) {
     userData.getUserFiles(req.user_id).then(data => res.json(data));
 });
 

@@ -1,24 +1,24 @@
 const express = require('express');
-const token = require('../http/token');
+const accessCheck = require('./access-check');
 const userData = require('../db/user');
 const groupData = require('../db/group');
 
 const group = express.Router();
 
-group.get('/group', token.check, function (req, res) {
+group.get('/group', accessCheck.tokenCheck, function (req, res) {
     groupData.getGroup(req.user_id, req.query.groupId).then(data => res.json(data));
 });
 
-group.get('/groups', token.check, function (req, res) {
+group.get('/groups', accessCheck.tokenCheck, function (req, res) {
     groupData.getGroups(req.user_id).then(data => res.json(data));
 });
 
-group.post('/create', token.check, function (req) {
+group.post('/create', accessCheck.tokenCheck, function (req) {
     groupData.addGroup(req.query.title, req.query.description, req.query.image, req.user_id)
         .then(res => groupData.addGroupUser(req.user_id, res, 'ADMIN'));
 });
 
-group.post('/user', token.check, function (req, res) {
+group.post('/user', accessCheck.tokenCheck, function (req, res) {
     const groupId = req.query.groupId;
     let access = req.query.access;
     groupData.getUserAccess(groupId, req.user_id).then(resolve => {
@@ -47,7 +47,7 @@ group.post('/user', token.check, function (req, res) {
     });
 });
 
-group.delete('/user', token.check, (req, res) => {
+group.delete('/user', accessCheck.tokenCheck, (req, res) => {
     const groupId = req.query.groupId;
     const userId = req.query.userId;
     groupData.getUserAccess(groupId, req.user_id).then(resolve => {
@@ -73,7 +73,7 @@ group.delete('/user', token.check, (req, res) => {
     });
 });
 
-group.get('/users', token.check, function (req, res) {
+group.get('/users', accessCheck.tokenCheck, function (req, res) {
     const groupId = req.query.groupId;
     groupData.getGroup(req.user_id, groupId).then(group => {
         if (group.length === 0) {
@@ -84,7 +84,7 @@ group.get('/users', token.check, function (req, res) {
     });
 });
 
-group.get('/files', token.check, function (req, res) {
+group.get('/files', accessCheck.tokenCheck, function (req, res) {
     const groupId = req.query.groupId;
     groupData.getGroup(req.user_id, groupId).then(group => {
         if (group.length === 0) {
