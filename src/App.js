@@ -25,7 +25,7 @@ function PrivateRoute({component: Component, ...rest}) {
 function PublicOnlyRoute({component: Component, ...rest}) {
     return (
         <Route {...rest}
-            render={props => isAuthenticated ? (<Redirect to="/models" />) : (<Component {...rest} {...props} />)}
+            render={props => isAuthenticated ? (<Redirect to="/files" />) : (<Component {...rest} {...props} />)}
         />
     );
 }
