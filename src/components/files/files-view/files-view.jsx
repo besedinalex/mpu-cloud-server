@@ -10,6 +10,7 @@ import {faUpload, faSearch} from "@fortawesome/free-solid-svg-icons";
 import FileItemCardComponent from "../file-item-card-component";
 import AppsIcon from '@material-ui/icons/Apps';
 import ListIcon from '@material-ui/icons/List';
+import NotificationsComponent, {notify} from "../../notifications-component";
 
 export default class FilesView extends Component {
     constructor(props) {
@@ -66,13 +67,20 @@ export default class FilesView extends Component {
     handleInputChange = (e) => this.setState({filename: e.target.value});
 
     handleUpload = () => {
+        if (this.state.filename === 'Выберите файл') {
+            notify('Вы не выбрали файл для загрузки');
+            return;
+        }
         this.setState({isUploaded: true});
         const groupId = this.props.groupId === undefined ? 'NULL' : this.props.groupId;
         uploadFile(this.state.title, this.state.desc, this.fileInput.current.files[0], groupId)
-            .then(data => {
-                $("#exampleModal").modal("hide");
-                this.setState({redirect: true, modelId: data.data});
-            });
+            .then(data => this.setState({redirect: true, modelId: data.data}))
+            .catch(() => {
+                this.setState({filename: 'Выберите файл'});
+                this.setState({isUploaded: false});
+                notify('Не удалось загрузить файл');
+            })
+            .finally(() => $("#exampleModal").modal("hide"));
     };
 
     render() {
@@ -281,6 +289,7 @@ export default class FilesView extends Component {
                         </div>
                     </div>
                 </main>
+                <NotificationsComponent />
             </div>
         );
     }
