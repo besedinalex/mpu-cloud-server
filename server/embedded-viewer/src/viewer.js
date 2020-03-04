@@ -101,7 +101,7 @@ export function init(viewerToken, modelToken, groupId) {
 				camera.up = [0, 1, 0];
 				input = scene.input;
 
-				const annotation = new AnnotationExtension(input, scene);
+				const annotation = new AnnotationExtension(input, scene, modelToken, viewerToken, groupId);
 				const highlight = new HighlightExtension(cameraControl, input);
 				const hideParts = new HidePartsExtension(cameraControl, camera, model, input);
 				const spacing = new SpacingExtension(model);

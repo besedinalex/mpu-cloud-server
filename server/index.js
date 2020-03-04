@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const user = require('./requests/http/user');
 const group = require('./requests/http/group');
 const file = require('./requests/http/file');
+const modelAnnotation = require('./requests/http/model-annotation');
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(cookieParser());
 app.use('/user', user);
 app.use('/group', group);
 app.use('/file', file);
+app.use('/model-annotation', modelAnnotation);
 
 // Public access files
 app.use('/viewer', express.static(__dirname + '/embedded-viewer/public')); // 3D viewer
