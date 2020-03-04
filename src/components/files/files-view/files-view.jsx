@@ -76,16 +76,20 @@ export default class FilesView extends Component {
         uploadFile(this.state.title, this.state.desc, this.fileInput.current.files[0], groupId)
             .then(data => this.setState({redirect: true, modelId: data.data}))
             .catch(() => {
+                $("#exampleModal").modal("hide");
+                this.fileInput = React.createRef();
                 this.setState({filename: 'Выберите файл'});
                 this.setState({isUploaded: false});
                 notify('Не удалось загрузить файл');
-            })
-            .finally(() => $("#exampleModal").modal("hide"));
+            });
     };
 
     render() {
         if (this.state.redirect) {
-            return <Redirect to={`/model/${this.state.modelId}`} />;
+            $("#exampleModal").modal("hide");
+            const fileIsPDF = this.fileInput.current.files[0].name.toLowerCase().includes('.pdf');
+            const path = fileIsPDF === true ? 'document' : 'model';
+            return <Redirect to={`/${path}/${this.state.modelId}`} />;
         }
         return (
             <div>
