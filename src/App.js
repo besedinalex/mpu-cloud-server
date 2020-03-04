@@ -1,19 +1,15 @@
 import React, {Component} from 'react';
 import {BrowserRouter as Router, Link, Redirect, Route, Switch} from "react-router-dom";
-
 import 'jquery';
-
 import {isAuthenticated} from "./services/authentication";
-
-import LandingView from "./components/LandingView";
-import SignUpView from './components/Auth/SignUpView';
-import SignInView from './components/Auth/SignInView';
-import ProfileView from "./components/ProfileView";
-import ModelsView from './components/ModelsView';
-import ModelView from "./components/ModelView";
-import GroupsView from "./components/Groups/GroupsView";
-import GroupView from "./components/Groups/GroupView";
-
+import LandingView from "./components/landing-view";
+import SignUpView from './components/auth-view/sign-up-view';
+import SignInView from './components/auth-view/sign-in-view';
+import FilesView from './components/files/files-view';
+import ModelViewerView from "./components/files/model-viewer-view";
+import GroupsView from "./components/groups/groups-view";
+import GroupView from "./components/groups/group-view";
+import PDFViewerView from './components/files/pdf-viewer-view';
 import './App.css';
 import 'bootstrap/dist/js/bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -29,7 +25,7 @@ function PrivateRoute({component: Component, ...rest}) {
 function PublicOnlyRoute({component: Component, ...rest}) {
     return (
         <Route {...rest}
-            render={props => isAuthenticated ? (<Redirect to="/models" />) : (<Component {...rest} {...props} />)}
+            render={props => isAuthenticated ? (<Redirect to="/files" />) : (<Component {...rest} {...props} />)}
         />
     );
 }
@@ -54,11 +50,11 @@ class App extends Component {
                         <Route exact path="/" component={LandingView} />
                         <PublicOnlyRoute path="/login" component={SignInView} />
                         <PublicOnlyRoute path="/signup" component={SignUpView} />
-                        <PrivateRoute path="/models" component={ModelsView} />
-                        <PrivateRoute path="/model/:id" component={ModelView} />
+                        <PrivateRoute path="/files" component={FilesView} />
+                        <PrivateRoute path="/model/:id" component={ModelViewerView} />
+                        <PrivateRoute path="/document/:id" component={PDFViewerView} />
                         <PrivateRoute path="/groups" component={GroupsView} />
                         <PrivateRoute path="/group/:id" component={GroupView} />
-                        {/*<PrivateRoute path="/profile/:id" component={ProfileView} />*/}
                         <Route component={Page404} />
                     </Switch>
                 </div>

@@ -12,7 +12,7 @@ updateAuthData();
 
 export function handleSigningUp(firstName, lastName, email, password) {
     return new Promise((resolve, reject) => {
-        (axios.post(`${serverURL}/user?firstName=${firstName}&lastName=${lastName}&email=${email}&password=${password}`)
+        (axios.post(`${serverURL}/user/data?firstName=${firstName}&lastName=${lastName}&email=${email}&password=${password}`)
             .then(res => {
                 if (res.status === 200)
                     handleAuthentication(res.data);
@@ -22,7 +22,7 @@ export function handleSigningUp(firstName, lastName, email, password) {
 
 export function handleSigningIn(email, password) {
     return new Promise((resolve, reject) => {
-        (axios.get(`${serverURL}/token?email=${email}&password=${password}`)
+        (axios.get(`${serverURL}/user/token?email=${email}&password=${password}`)
             .then(res => {
                 if (res.status === 200)
                     handleAuthentication(res.data);
