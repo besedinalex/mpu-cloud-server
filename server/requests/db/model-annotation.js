@@ -1,5 +1,18 @@
 const db = require('./main').db;
 
+exports.getAnnotations = function (modelId) {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT ModelAnnotations.data FROM ModelAnnotations WHERE ModelAnnotations.model_id = ${modelId}`;
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+};
+
 exports.addAnnotation = function (modelId, data) {
     return new Promise((resolve, reject) => {
         const sql =
@@ -15,14 +28,14 @@ exports.addAnnotation = function (modelId, data) {
     });
 };
 
-exports.getAnnotations = function (modelId) {
+exports.deleteAnnotations = function (modelId) {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT ModelAnnotations.data FROM ModelAnnotations WHERE ModelAnnotations.model_id = ${modelId}`;
-        db.all(sql, [], (err, rows) => {
+        const sql = `DELETE FROM ModelAnnotations WHERE model_id = ${modelId}`;
+        db.run(sql, [], function(err) {
             if (err) {
                 reject(err);
             } else {
-                resolve(rows);
+                resolve(this.changes);
             }
         });
     });
