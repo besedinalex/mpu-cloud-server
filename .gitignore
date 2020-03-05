@@ -359,7 +359,10 @@ MigrationBackup/
 # JetBrains IDEs
 .idea/
 
-server/storage/*
-server/public
+# User data storage
+data/*
+!data/database.sqlite3
 
-mpu-cloud-viewer.min.js
+
+# Compiled client
+public/
