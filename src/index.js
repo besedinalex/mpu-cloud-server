@@ -1,13 +1,28 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const user = require('./requests/http/user');
+const group = require('./requests/http/group');
+const file = require('./requests/http/file');
+const modelAnnotation = require('./requests/http/model-annotation');
 
+const app = express();
+const publicFolderPath = path.join(__dirname.replace('src', ''), 'public');
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// Some security stuff
+app.use(cors());
+app.use(cookieParser());
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// Public access files
+app.use('/', express.static(publicFolderPath));
+app.use('/viewer', express.static(publicFolderPath + '/embedded-viewer')); // TODO: Remove on new React-viewer
+
+// Requests
+app.use('/user', user);
+app.use('/group', group);
+app.use('/file', file);
+app.use('/model-annotation', modelAnnotation);
+app.get('/*', (req, res) => res.sendFile(__dirname + '/public/index.html')); // React app
+
+app.listen(4000, () => console.log('Сервер запущен!')); // TODO: Update before prod
