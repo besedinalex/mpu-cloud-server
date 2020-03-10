@@ -1,12 +1,10 @@
 const db = require('./db-connection').db;
-const crypto = require('../../crypto.js');
 
 exports.signUp = function (firstName, lastName, email, password) {
     return new Promise((resolve, reject) => {
-        const cryptedPassword = crypto.encrypt(password);
         const sql =
         `INSERT INTO Users (firstName, lastName, email, password)
-        VALUES ('${firstName}','${lastName}','${email}','${cryptedPassword}')`;
+        VALUES ('${firstName}','${lastName}','${email}','${password}')`;
         db.run(sql, [], function(err) {
             if (err) {
                 reject(err);
@@ -19,16 +17,11 @@ exports.signUp = function (firstName, lastName, email, password) {
 
 exports.signIn = function (email, password) {
     return new Promise((resolve, reject) => {
-        const cryptedPassword = crypto.encrypt(password);
-        const sql =
-        `SELECT Users.user_id
-        FROM Users 
-        WHERE email = '${email}' AND password = '${cryptedPassword}'`;
+        const sql = `SELECT Users.user_id, Users.password FROM Users WHERE email = '${email}'`;
         db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);
             } else if (rows.length === 0) {
-                const err = new Error('Неверный логин или пароль.');
                 reject(err);
             } else {
                 resolve(rows[0]);
