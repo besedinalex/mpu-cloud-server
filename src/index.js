@@ -23,6 +23,6 @@ app.use('/user', user);
 app.use('/group', group);
 app.use('/file', file);
 app.use('/model-annotation', modelAnnotation);
-app.get('/*', (req, res) => res.sendFile(publicFolderPath)); // React app
+app.get('/*', (req, res) => res.sendFile(path.join(publicFolderPath, 'index.html'))); // React app
 
 app.listen(4000, () => console.log('Сервер запущен!')); // TODO: Update before prod
