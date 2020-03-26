@@ -8,7 +8,7 @@ const file = require('./requests/http/file');
 const modelAnnotation = require('./requests/http/model-annotation');
 
 const app = express();
-const publicFolderPath = path.join(__dirname.replace('src', ''), 'public');
+const publicFolderPath = path.join(__dirname, '..', 'public');
 
 // Some security stuff
 app.use(cors());

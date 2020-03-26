@@ -11,7 +11,7 @@ const modelAnnotationData = require('../db/model-annotation');
 const files = express.Router();
 const upload = multer({storage: multer.memoryStorage()});
 
-const filesPath = path.join(__dirname.replace('src/requests/http', ''), 'data/storage'); // Temp
+const filesPath = path.join(__dirname, '..', '..', '..', 'data/storage'); // Temp
 
 // Sends model to converter and await for converted one
 function convertModel(token, modelPath, exportFormat, callback) {
