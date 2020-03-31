@@ -16,7 +16,7 @@ app.use(cookieParser());
 
 // Public access files
 app.use('/', express.static(publicFolderPath));
-app.use('/viewer', express.static(publicFolderPath + '/embedded-viewer')); // TODO: Remove on new React-viewer
+app.use('/draco', express.static(publicFolderPath + '/draco'));
 
 // Requests
 app.use('/user', user);

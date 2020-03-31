@@ -363,6 +363,6 @@ MigrationBackup/
 data/*
 !data/database.sqlite3
 
-
 # Compiled client
-public/
+public/*
+!public/draco
