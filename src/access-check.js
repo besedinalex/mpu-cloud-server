@@ -15,9 +15,19 @@ exports.tokenCheck = function (req, res, next) {
                 res.status(401).send('Unauthorized: Invalid token');
             } else if (Date.now() >= decoded.exp * 1000) {
                 res.status(401).send('Unauthorized: Token expired');
+            } else if (decoded.email === undefined) {
+                res.status(401).send('Unauthorized: Old token format')
             } else {
-                req.user_id = decoded.id;
-                next();
+                userData.getEmailById(decoded.id).then(rows => {
+                    if (rows.length === 0) {
+                        res.status(401).send('Unauthorized: No data found');
+                    } else if (rows[0].email !== decoded.email) {
+                        res.status(401).send('Unauthorized: Found data does not match');
+                    } else {
+                        req.user_id = decoded.id;
+                        next();
+                    }
+                });
             }
         });
     }

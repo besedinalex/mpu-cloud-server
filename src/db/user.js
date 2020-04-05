@@ -59,6 +59,19 @@ exports.getIdByEmail = function (email) {
     })
 };
 
+exports.getEmailById = function (id) {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT Users.email FROM Users WHERE Users.user_id = '${id}'`;
+        db.all(sql, [], function(err, rows) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        })
+    })
+};
+
 exports.getUserFiles = function (userId) {
     return new Promise((resolve, reject) => {
         const sql = `SELECT * FROM Files WHERE ownerUser = '${userId}'`;
