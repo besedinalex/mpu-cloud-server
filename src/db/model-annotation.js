@@ -1,4 +1,4 @@
-const db = require('./db-connection').db;
+const db = require('./db-connection');
 
 exports.getAnnotations = function (modelId) {
     return new Promise((resolve, reject) => {

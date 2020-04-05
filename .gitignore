@@ -361,7 +361,6 @@ MigrationBackup/
 
 # User data storage
 data/*
-!data/database.sqlite3
 
 # Compiled client
 public/*

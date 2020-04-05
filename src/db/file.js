@@ -1,4 +1,4 @@
-const db = require('./db-connection').db;
+const db = require('./db-connection');
 
 exports.addFile = function (title, desc, filename, code, sizeKB, type, ownerUser, ownerGroup) {
     return new Promise((resolve, reject) => {

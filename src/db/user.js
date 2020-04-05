@@ -1,4 +1,4 @@
-const db = require('./db-connection').db;
+const db = require('./db-connection');
 
 exports.signUp = function (firstName, lastName, email, password) {
     return new Promise((resolve, reject) => {

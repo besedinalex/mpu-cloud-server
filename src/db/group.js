@@ -1,4 +1,4 @@
-const db = require('./db-connection').db;
+const db = require('./db-connection');
 
 exports.addGroup = function (title, description, image, owner) {
     return new Promise((resolve, reject) => {
