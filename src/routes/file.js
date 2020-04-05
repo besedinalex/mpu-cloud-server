@@ -96,8 +96,9 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
 files.delete('/original/:id', accessCheck.tokenCheck, (req, res) => {
     accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
         fs.removeSync(path.join(filesPath, file.code));
-        modelAnnotationData.deleteAnnotations(file.file_id)
-            .then(() => fileData.removeFile(req.params.id, req.user_id).then(deleted => res.json({deleted})));
+        fileData.removeFile(req.params.id, req.user_id).then(deleted => res.json({deleted}));
+        // modelAnnotationData.deleteAnnotations(file.file_id)
+        //     .then(() => fileData.removeFile(req.params.id, req.user_id).then(deleted => res.json({deleted})));
     });
 });
 
