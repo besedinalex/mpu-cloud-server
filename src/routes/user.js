@@ -1,8 +1,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const accessCheck = require('./access-check');
+const accessCheck = require('../access-check');
 const userData = require('../db/user');
-const crypto = require('./../../crypto');
+const crypto = require('../crypto');
 
 const user = express.Router();
 

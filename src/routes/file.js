@@ -4,14 +4,14 @@ const fs = require('fs-extra');
 const path = require('path');
 const request = require('request');
 const multer = require('multer');
-const accessCheck = require('./access-check');
+const accessCheck = require('../access-check');
 const fileData = require('../db/file');
 const modelAnnotationData = require('../db/model-annotation');
 
 const files = express.Router();
 const upload = multer({storage: multer.memoryStorage()});
 
-const filesPath = path.join(__dirname, '..', '..', '..', 'data/storage'); // Temp
+const filesPath = path.join(__dirname, '..', '..', 'data/storage'); // Temp
 
 // Sends model to converter and await for converted one
 function convertModel(token, modelPath, exportFormat, callback) {

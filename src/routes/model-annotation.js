@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const accessCheck = require('./access-check');
+const accessCheck = require('../access-check');
 const modelAnnotationData = require('../db/model-annotation');
 
 const modelAnnotation = express.Router();

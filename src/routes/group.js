@@ -1,5 +1,5 @@
 const express = require('express');
-const accessCheck = require('./access-check');
+const accessCheck = require('../access-check');
 const userData = require('../db/user');
 const groupData = require('../db/group');
 

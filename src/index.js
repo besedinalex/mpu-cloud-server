@@ -2,10 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const user = require('./requests/http/user');
-const group = require('./requests/http/group');
-const file = require('./requests/http/file');
-const modelAnnotation = require('./requests/http/model-annotation');
+const user = require('./routes/user');
+const group = require('./routes/group');
+const file = require('./routes/file');
+const modelAnnotation = require('./routes/model-annotation');
 
 const app = express();
 const publicFolderPath = path.join(__dirname, '..', 'public');
@@ -16,7 +16,6 @@ app.use(cookieParser());
 
 // Public access files
 app.use('/', express.static(publicFolderPath));
-app.use('/draco', express.static(publicFolderPath + '/draco'));
 
 // Requests
 app.use('/user', user);

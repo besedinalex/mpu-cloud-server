@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const userData = require('../db/user');
-const groupData = require('../db/group');
+const userData = require('./db/user');
+const groupData = require('./db/group');
 
 const secret = 'Hello World!';
 
