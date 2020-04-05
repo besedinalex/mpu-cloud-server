@@ -14,14 +14,11 @@ user.get('/token', function (req, res) {
             if (crypto.decrypt(data.password) !== req.query.password) {
                 res.status(401).send();
             } else {
-                const payload = {id: data.user_id};
-                const token = jwt.sign(payload, secret, {expiresIn: '365d'});
-                let expiresAt = Date.now() + +365 * 24 * 60 * 60 * 1000;
+                const payload = {id: data.user_id, email: req.query.email.toLowerCase()};
+                const token = jwt.sign(payload, secret, {expiresIn: '7d'});
+                let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000;
                 res.json({token, expiresAt: expiresAt, userId: data.user_id});
             }
-            // TODO: Хранить токены в БД.
-            // TODO: Дать юзеру возможность дропнуть токены.
-            // TODO: Выдавать токен на несколько дней/месяцев в зависимости от галочки в поле "запомнить меня".
         })
         .catch(() => res.status(500));
 });
@@ -33,9 +30,9 @@ user.get('/data', function (req, res) {
 user.post('/data', function (req, res) {
     userData.signUp(req.query.firstName, req.query.lastName, req.query.email.toLowerCase(), crypto.encrypt(req.query.password))
         .then(userId => {
-            const payload = {id: userId};
-            const token = jwt.sign(payload, secret, {expiresIn: '365d'});
-            let expiresAt = Date.now() + +365 * 24 * 60 * 60 * 1000;
+            const payload = {id: userId, email: req.query.email.toLowerCase()};
+            const token = jwt.sign(payload, secret, {expiresIn: '7d'});
+            let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000;
             res.json({token, expiresAt: expiresAt, userId: userId});
         })
         .catch(() => res.status(401).send());
