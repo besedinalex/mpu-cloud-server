@@ -37,12 +37,12 @@ group.post('/user', accessCheck.tokenCheck, function (req, res) {
                         }
                         groupData.addGroupUser(id[0].user_id, groupId, access);
                     } else {
-                        res.status(409).send();
+                        res.sendStatus(409);
                     }
                 });
             });
         } else {
-            res.status(401).send();
+            res.sendStatus(401);
         }
     });
 });
@@ -67,7 +67,7 @@ group.delete('/user', accessCheck.tokenCheck, (req, res) => {
                 });
                 break;
             default:
-                res.status(401).send();
+                res.sendStatus(401);
                 break;
         }
     });
@@ -77,7 +77,7 @@ group.get('/users', accessCheck.tokenCheck, function (req, res) {
     const groupId = req.query.groupId;
     groupData.getGroup(req.user_id, groupId).then(group => {
         if (group.length === 0) {
-            res.status(401).send();
+            res.sendStatus(401);
         } else {
             groupData.getGroupUsers(groupId).then(data => res.json(data));
         }
@@ -88,7 +88,7 @@ group.get('/files', accessCheck.tokenCheck, function (req, res) {
     const groupId = req.query.groupId;
     groupData.getGroup(req.user_id, groupId).then(group => {
         if (group.length === 0) {
-            res.status(401).send();
+            res.sendStatus(401);
         } else {
             groupData.getGroupFiles(groupId).then(data => res.json(data));
         }

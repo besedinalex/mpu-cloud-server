@@ -5,14 +5,13 @@ const userData = require('../db/user');
 const crypto = require('../crypto');
 
 const user = express.Router();
-
 const secret = 'Hello World!';
 
 user.get('/token', function (req, res) {
     userData.signIn(req.query.email, req.query.password)
         .then(data => {
             if (crypto.decrypt(data.password) !== req.query.password) {
-                res.status(401).send();
+                res.sendStatus(401);
             } else {
                 const payload = {id: data.user_id, email: req.query.email.toLowerCase()};
                 const token = jwt.sign(payload, secret, {expiresIn: '7d'});
@@ -20,7 +19,7 @@ user.get('/token', function (req, res) {
                 res.json({token, expiresAt: expiresAt, userId: data.user_id});
             }
         })
-        .catch(() => res.status(500));
+        .catch(() => res.sendStatus(500));
 });
 
 user.get('/data', function (req, res) {
@@ -35,7 +34,7 @@ user.post('/data', function (req, res) {
             let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000;
             res.json({token, expiresAt: expiresAt, userId: userId});
         })
-        .catch(() => res.status(401).send());
+        .catch(() => res.sendStatus(401));
 });
 
 user.get('/files', accessCheck.tokenCheck, function (req, res) {

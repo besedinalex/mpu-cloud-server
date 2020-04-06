@@ -36,7 +36,7 @@ files.get('/original/:id', accessCheck.tokenCheck, function (req, res) {
             const origPath = filePath.replace('.' + format, '.' + file.format);
             convertModel(req.query.token, origPath, req.query.format, (err, response, data) => {
                 if (response === undefined || response.statusCode === 500) {
-                    res.status(500).send();
+                    res.sendStatus(500);
                 } else {
                     fs.writeFile(filePath, data, () => res.download(filePath, `${file.title}.${format}`));
                 }
