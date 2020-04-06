@@ -108,7 +108,8 @@ files.get('/view/:id', accessCheck.tokenCheck, function (req, res) {
         const format = req.query.format;
         const filePath = path.join(filesPath, file.code, file.code + '.' + format);
         if (format === 'gltf') {
-            res.json({model: JSON.parse(fs.readFileSync(filePath))});
+            const gltf = JSON.parse(fs.readFileSync(filePath));
+            res.json(gltf);
         } else {
             res.sendFile(filePath);
         }
