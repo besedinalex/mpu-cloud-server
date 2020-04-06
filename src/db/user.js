@@ -15,7 +15,7 @@ exports.signUp = function (firstName, lastName, email, password) {
     })
 };
 
-exports.signIn = function (email, password) {
+exports.signIn = function (email) {
     return new Promise((resolve, reject) => {
         const sql = `SELECT Users.user_id, Users.password FROM Users WHERE email = '${email}'`;
         db.all(sql, [], (err, rows) => {
