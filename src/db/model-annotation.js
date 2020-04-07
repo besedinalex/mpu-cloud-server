@@ -2,7 +2,7 @@ const db = require('./db-connection');
 
 exports.getAnnotations = function (modelId) {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT ModelAnnotations.data FROM ModelAnnotations WHERE ModelAnnotations.model_id = ${modelId}`;
+        const sql = `SELECT MA.x, MA.y, MA.z, MA.name, MA.text FROM ModelAnnotations as MA WHERE modelId = ${modelId}`;
         db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);
@@ -13,11 +13,11 @@ exports.getAnnotations = function (modelId) {
     });
 };
 
-exports.addAnnotation = function (modelId, data) {
+exports.addAnnotation = function (modelId, x, y, z, name, text) {
     return new Promise((resolve, reject) => {
         const sql =
-        `INSERT INTO ModelAnnotations (model_id, data)
-        VALUES ('${modelId}', '${data}')`;
+        `INSERT INTO ModelAnnotations (modelId, x, y, z, name, text)
+        VALUES ('${modelId}', '${x}', '${y}', '${z}', '${name}', '${text}')`;
         db.run(sql, [], function(err) {
             if (err) {
                 reject(err);
@@ -30,7 +30,7 @@ exports.addAnnotation = function (modelId, data) {
 
 exports.deleteAnnotations = function (modelId) {
     return new Promise((resolve, reject) => {
-        const sql = `DELETE FROM ModelAnnotations WHERE model_id = ${modelId}`;
+        const sql = `DELETE FROM ModelAnnotations WHERE modelId = ${modelId}`;
         db.run(sql, [], function(err) {
             if (err) {
                 reject(err);
