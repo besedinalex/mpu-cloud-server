@@ -23,6 +23,7 @@ const createQueries = [
     'password' TEXT,
     'createdTime' TEXT DEFAULT CURRENT_TIMESTAMP
     );`,
+
     `CREATE TABLE IF NOT EXISTS 'Files' (
     'file_id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     'filename' TEXT,
@@ -36,6 +37,7 @@ const createQueries = [
     'sizeKB' INTEGER,
     FOREIGN KEY('ownerUser') REFERENCES 'Users'('user_id')
     );`,
+
     `CREATE TABLE IF NOT EXISTS 'Groups' (
     'title' TEXT NOT NULL,
     'description' TEXT,
@@ -45,6 +47,7 @@ const createQueries = [
     'group_id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     FOREIGN KEY('owner') REFERENCES 'Users'('user_id')
     );`,
+
     `CREATE TABLE IF NOT EXISTS 'GroupUsers' (
     'group_id' INTEGER NOT NULL,
     'user_id' INTEGER NOT NULL,
@@ -54,6 +57,16 @@ const createQueries = [
     PRIMARY KEY('id'),
     FOREIGN KEY('user_id') REFERENCES 'Users'('user_id'),
     FOREIGN KEY('group_id') REFERENCES 'Groups'('group_id')
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS 'ModelAnnotations' (
+    'modelId' INTEGER NOT NULL,
+    'x' INTEGER NOT NULL,
+    'y' INTEGER NOT NULL,
+    'z' INTEGER NOT NULL,
+    'name' TEXT NOT NULL,
+    'text' TEXT,
+    FOREIGN KEY('modelId') REFERENCES 'Files'('file_id')
     );`
 ];
 
