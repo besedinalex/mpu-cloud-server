@@ -3,9 +3,16 @@ const jwt = require('jsonwebtoken');
 const accessCheck = require('../access-check');
 const userData = require('../db/user');
 const crypto = require('../crypto');
+const regEmail = require('../../emails/registration')
+const nodemailer = require('nodemailer');
+const sendgrid = require('nodemailer-sendgrid-transport');
+const keys = require("../../keys")
 
 const user = express.Router();
-const secret = 'Hello World!';
+
+const transporter = nodemailer.createTransport(sendgrid({
+    auth:{api_key: keys.SENDGRID_API_KEY}
+}))
 
 user.get('/token', function (req, res) {
     userData.signIn(req.query.email, req.query.password)
@@ -14,7 +21,7 @@ user.get('/token', function (req, res) {
                 res.sendStatus(401);
             } else {
                 const payload = {id: data.user_id, email: req.query.email.toLowerCase()};
-                const token = jwt.sign(payload, secret, {expiresIn: '7d'});
+                const token = jwt.sign(payload, keys.SECRET, {expiresIn: '7d'});
                 let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000;
                 res.json({token, expiresAt: expiresAt, userId: data.user_id});
             }
@@ -27,11 +34,14 @@ user.get('/data', function (req, res) {
 });
 
 user.post('/data', function (req, res) {
-    userData.signUp(req.query.firstName, req.query.lastName, req.query.email.toLowerCase(), crypto.encrypt(req.query.password))
-        .then(userId => {
-            const payload = {id: userId, email: req.query.email.toLowerCase()};
-            const token = jwt.sign(payload, secret, {expiresIn: '7d'});
-            let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000;
+    const {firstName, lastName, email, password} = req.query;
+
+    userData.signUp(firstName, lastName, email.toLowerCase(), crypto.encrypt(password))
+        .then(async userId => {
+            const payload = {id: userId, email: email.toLowerCase()};
+            const token = jwt.sign(payload, keys.SECRET, {expiresIn: '7d'});
+            let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000; 
+            await transporter.sendMail(regEmail(email.toLowerCase()));
             res.json({token, expiresAt: expiresAt, userId: userId});
         })
         .catch(() => res.sendStatus(401));
