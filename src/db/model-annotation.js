@@ -2,7 +2,7 @@ const db = require('./db-connection');
 
 exports.getAnnotations = function (modelId) {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT MA.x, MA.y, MA.z, MA.name, MA.text FROM ModelAnnotations as MA WHERE modelId = ${modelId}`;
+        const sql = `SELECT * FROM ModelAnnotations WHERE modelId = ${modelId}`;
         db.all(sql, [], (err, rows) => {
             if (err) {
                 reject(err);
@@ -23,6 +23,19 @@ exports.addAnnotation = function (modelId, x, y, z, name, text) {
                 reject(err);
             } else {
                 resolve();
+            }
+        });
+    });
+};
+
+exports.deleteAnnotation = function (id) {
+    return new Promise((resolve, reject) => {
+        const sql = `DELETE FROM ModelAnnotations WHERE id = ${id}`;
+        db.run(sql, [], function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this.changes);
             }
         });
     });
