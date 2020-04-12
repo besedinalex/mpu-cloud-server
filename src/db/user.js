@@ -84,3 +84,16 @@ exports.getUserFiles = function (userId) {
         });
     })
 };
+
+exports.insertResetToken = function (userId, resetToken, resetTokenExp){
+    return new Promise((resolve, reject) => {
+        const sql = `UPDATE Users SET resetToken="${resetToken}", resetTokenExp="${resetTokenExp}" WHERE user_id=${userId}`
+        db.run(sql, [], function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this.lastID);
+            }
+        })
+    })
+}

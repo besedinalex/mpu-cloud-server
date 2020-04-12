@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const accessCheck = require('../access-check');
 const userData = require('../db/user');
 const crypto = require('../crypto');
+const crpt = require('crypto');
 const regEmail = require('../../emails/registration')
 const nodemailer = require('nodemailer');
 const sendgrid = require('nodemailer-sendgrid-transport');
@@ -50,5 +51,29 @@ user.post('/data', function (req, res) {
 user.get('/files', accessCheck.tokenCheck, function (req, res) {
     userData.getUserFiles(req.user_id).then(data => res.json(data));
 });
+
+//Reset-pass
+user.post('/reset-pass', (req, res) => {
+    const email = req.query.email.toLowerCase();
+    try {
+        crpt.randomBytes(32, async (err, buffer) => {
+            if (err) res.sendStatus(401);
+            const token = buffer.toString('hex');
+            const isExist = await userData.getIdByEmail(email);
+            if (isExist.length) {
+                const resetToken = token;
+                const resetTokenExp = Date.now() + 60 * 60 * 1000; //1 час
+                const userId = Number(isExist[0].user_id);
+                userData.insertResetToken(userId, resetToken, resetTokenExp);
+                //await transporter.sendMail(resetEmail(isExist.email, token));
+            } else {
+                //Пользователя не существует в БД
+                res.sendStatus(401);
+            }
+        })
+    } catch (error) {
+        res.sendStatus(401);
+    }
+})
 
 module.exports = user;
