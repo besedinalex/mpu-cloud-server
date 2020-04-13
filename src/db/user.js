@@ -107,7 +107,7 @@ exports.insertResetToken = function (userId, resetToken, resetTokenExp) {
         firstName: "Всеволод",
         lastName: "Кочнев"
     });
-    
+
 Найдет всех пользователей с именем "Всеволод" и фамилией "Кочнев"
 */
 
@@ -132,5 +132,18 @@ exports.find = function (params) {
         } catch (error) {
             throw error;
         }
+    });
+};
+
+exports.updatePassword = function (password, user) {
+    return new Promise((resolve, reject) => {
+        const sql = `UPDATE Users SET password="${password}" WHERE user_id=${user.user_id}`;
+        db.run(sql, [], function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
     });
 };
