@@ -83,14 +83,14 @@ exports.getUserFiles = function (userId) {
     });
 };
 
-exports.insertResetToken = function (userId, resetToken, resetTokenExp) {
+exports.updateResetToken = function (userId, resetToken, resetTokenExp) { 
     return new Promise((resolve, reject) => {
         const sql = `UPDATE Users SET resetToken="${resetToken}", resetTokenExp="${resetTokenExp}" WHERE user_id=${userId}`;
         db.run(sql, [], function (err) {
             if (err) {
                 reject(err);
             } else {
-                resolve(this.lastID);
+                resolve();
             }
         });
     });
@@ -135,9 +135,9 @@ exports.find = function (params) {
     });
 };
 
-exports.updatePassword = function (password, user) {
+exports.updatePassword = function (password, user_id) {
     return new Promise((resolve, reject) => {
-        const sql = `UPDATE Users SET password="${password}" WHERE user_id=${user.user_id}`;
+        const sql = `UPDATE Users SET password="${password}" WHERE user_id=${user_id}`;
         db.run(sql, [], function (err) {
             if (err) {
                 reject(err);
@@ -147,3 +147,4 @@ exports.updatePassword = function (password, user) {
         });
     });
 };
+

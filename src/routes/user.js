@@ -79,7 +79,7 @@ user.post("/reset-pass", (req, res) => {
                 const resetToken = token;
                 const resetTokenExp = Date.now() + 60 * 60 * 1000; //1 час
                 const userId = Number(isExist[0].user_id);
-                userData.insertResetToken(userId, resetToken, resetTokenExp);
+                await userData.updateResetToken(userId, resetToken, resetTokenExp);
                 await transporter.sendMail(resetEmail(email, token));
             } else {
                 //Пользователя не существует в БД
@@ -117,8 +117,10 @@ user.post("/password", async (req, res) => {
         }
         await userData.updatePassword(
             crypto.encrypt(password),
-            candidate
+            candidate.user_id
         );
+
+        await userData.updateResetToken(candidate.user_id, null, null)
         res.sendStatus(201);
     } catch (error) {
         res.sendStatus(401);
