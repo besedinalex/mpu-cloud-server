@@ -5,6 +5,7 @@ const userData = require("../db/user");
 const crypto = require("../crypto");
 const crpt = require("crypto");
 const regEmail = require("../../emails/registration");
+const resetEmail = require('../../emails/reset')
 const nodemailer = require("nodemailer");
 const sendgrid = require("nodemailer-sendgrid-transport");
 const keys = require("../../keys");
@@ -79,7 +80,7 @@ user.post("/reset-pass", (req, res) => {
                 const resetTokenExp = Date.now() + 60 * 60 * 1000; //1 час
                 const userId = Number(isExist[0].user_id);
                 userData.insertResetToken(userId, resetToken, resetTokenExp);
-                //await transporter.sendMail(resetEmail(isExist.email, token));
+                await transporter.sendMail(resetEmail(email, token));
             } else {
                 //Пользователя не существует в БД
                 res.sendStatus(401);
@@ -102,7 +103,7 @@ user.post("/password", async (req, res) => {
         if (!candidate) {
             //Пользователь не найден
             console.log(1);
-            return res.sendStatus(401,"Пользователя с таким токеном не существует");
+            return res.sendStatus(401, "Пользователя с таким токеном не существует");
         }
         if (crypto.decrypt(candidate.password) === password) {
             //Одинаковые пароли
@@ -112,7 +113,7 @@ user.post("/password", async (req, res) => {
         if (+Date.now() > +candidate.resetTokenExp) {
             //Прошло больше часа с момента создания токена
             console.log(3);
-            return res.sendStatus(401,"Прошло больше часа с момента создания токена");
+            return res.sendStatus(401, "Прошло больше часа с момента создания токена");
         }
         await userData.updatePassword(
             crypto.encrypt(password),
