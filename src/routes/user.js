@@ -103,17 +103,17 @@ user.post("/password", async (req, res) => {
         if (!candidate) {
             //Пользователь не найден
             console.log(1);
-            return res.sendStatus(401, "Пользователя с таким токеном не существует");
+            return res.sendStatus(401).send("Пользователь не найден")
         }
         if (crypto.decrypt(candidate.password) === password) {
             //Одинаковые пароли
             console.log(2);
-            return res.sendStatus(401, "Одинаковые пароли");
+            return res.sendStatus(401).send("Одинаковые пароли");
         }
         if (+Date.now() > +candidate.resetTokenExp) {
             //Прошло больше часа с момента создания токена
             console.log(3);
-            return res.sendStatus(401, "Прошло больше часа с момента создания токена");
+            return res.sendStatus(401).send("Прошло больше часа с момента создания токена");
         }
         await userData.updatePassword(
             crypto.encrypt(password),
