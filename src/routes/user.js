@@ -48,6 +48,8 @@ user.get("/data", function (req, res) {
 user.post("/data", registerValidators, function (req, res) {
     const { firstName, lastName, email, password } = req.query;
    
+    console.log(123213);
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         //Сообщение об ошибках - errors.array()

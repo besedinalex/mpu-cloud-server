@@ -18,7 +18,6 @@ exports.registerValidators = [
         .normalizeEmail(),
     query("password")
         .isLength({ min: 6, max: 56 })
-        .isAlphanumeric()
         .withMessage("Некорректный пароль")
         .isAlphanumeric()
         .trim(),
