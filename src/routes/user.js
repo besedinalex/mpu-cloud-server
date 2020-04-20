@@ -50,7 +50,8 @@ user.post("/data", registerValidators, function (req, res) {
    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log(errors.array()[0].msg);
+        //Сообщение об ошибках - errors.array()
+        console.log(errors.array());
         res.sendStatus(422);
     }
     else{
@@ -58,14 +59,14 @@ user.post("/data", registerValidators, function (req, res) {
         .signUp(
             firstName,
             lastName,
-            email.toLowerCase(),
+            email,
             crypto.encrypt(password)
         )
         .then(async (userId) => {
-            const payload = { id: userId, email: email.toLowerCase() };
+            const payload = { id: userId, email: email };
             const token = jwt.sign(payload, keys.SECRET, { expiresIn: "7d" });
             let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000;
-            await transporter.sendMail(regEmail(email.toLowerCase()));
+            await transporter.sendMail(regEmail(email));
             res.json({ token, expiresAt: expiresAt, userId: userId });
         })
         .catch(() => res.sendStatus(401));
