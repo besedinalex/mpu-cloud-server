@@ -362,6 +362,8 @@ MigrationBackup/
 # User data storage
 data/*
 
-# Compiled client
+# Compiled files
+mpu-cloud-server.exe
+node_sqlite3.node
 public/*
 !public/draco
