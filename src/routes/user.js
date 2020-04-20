@@ -9,7 +9,8 @@ const resetEmail = require('../../emails/reset')
 const nodemailer = require("nodemailer");
 const sendgrid = require("nodemailer-sendgrid-transport");
 const keys = require("../../keys");
-const { query, validationResult } = require('express-validator')
+const {validationResult } = require('express-validator')
+const { registerValidators } = require('../../utils/validators')
 
 const user = express.Router();
 
@@ -44,10 +45,9 @@ user.get("/data", function (req, res) {
     userData.getUser(req.query.userId).then((data) => res.json(data));
 });
 
-user.post("/data", query('email').isEmail(), function (req, res) {
+user.post("/data", registerValidators, function (req, res) {
     const { firstName, lastName, email, password } = req.query;
    
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         console.log(errors.array()[0].msg);
