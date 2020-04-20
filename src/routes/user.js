@@ -9,6 +9,7 @@ const resetEmail = require('../../emails/reset')
 const nodemailer = require("nodemailer");
 const sendgrid = require("nodemailer-sendgrid-transport");
 const keys = require("../../keys");
+const { query, validationResult } = require('express-validator')
 
 const user = express.Router();
 
@@ -43,10 +44,17 @@ user.get("/data", function (req, res) {
     userData.getUser(req.query.userId).then((data) => res.json(data));
 });
 
-user.post("/data", function (req, res) {
+user.post("/data", query('email').isEmail(), function (req, res) {
     const { firstName, lastName, email, password } = req.query;
+   
 
-    userData
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors.array()[0].msg);
+        res.sendStatus(422);
+    }
+    else{
+        userData
         .signUp(
             firstName,
             lastName,
@@ -61,6 +69,7 @@ user.post("/data", function (req, res) {
             res.json({ token, expiresAt: expiresAt, userId: userId });
         })
         .catch(() => res.sendStatus(401));
+    }
 });
 
 user.get("/files", accessCheck.tokenCheck, function (req, res) {
