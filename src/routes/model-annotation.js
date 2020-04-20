@@ -19,4 +19,11 @@ modelAnnotation.post('/new/:id', accessCheck.tokenCheck, function (req, res) {
     });
 });
 
+// Delete annotation by id
+modelAnnotation.delete('/one/:id', accessCheck.tokenCheck, function (req, res) {
+    accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, () => {
+        modelAnnotationData.deleteAnnotation(req.query.annotationId).then(() => res.sendStatus(200));
+    });
+});
+
 module.exports = modelAnnotation;
