@@ -21,7 +21,7 @@ exports.selectData = function(sqlQuery, firstValueOnly = false) {
         return;
     }
     return new Promise((resolve, reject) => {
-        db.all(sqlQuery, [], (err, rows) => {
+        db.all(sqlQuery, [], function (err, rows) {
             if (err) {
                 reject(err);
             } else {
@@ -51,7 +51,7 @@ exports.changeData = function (sqlQuery) {
         return;
     }
     return new Promise((resolve, reject) => {
-        db.run(sqlQuery, [], err => {
+        db.run(sqlQuery, [], function (err) {
             if (err) {
                 reject(err);
             } else if (queryType === 'insert') {
