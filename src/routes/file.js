@@ -47,12 +47,10 @@ files.get('/original/:id', accessCheck.tokenCheck, function (req, res) {
 
 // Uploading file to server
 files.post('/original', [accessCheck.tokenCheck, upload.single('model')], function (req, res) {
-    const body = req.body;
-    const file = req.file;
+    const {body, file} = req;
 
     if (!body || !file) {
-        console.error('Bad Request. File is required!');
-        res.status(500).send('Bad request!');
+        res.status(400).send({message: 'Файл и соответствующая информация не обнаружены.'});
         return;
     }
 
