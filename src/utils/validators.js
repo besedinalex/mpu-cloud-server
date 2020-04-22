@@ -1,5 +1,5 @@
 const { query } = require("express-validator");
-const { find } = require("../src/db/user");
+const { find } = require("../db/user");
 
 exports.registerValidators = [
     query("email")

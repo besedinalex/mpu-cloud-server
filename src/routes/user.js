@@ -10,7 +10,7 @@ const nodemailer = require("nodemailer");
 const sendgrid = require("nodemailer-sendgrid-transport");
 const keys = require("../../keys");
 const {validationResult } = require('express-validator')
-const { registerValidators } = require('../../utils/validators')
+const { registerValidators } = require('../utils/validators')
 
 const user = express.Router();
 
@@ -49,7 +49,7 @@ user.post("/data", registerValidators, function (req, res) {
     const { firstName, lastName, email, password } = req.query;
    
     console.log(123213);
-    
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         //Сообщение об ошибках - errors.array()
