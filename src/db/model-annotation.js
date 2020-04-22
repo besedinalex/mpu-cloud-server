@@ -1,55 +1,23 @@
-const db = require('./db-connection');
+const {selectData, changeData} = require('./run-query');
 
 exports.getAnnotations = function (modelId) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM ModelAnnotations WHERE modelId = ${modelId}`;
-        db.all(sql, [], (err, rows) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
-            }
-        });
-    });
+    const sql = `SELECT * FROM ModelAnnotations WHERE modelId = ${modelId}`;
+    return selectData(sql);
 };
 
 exports.addAnnotation = function (modelId, x, y, z, name, text) {
-    return new Promise((resolve, reject) => {
-        const sql =
+    const sql =
         `INSERT INTO ModelAnnotations (modelId, x, y, z, name, text)
         VALUES ('${modelId}', '${x}', '${y}', '${z}', '${name}', '${text}')`;
-        db.run(sql, [], function(err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
-    });
+    return changeData(sql);
 };
 
 exports.deleteAnnotation = function (id) {
-    return new Promise((resolve, reject) => {
-        const sql = `DELETE FROM ModelAnnotations WHERE id = ${id}`;
-        db.run(sql, [], function(err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(this.changes);
-            }
-        });
-    });
+    const sql = `DELETE FROM ModelAnnotations WHERE id = ${id}`;
+    return changeData(sql);
 };
 
 exports.deleteAnnotations = function (modelId) {
-    return new Promise((resolve, reject) => {
-        const sql = `DELETE FROM ModelAnnotations WHERE modelId = ${modelId}`;
-        db.run(sql, [], function(err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(this.changes);
-            }
-        });
-    });
+    const sql = `DELETE FROM ModelAnnotations WHERE modelId = ${modelId}`;
+    return changeData(sql);
 };

@@ -1,39 +1,27 @@
-const { query } = require("express-validator");
-const { find } = require("../db/user");
+const {query} = require("express-validator");
 
 exports.registerValidators = [
     query("email")
         .isEmail()
-        .withMessage("Некорректный email")
-        .custom(async (value, { req }) => {
-            try {
-                const user = await find({ email: value });
-                if (user.length) {
-                    return Promise.reject("Такой email уже занят");
-                }
-            } catch (error) {
-                console.log(e);
-            }
-        })
-        .normalizeEmail(),
+        .withMessage("Email не соответствует правилам сервера."),
     query("password")
         .isLength({ min: 6, max: 56 })
-        .withMessage("Некорректный пароль")
+        .withMessage("Пароль не соответствует правилам сервера.")
         .trim(),
     query("lastName")
-        .custom((value, { req }) => {
+        .custom((value, {}) => {
             if (!value.match(/(?=.*[а-я])(?=.*[А-Я])[а-яА-Я]{3,}/g)) {
-                throw new Error("Некоректное имя");
+                throw new Error("Имя не соответствует правилам сервера.");
             }
             return true;
         })
         .trim(),
     query("lastName")
-        .custom((value, { req }) => {
+        .custom((value, {}) => {
             if (!value.match(/(?=.*[а-я])(?=.*[А-Я])[а-яА-Я]{3,}/g)) {
-                throw new Error("Некоректная фамилия");
+                throw new Error("Фамилия не соответствует правилам сервера.");
             }
             return true;
         })
-        .trim(),
+        .trim()
 ];

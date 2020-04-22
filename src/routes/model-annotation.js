@@ -1,5 +1,5 @@
 const express = require('express');
-const accessCheck = require('../access-check');
+const accessCheck = require('../utils/access-check');
 const modelAnnotationData = require('../db/model-annotation');
 
 const modelAnnotation = express.Router();

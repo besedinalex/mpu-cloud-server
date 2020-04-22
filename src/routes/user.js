@@ -1,16 +1,16 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const accessCheck = require("../access-check");
+const accessCheck = require("../utils/access-check");
 const userData = require("../db/user");
-const crypto = require("../crypto");
+const crypto = require("../utils/crypto");
 const crpt = require("crypto");
 const regEmail = require("../../emails/registration");
 const resetEmail = require('../../emails/reset')
 const nodemailer = require("nodemailer");
 const sendgrid = require("nodemailer-sendgrid-transport");
 const keys = require("../../keys");
-const {validationResult } = require('express-validator')
-const { registerValidators } = require('../utils/validators')
+const {validationResult} = require('express-validator')
+const {registerValidators} = require('../utils/validators')
 
 const user = express.Router();
 
@@ -21,59 +21,70 @@ const transporter = nodemailer.createTransport(
 );
 
 user.get("/token", function (req, res) {
-    userData
-        .signIn(req.query.email, req.query.password)
+    const email = req.query.email.toLowerCase();
+    const {password} = req.query;
+    userData.signIn(email, password)
         .then((data) => {
-            if (crypto.decrypt(data.password) !== req.query.password) {
-                res.sendStatus(401);
+            if (crypto.decrypt(data.password) !== password) {
+                res.status(401).send({message: 'Неверный email или пароль.'});
             } else {
                 const payload = {
                     id: data.user_id,
-                    email: req.query.email.toLowerCase(),
+                    email: email
                 };
-                const token = jwt.sign(payload, keys.SECRET, {
-                    expiresIn: "7d",
-                });
+                const token = jwt.sign(payload, keys.SECRET, {expiresIn: "7d"});
                 let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000;
-                res.json({ token, expiresAt: expiresAt, userId: data.user_id });
+                res.json({
+                    token,
+                    expiresAt: expiresAt,
+                    userId: data.user_id
+                });
             }
         })
-        .catch(() => res.sendStatus(500));
+        .catch(() => res.status(404).send({message: 'Пользователь с таким email не найден.'}));
 });
 
 user.get("/data", function (req, res) {
-    userData.getUser(req.query.userId).then((data) => res.json(data));
+    userData.getUser(req.query.userId)
+        .then((data) => res.json(data))
+        .catch(() => res.status(404).send({message: 'Такой пользователь не найден'}));
 });
 
 user.post("/data", registerValidators, function (req, res) {
-    const { firstName, lastName, email, password } = req.query;
+    const {firstName, lastName, email, password} = req.query;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        //Сообщение об ошибках - errors.array()
-        console.log(errors.array());
-        res.sendStatus(422);
-    }
-    else{
-        userData
-        .signUp(
-            firstName,
-            lastName,
-            email,
-            crypto.encrypt(password)
-        )
-        .then(/*async*/(userId) => {
-            const payload = { id: userId, email: email };
-            const token = jwt.sign(payload, keys.SECRET, { expiresIn: "7d" });
-            let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000;
-            //await transporter.sendMail(regEmail(email));
-            res.json({ token, expiresAt: expiresAt, userId: userId });
-        })
-        .catch(() => res.sendStatus(401));
+        res.status(422).send({errors: errors.array()});
+    } else {
+        userData.signUp(firstName, lastName, email, crypto.encrypt(password))
+            .then(userId => {
+                const payload = {
+                    id: userId,
+                    email: email
+                };
+                const token = jwt.sign(payload, keys.SECRET, {expiresIn: "7d"});
+                let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000;
+                //await transporter.sendMail(regEmail(email));
+                res.json({
+                    token,
+                    expiresAt: expiresAt,
+                    userId: userId
+                });
+            })
+            .catch(() => res.status(409).send({message: 'Пользователь с таким email уже существует.'}));
     }
 });
 
 user.get("/files", accessCheck.tokenCheck, function (req, res) {
-    userData.getUserFiles(req.user_id).then((data) => res.json(data));
+    userData.getUserFiles(req.user_id)
+        .then((data) => {
+            if (data.length === 0) {
+                res.status(404).send({message: 'У вас нет файлов.'});
+            } else {
+                res.json(data);
+            }
+        })
+        .catch(() => res.status(500).send({message: 'Неизвестная ошибка сервера.'}))
 });
 
 //Reset-pass

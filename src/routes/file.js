@@ -4,14 +4,14 @@ const fs = require('fs-extra');
 const path = require('path');
 const request = require('request');
 const multer = require('multer');
-const accessCheck = require('../access-check');
+const accessCheck = require('../utils/access-check');
 const fileData = require('../db/file');
 const modelAnnotationData = require('../db/model-annotation');
 
 const files = express.Router();
 const upload = multer({storage: multer.memoryStorage()});
 
-const filesPath = path.join(process.cwd(), 'data/storage'); // Temp
+const filesPath = path.join(process.cwd(), 'data/storage');
 
 // Sends model to converter and await for converted one
 function convertModel(token, modelPath, exportFormat, callback) {
@@ -36,7 +36,7 @@ files.get('/original/:id', accessCheck.tokenCheck, function (req, res) {
             const origPath = filePath.replace('.' + format, '.' + file.format);
             convertModel(req.query.token, origPath, req.query.format, (err, response, data) => {
                 if (response === undefined || response.statusCode === 500) {
-                    res.sendStatus(500);
+                    res.status(500).send({message: 'Не удалось конвертировать модель'});
                 } else {
                     fs.writeFile(filePath, data, () => res.download(filePath, `${file.title}.${format}`));
                 }
@@ -80,13 +80,15 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
         convertModel(req.query.token, fullPathOrig, 'gltf', (err, response, data) => {
             if (response.statusCode === 500) {
                 fs.removeSync(folderPath);
-                res.status(500).send(data);
+                res.status(500).send({message: 'Не удалось конвертировать модель.'});
             } else {
                 fs.outputFileSync(fullPathGLTF, data, {flag: 'wx'});
                 fileData.addFile(
                     body.title, body.desc, file.originalname, modelCode, file.size,
                     path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
-                ).then(data => res.json(data));
+                )
+                    .then(data => res.json(data))
+                    .catch(() => res.status(500).send({message: 'Не удалось добавить модель.'}));
             }
         });
     }
@@ -97,7 +99,12 @@ files.delete('/original/:id', accessCheck.tokenCheck, (req, res) => {
     accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
         fs.removeSync(path.join(filesPath, file.code));
         modelAnnotationData.deleteAnnotations(file.file_id)
-            .then(() => fileData.removeFile(req.params.id, req.user_id).then(deleted => res.json({deleted})));
+            .then(() => {
+                fileData.removeFile(req.params.id, req.user_id)
+                    .then(deleted => res.json({deleted}))
+                    .catch(() => res.status(500).send({message: 'Не удалось удалить модель.'}))
+            })
+            .catch(() => res.status(500).send({message: 'Не удалось удалить модель и её аннотации.'}));
     });
 });
 
@@ -119,7 +126,7 @@ files.get('/view/:id', accessCheck.tokenCheck, function (req, res) {
 files.post('/preview/:id', [accessCheck.tokenCheck, upload.single('canvasImage')], function (req, res) {
     accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res,file => {
         const previewPath = path.join(filesPath, file.code, file.code + '.jpg');
-        fs.writeFile(previewPath, req.file.buffer, () => res.sendStatus(200))
+        fs.writeFile(previewPath, req.file.buffer, () => res.sendStatus(200));
     });
 });
 

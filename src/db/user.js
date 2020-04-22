@@ -1,99 +1,47 @@
+const {selectData, changeData} = require('./run-query');
 const db = require("./db-connection");
 
-exports.signUp = function (firstName, lastName, email, password) {
-    return new Promise((resolve, reject) => {
-        const sql = `INSERT INTO Users (firstName, lastName, email, password)
-        VALUES ('${firstName}','${lastName}','${email}','${password}')`;
-        db.run(sql, [], function (err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(this.lastID);
-            }
-        });
-    });
+exports.signIn = function (email) {
+    const sql = `SELECT U.user_id, U.password FROM Users AS U WHERE email = '${email}'`;
+    return selectData(sql, true);
 };
 
-exports.signIn = function (email) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT Users.user_id, Users.password FROM Users WHERE email = '${email}'`;
-        db.all(sql, [], (err, rows) => {
-            if (err) {
-                reject(err);
-            } else if (rows.length === 0) {
-                reject(err);
-            } else {
-                resolve(rows[0]);
-            }
-        });
-    });
+exports.signUp = function (firstName, lastName, email, password) {
+    const sql =
+        `INSERT INTO Users (firstName, lastName, email, password)
+        VALUES ('${firstName}','${lastName}','${email}','${password}')`;
+    return changeData(sql);
 };
 
 exports.getUser = function (user_id) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT Users.user_id,  Users.createdTime, Users.firstName, Users.lastName, Users.email
-        FROM Users
-        WHERE Users.user_id ='${user_id}'`;
-        db.all(sql, [], function (err, rows) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
-            }
-        });
-    });
+    const sql =
+        `SELECT U.user_id, U.createdTime, U.firstName, U.lastName, U.email FROM Users AS U WHERE user_id ='${user_id}'`;
+    return selectData(sql, true);
 };
 
 exports.getIdByEmail = function (email) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT Users.user_id FROM Users WHERE Users.email = '${email}'`;
-        db.all(sql, [], function (err, rows) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
-            }
-        });
-    });
+    const sql = `SELECT Users.user_id FROM Users WHERE Users.email = '${email}'`;
+    return selectData(sql, true);
 };
 
 exports.getEmailById = function (id) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT Users.email FROM Users WHERE Users.user_id = '${id}'`;
-        db.all(sql, [], function (err, rows) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
-            }
-        });
-    });
+    const sql = `SELECT Users.email FROM Users WHERE Users.user_id = '${id}'`;
+    return selectData(sql, true);
 };
 
 exports.getUserFiles = function (userId) {
-    return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM Files WHERE ownerUser = '${userId}'`;
-        db.all(sql, [], (err, rows) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
-            }
-        });
-    });
+    const query = `SELECT * FROM Files WHERE ownerUser = '${userId}'`;
+    return selectData(query);
 };
 
-exports.updateResetToken = function (userId, resetToken, resetTokenExp) { 
-    return new Promise((resolve, reject) => {
-        const sql = `UPDATE Users SET resetToken="${resetToken}", resetTokenExp="${resetTokenExp}" WHERE user_id=${userId}`;
-        db.run(sql, [], function (err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
-    });
+exports.updateResetToken = function (userId, resetToken, resetTokenExp) {
+    const sql = `UPDATE Users SET resetToken='${resetToken}', resetTokenExp='${resetTokenExp}' WHERE user_id=${userId}`;
+    return changeData(sql);
+};
+
+exports.updatePassword = function (password, user_id) {
+    const sql = `UPDATE Users SET password="${password}" WHERE user_id=${user_id}`;
+    return changeData(sql);
 };
 
 /* Функция поиска в таблице Users, по заданным параметрам.
@@ -134,17 +82,3 @@ exports.find = function (params) {
         }
     });
 };
-
-exports.updatePassword = function (password, user_id) {
-    return new Promise((resolve, reject) => {
-        const sql = `UPDATE Users SET password="${password}" WHERE user_id=${user_id}`;
-        db.run(sql, [], function (err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
-    });
-};
-

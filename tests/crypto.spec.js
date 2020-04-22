@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const crypto = require('./../src/crypto');
+const crypto = require('../src/utils/crypto');
 
 describe('Crypto', function () {
     it('Encrypts text', function (done) {
