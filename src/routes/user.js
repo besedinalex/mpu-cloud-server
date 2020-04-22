@@ -2,8 +2,8 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const accessCheck = require("../utils/access-check");
 const userData = require("../db/user");
-const crypto = require("../utils/crypto");
-const crpt = require("crypto");
+const {decrypt, encrypt} = require("../utils/crypto");
+const crypto = require("crypto");
 const regEmail = require("../../emails/registration");
 const resetEmail = require('../../emails/reset')
 const nodemailer = require("nodemailer");
@@ -12,31 +12,50 @@ const keys = require("../../config.json");
 const {validationResult} = require('express-validator')
 const {registerValidators} = require('../utils/validators')
 
-const user = express.Router();
+let lastPasswordResetId = 0;
+const resetRequests = [];
 
-const transporter = nodemailer.createTransport(
-    sendgrid({
-        auth: { api_key: keys.SENDGRID_API_KEY },
-    })
-);
+function addResetRequest(request) {
+    // Makes previous token invalid
+    for (const obj of resetRequests) {
+        if (obj.email === request.email) {
+            obj.valid = false
+        }
+    }
+    // Adds new token
+    request.id = lastPasswordResetId;
+    request.valid = true;
+    resetRequests.push(request);
+    // Adds timer for added token
+    const sequenceId = lastPasswordResetId;
+    setTimeout(() => {
+        for (const obj of resetRequests) {
+            if (obj.id === sequenceId) {
+                obj.valid = false;
+            }
+        }
+    }, 1000 * 60 * 60);
+    // Update sequence
+    lastPasswordResetId += 1;
+}
+
+const user = express.Router();
 
 user.get("/token", function (req, res) {
     const email = req.query.email.toLowerCase();
     const {password} = req.query;
     userData.signIn(email, password)
         .then((data) => {
-            if (crypto.decrypt(data.password) !== password) {
+            if (decrypt(data.password) !== password) {
                 res.status(401).send({message: 'Неверный email или пароль.'});
             } else {
                 const payload = {
                     id: data.user_id,
                     email: email
                 };
-                const token = jwt.sign(payload, keys.SECRET, {expiresIn: "7d"});
-                let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000;
                 res.json({
-                    token,
-                    expiresAt: expiresAt,
+                    token: jwt.sign(payload, keys.SECRET, {expiresIn: "7d"}),
+                    expiresAt: Date.now() + +7 * 24 * 60 * 60 * 1000,
                     userId: data.user_id
                 });
             }
@@ -47,7 +66,7 @@ user.get("/token", function (req, res) {
 user.get("/data", function (req, res) {
     userData.getUser(req.query.userId)
         .then((data) => res.json(data))
-        .catch(() => res.status(404).send({message: 'Такой пользователь не найден'}));
+        .catch(() => res.status(404).send({message: 'Такой пользователь не найден.'}));
 });
 
 user.post("/data", registerValidators, function (req, res) {
@@ -56,7 +75,7 @@ user.post("/data", registerValidators, function (req, res) {
     if (!errors.isEmpty()) {
         res.status(422).send({errors: errors.array()});
     } else {
-        userData.signUp(firstName, lastName, email, crypto.encrypt(password))
+        userData.signUp(firstName, lastName, email, encrypt(password))
             .then(userId => {
                 const payload = {
                     id: userId,
@@ -87,63 +106,58 @@ user.get("/files", accessCheck.tokenCheck, function (req, res) {
         .catch(() => res.status(500).send({message: 'Неизвестная ошибка сервера.'}))
 });
 
-//Reset-pass
-user.post("/reset-pass", (req, res) => {
+user.post("/reset-password", function (req, res) {
     const email = req.query.email.toLowerCase();
-    try {
-        crpt.randomBytes(32, async (err, buffer) => {
-            if (err) res.sendStatus(401);
-            const token = buffer.toString("hex");
-            const isExist = await userData.getIdByEmail(email);
-            if (isExist.length) {
-                const resetToken = token;
-                const resetTokenExp = Date.now() + 60 * 60 * 1000; //1 час
-                const userId = Number(isExist[0].user_id);
-                await userData.updateResetToken(userId, resetToken, resetTokenExp);
-                await transporter.sendMail(resetEmail(email, token));
-            } else {
-                //Пользователя не существует в БД
-                res.sendStatus(401);
-            }
-        });
-    } catch (error) {
-        res.sendStatus(401);
-    }
+    crypto.randomBytes(32, (err, buffer) => {
+        if (err) {
+            res.status(500).send({message: 'Не удалось сбросить пароль.'});
+        } else {
+            const resetToken = buffer.toString("hex");
+            userData.getIdByEmail(email)
+                .then(() => {
+                    const resetRequest = {
+                        token: resetToken,
+                        email: email
+                    }
+                    addResetRequest(resetRequest);
+                    const transporter = nodemailer.createTransport(sendgrid({
+                        auth: {api_key: keys.SENDGRID_API_KEY}
+                    }));
+                    transporter.sendMail(resetEmail(email, resetToken))
+                        .then(() => res.sendStatus(200))
+                        .catch(() => res.status(500).send({message: 'Не удалось отправить email.'}));
+                })
+                .catch(() => res.status(404).send({message: 'Пользователь с таким email не найден.'}));
+        }
+    });
 });
 
-user.post("/password", async (req, res) => {
-    const { password, token } = req.query;
-
-    try {
-        const data = await userData.find({
-            resetToken: token,
-        });
-        const candidate = data[0];
-
-        if (!candidate) {
-            //Пользователь не найден
-            console.log(1);
-            return res.sendStatus(401).send("Пользователь не найден")
+user.post("/password", function (req, res) {
+    const {password, token} = req.query;
+    let tokenFound = false;
+    for (const request of resetRequests) {
+        if (request.token === token) {
+            tokenFound = true;
+            if (!request.valid) {
+                res.status(403).send({message: 'Данный запрос на восстановление пароля устарел.'});
+            } else {
+                userData.signIn(request.email)
+                    .then(data => {
+                        if (decrypt(data.password) === password) {
+                            res.send(403).send({message: 'Нельзя использовать предыдущий пароль.'});
+                        } else {
+                            userData.updatePassword(password, data.user_id)
+                                .then(() => res.sendStatus(200))
+                                .catch(() => res.status(500).send({message: 'Не удалось обновить пароль.'}));
+                        }
+                    })
+                    .catch(() => res.status(404).send({message: 'Пользователь не найден.'}));
+            }
+            break;
         }
-        if (crypto.decrypt(candidate.password) === password) {
-            //Одинаковые пароли
-            console.log(2);
-            return res.sendStatus(401).send("Одинаковые пароли");
-        }
-        if (+Date.now() > +candidate.resetTokenExp) {
-            //Прошло больше часа с момента создания токена
-            console.log(3);
-            return res.sendStatus(401).send("Прошло больше часа с момента создания токена");
-        }
-        await userData.updatePassword(
-            crypto.encrypt(password),
-            candidate.user_id
-        );
-
-        await userData.updateResetToken(candidate.user_id, null, null)
-        res.sendStatus(201);
-    } catch (error) {
-        res.sendStatus(401);
+    }
+    if (!tokenFound) {
+        res.status(401).send({message: 'Такого запроса на восстановление пароля не существует.'});
     }
 });
 

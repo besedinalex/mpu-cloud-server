@@ -21,9 +21,7 @@ const createQueries = [
     'lastName' TEXT,
     'email' TEXT NOT NULL UNIQUE,
     'password' TEXT,
-    'createdTime' TEXT DEFAULT CURRENT_TIMESTAMP,
-    'resetToken' TEXT,
-    'resetTokenExp' TEXT
+    'createdTime' TEXT DEFAULT CURRENT_TIMESTAMP
     );`,
 
     `CREATE TABLE IF NOT EXISTS 'Files' (
