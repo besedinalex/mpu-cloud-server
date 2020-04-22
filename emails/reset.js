@@ -1,4 +1,4 @@
-const keys = require('../keys')
+const keys = require('../config.json')
 
 module.exports = function (to, token) {
     return {

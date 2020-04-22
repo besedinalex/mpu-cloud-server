@@ -8,7 +8,7 @@ const regEmail = require("../../emails/registration");
 const resetEmail = require('../../emails/reset')
 const nodemailer = require("nodemailer");
 const sendgrid = require("nodemailer-sendgrid-transport");
-const keys = require("../../keys");
+const keys = require("../../config.json");
 const {validationResult} = require('express-validator')
 const {registerValidators} = require('../utils/validators')
 

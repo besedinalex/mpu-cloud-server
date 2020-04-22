@@ -1,8 +1,7 @@
 const jwt = require('jsonwebtoken');
 const userData = require('../db/user');
 const groupData = require('../db/group');
-
-const secret = 'Hello World!';
+const secret = require('../../config.json').SECRET;
 
 // Checks if token is valid
 exports.tokenCheck = function (req, res, next) {
