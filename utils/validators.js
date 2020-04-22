@@ -19,7 +19,6 @@ exports.registerValidators = [
     query("password")
         .isLength({ min: 6, max: 56 })
         .withMessage("Некорректный пароль")
-        .isAlphanumeric()
         .trim(),
     query("lastName")
         .custom((value, { req }) => {
