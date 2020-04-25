@@ -33,7 +33,7 @@ files.get('/original/:id', accessCheck.tokenCheck, function (req, res) {
         if (fs.existsSync(filePath)) {
             res.download(filePath, `${file.title}.${format}`);
         } else {
-            const origPath = filePath.replace('.' + format, '.' + file.format);
+            const origPath = path.join(filesPath, file.code, file.code + '.' + file.type);
             convertModel(req.query.token, origPath, req.query.format, (err, response) => {
                 if (response === undefined || response.statusCode === 500 || err) {
                     res.status(500).send({message: 'Не удалось конвертировать модель'});
@@ -67,13 +67,13 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
             path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
         ).then(data => res.json(data));
     } else {
-        convertModel(req.query.token, fullPathOrig, 'gltf', (err, response) => {
+        convertModel(req.query.token, fullPathOrig, 'glb', (err, response) => {
             if (response === undefined || response.statusCode === 500 || err) {
                 fs.removeSync(folderPath);
                 res.status(500).send({message: 'Не удалось конвертировать модель.'});
             } else {
                 const model = JSON.parse(response.body);
-                fs.outputFileSync(path.join(folderPath, modelCode + '.gltf'), model.data, {flag: 'wx'});
+                fs.outputFileSync(path.join(folderPath, modelCode + '.glb'), Buffer.from(model.data), {flag: 'wx'});
                 fs.outputFileSync(path.join(folderPath, modelCode + '.png'), Buffer.from(model.thumbnail));
 
                 fileData.addFile(
@@ -112,14 +112,6 @@ files.get('/view/:id', accessCheck.tokenCheck, function (req, res) {
         } else {
             res.sendFile(filePath);
         }
-    });
-});
-
-// Adding preview of file
-files.post('/preview/:id', [accessCheck.tokenCheck, upload.single('canvasImage')], function (req, res) {
-    accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res,file => {
-        const previewPath = path.join(filesPath, file.code, file.code + '.jpg');
-        fs.writeFile(previewPath, req.file.buffer, () => res.sendStatus(200));
     });
 });
 
