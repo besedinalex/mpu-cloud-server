@@ -1,4 +1,15 @@
-const {selectData, changeData} = require('./run-query');
+const {selectData, changeData} = require('sqlite3-simple-api');
+
+const createUserTable =
+    `CREATE TABLE IF NOT EXISTS 'Users' (
+    'user_id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    'firstName' TEXT,
+    'lastName' TEXT,
+    'email' TEXT NOT NULL UNIQUE,
+    'password' TEXT,
+    'createdTime' TEXT DEFAULT CURRENT_TIMESTAMP
+    );`;
+changeData(createUserTable);
 
 exports.signIn = function (email) {
     const sql = `SELECT U.user_id, U.password FROM Users AS U WHERE email = '${email}'`;

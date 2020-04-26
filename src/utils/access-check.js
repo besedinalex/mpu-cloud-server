@@ -26,7 +26,7 @@ exports.tokenCheck = function (req, res, next) {
                             next();
                         }
                     })
-                    .catch(() => res.status(500).send('Не удается найти информацию о вашем аккаунте.'));
+                    .catch(() => res.status(401).send({message: 'Ваш токен недействителен.'}));
             }
         });
     }

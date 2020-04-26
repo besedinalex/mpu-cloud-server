@@ -1,4 +1,17 @@
-const {selectData, changeData} = require('./run-query');
+const {selectData, changeData} = require('sqlite3-simple-api');
+
+const createModelAnnotationsTable =
+    `CREATE TABLE IF NOT EXISTS 'ModelAnnotations' (
+    'id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    'modelId' INTEGER NOT NULL,
+    'x' INTEGER NOT NULL,
+    'y' INTEGER NOT NULL,
+    'z' INTEGER NOT NULL,
+    'name' TEXT NOT NULL,
+    'text' TEXT,
+    FOREIGN KEY('modelId') REFERENCES 'Files'('file_id')
+    );`;
+changeData(createModelAnnotationsTable);
 
 exports.getAnnotations = function (modelId) {
     const sql = `SELECT * FROM ModelAnnotations WHERE modelId = ${modelId}`;

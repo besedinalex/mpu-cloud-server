@@ -14,14 +14,14 @@ const upload = multer({storage: multer.memoryStorage()});
 const filesPath = path.join(process.cwd(), 'data/storage');
 
 // Sends model to converter and await for converted one
-function convertModel(token, modelPath, exportFormat, callback) {
+function convertModel(token, modelPath, exportFormat, result) {
     request({
         method: 'POST',
         url: `http://195.133.144.86:4001/model?token=${token}&exportFormat=${exportFormat}`,
         headers: {'Content-Type': 'multipart/form-data'},
         formData: {'model': fs.createReadStream(modelPath)}
-    }, function (err, response, data) {
-        callback(err, response, data);
+    }, function (err, response) {
+        result(err, response);
     });
 }
 
@@ -33,12 +33,13 @@ files.get('/original/:id', accessCheck.tokenCheck, function (req, res) {
         if (fs.existsSync(filePath)) {
             res.download(filePath, `${file.title}.${format}`);
         } else {
-            const origPath = filePath.replace('.' + format, '.' + file.format);
-            convertModel(req.query.token, origPath, req.query.format, (err, response, data) => {
-                if (response === undefined || response.statusCode === 500) {
+            const origPath = path.join(filesPath, file.code, file.code + '.' + file.type);
+            convertModel(req.query.token, origPath, req.query.format, (err, response) => {
+                if (response === undefined || response.statusCode === 500 || err) {
                     res.status(500).send({message: 'Не удалось конвертировать модель'});
                 } else {
-                    fs.writeFile(filePath, data, () => res.download(filePath, `${file.title}.${format}`));
+                    const model = JSON.parse(response.body);
+                    fs.writeFile(filePath, model.data, () => res.download(filePath, `${file.title}.${format}`));
                 }
             });
         }
@@ -56,14 +57,8 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
 
     const modelCode = generator.generate({length: 20, numbers: true});
     const folderPath = path.join(filesPath, modelCode);
-
-    const fileNameOrig = modelCode + path.extname(file.originalname);
-    const fullPathOrig = path.join(folderPath, fileNameOrig);
+    const fullPathOrig  =path.join(folderPath, modelCode + path.extname(file.originalname));
     fs.outputFileSync(fullPathOrig, file.buffer, {flag: 'wx'});
-
-    const fileNamePreview = modelCode + '.jpg';
-    const fullPathPreview = path.join(folderPath, fileNamePreview);
-    fs.outputFileSync(fullPathPreview, null);
 
     // Checks if PDF. PDF is added as is. 3D models are converted.
     if (path.extname(file.originalname).split('.')[1].toLowerCase() === 'pdf') {
@@ -72,15 +67,15 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
             path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
         ).then(data => res.json(data));
     } else {
-        const fileNameGLTF = modelCode + '.gltf';
-        const fullPathGLTF = path.join(folderPath, fileNameGLTF);
-
-        convertModel(req.query.token, fullPathOrig, 'gltf', (err, response, data) => {
-            if (response.statusCode === 500) {
+        convertModel(req.query.token, fullPathOrig, 'glb', (err, response) => {
+            if (response === undefined || response.statusCode === 500 || err) {
                 fs.removeSync(folderPath);
                 res.status(500).send({message: 'Не удалось конвертировать модель.'});
             } else {
-                fs.outputFileSync(fullPathGLTF, data, {flag: 'wx'});
+                const model = JSON.parse(response.body);
+                fs.outputFileSync(path.join(folderPath, modelCode + '.glb'), Buffer.from(model.data), {flag: 'wx'});
+                fs.outputFileSync(path.join(folderPath, modelCode + '.png'), Buffer.from(model.thumbnail));
+
                 fileData.addFile(
                     body.title, body.desc, file.originalname, modelCode, file.size,
                     path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
@@ -117,14 +112,6 @@ files.get('/view/:id', accessCheck.tokenCheck, function (req, res) {
         } else {
             res.sendFile(filePath);
         }
-    });
-});
-
-// Adding preview of file
-files.post('/preview/:id', [accessCheck.tokenCheck, upload.single('canvasImage')], function (req, res) {
-    accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res,file => {
-        const previewPath = path.join(filesPath, file.code, file.code + '.jpg');
-        fs.writeFile(previewPath, req.file.buffer, () => res.sendStatus(200));
     });
 });
 
