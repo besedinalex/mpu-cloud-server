@@ -1,4 +1,27 @@
-const {selectData, changeData} = require('./run-query');
+const {selectData, changeData} = require('sqlite3-simple-api');
+
+const createGroupTable =
+    `CREATE TABLE IF NOT EXISTS 'Groups' (
+    'group_id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    'title' TEXT NOT NULL,
+    'description' TEXT,
+    'image' TEXT NOT NULL,
+    'owner' TEXT NOT NULL,
+    'createdTime' TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY('owner') REFERENCES 'Users'('user_id')
+    );`;
+const createGroupUserTable =
+    `CREATE TABLE IF NOT EXISTS 'GroupUsers' (
+    'id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    'group_id' INTEGER NOT NULL,
+    'user_id' INTEGER NOT NULL,
+    'access' TEXT NOT NULL,
+    'userJoinedDate' TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY('user_id') REFERENCES 'Users'('user_id'),
+    FOREIGN KEY('group_id') REFERENCES 'Groups'('group_id')
+    );`;
+changeData(createGroupTable);
+changeData(createGroupUserTable);
 
 exports.getGroups = function (userId) {
     const sql =

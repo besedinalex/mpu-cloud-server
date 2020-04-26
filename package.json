@@ -7,8 +7,8 @@
     "dev": "nodemon src/index.js",
     "test": "mocha --recursive tests/**/*.spec.js",
     "start": "node src/index.js",
-    "sqlite-win-x86": "npm i sqlite3 --target_arch=ia32",
-    "sqlite-win-x64": "npm i sqlite3 --target_arch=x64",
+    "sqlite-win-x86": "npm i sqlite3-simple-api --target_arch=ia32",
+    "sqlite-win-x64": "npm i sqlite3-simple-api --target_arch=x64",
     "build-win-x86": "pkg . --targets=node12-win-x86",
     "build-win-x64": "pkg . --targets=node12-win-x64"
   },
@@ -30,7 +30,7 @@
     "nodemailer": "^6.4.6",
     "nodemailer-sendgrid-transport": "^0.2.0",
     "request": "^2.88.0",
-    "sqlite3": "^4.1.1"
+    "sqlite3-simple-api": "0.0.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",
