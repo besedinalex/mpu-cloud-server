@@ -4,9 +4,7 @@
 
 Создать папку `data/` в корне проекта иначе СУБД не заработает.
 
-`npm run dev` - запуск сервера с авто-перезапуском при изменениях.
-
-`npm start` - запуск сервера.
+`npm start` - запуск сервера с автоперезапуском при изменениях.
 
 ## Продакшн
 
@@ -18,10 +16,10 @@
 
 |ОС|sqlite3|Проект|
 |:---:|:---:|:---:|
-|*Windows x32*|`run npm sqlite-win-x86`|`run npm build-win-x86`|
-|*Windows x64*|`run npm sqlite-win-x64`|`run npm build-win-x64`|
-|*Linux*|...|...|
-|*MacOS*|...|...|
+|Windows x32|`run npm sqlite-win-x86`|`run npm build-win-x86`|
+|Windows x64|`run npm sqlite-win-x64`|`run npm build-win-x64`|
+|Linux|...|...|
+|MacOS|...|...|
 
 Переместить исполнительный файл (`.exe` для Windows) в любую папку откуда будем его запускать.
 
