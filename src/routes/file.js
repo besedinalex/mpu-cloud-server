@@ -61,7 +61,8 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
     fs.outputFileSync(fullPathOrig, file.buffer, {flag: 'wx'});
 
     // Checks if PDF. PDF is added as is. 3D models are converted.
-    if (path.extname(file.originalname).split('.')[1].toLowerCase() === 'pdf') {
+    const extension = path.extname(file.originalname).toLowerCase();
+    if (extension === '.pdf' || extension === '.gltf' || extension === '.glb') {
         fileData.addFile(
             body.title, body.desc, file.originalname, modelCode, file.size,
             path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
