@@ -363,6 +363,7 @@ MigrationBackup/
 data/*
 
 # Compiled files
+mpu-cloud-server
 mpu-cloud-server.exe
 node_sqlite3.node
 public/*

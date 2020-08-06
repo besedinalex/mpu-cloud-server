@@ -5,11 +5,7 @@
   "bin": "src/index.js",
   "scripts": {
     "start": "nodemon src/index.js",
-    "test": "mocha --recursive tests/**/*.spec.js",
-    "sqlite-win-x86": "npm i sqlite3-simple-api --target_arch=ia32",
-    "sqlite-win-x64": "npm i sqlite3-simple-api --target_arch=x64",
-    "build-win-x86": "pkg . --targets=node12-win-x86",
-    "build-win-x64": "pkg . --targets=node12-win-x64"
+    "test": "mocha --recursive tests/**/*.spec.js"
   },
   "pkg": {
     "scripts": [],
