@@ -7,6 +7,7 @@ const multer = require('multer');
 const accessCheck = require('../utils/access-check');
 const fileData = require('../db/file');
 const modelAnnotationData = require('../db/model-annotation');
+const UPLOAD_LIMIT = require(process.cwd() + '/config.json').UPLOAD_LIMIT;
 
 const files = express.Router();
 const upload = multer({storage: multer.memoryStorage()});
@@ -50,14 +51,22 @@ files.get('/original/:id', accessCheck.tokenCheck, function (req, res) {
 files.post('/original', [accessCheck.tokenCheck, upload.single('model')], function (req, res) {
     const {body, file} = req;
 
+    // Checks if there's no file at all
     if (!body || !file) {
         res.status(400).send({message: 'Файл и соответствующая информация не обнаружены.'});
         return;
     }
 
+    // Checks file limit in Megabytes
+    if (file.size / 1024 / 1024 > UPLOAD_LIMIT) {
+        res.status(400).send({message: `Невозможно загрузить файл. Ограничеение по размеру файла: ${UPLOAD_LIMIT}Мб.`});
+        return;
+    }
+
+    // Creates folder for files
     const modelCode = generator.generate({length: 20, numbers: true});
     const folderPath = path.join(filesPath, modelCode);
-    const fullPathOrig  =path.join(folderPath, modelCode + path.extname(file.originalname));
+    const fullPathOrig = path.join(folderPath, modelCode + path.extname(file.originalname));
     fs.outputFileSync(fullPathOrig, file.buffer, {flag: 'wx'});
 
     // Checks if PDF. PDF is added as is. 3D models are converted.
@@ -106,7 +115,7 @@ files.delete('/original/:id', accessCheck.tokenCheck, (req, res) => {
 files.get('/view/:id', accessCheck.tokenCheck, function (req, res) {
     accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
         const format = req.query.format;
-        if (format === undefined) {
+        if (format.isUndefined) {
             res.status(400).send({message: 'Необходимо указать формат запрашиваемого файла.'});
         }
         const filePath = path.join(filesPath, file.code, file.code + '.' + format);

@@ -3,5 +3,6 @@
     "EMAIL_FROM": "sevkaplay@gmail.com",
     "BASE_URL": "http://localhost:3000",
     "SECRET": "Hello World!",
+    "UPLOAD_LIMIT": 20,
     "PORT": 4002
 }
