@@ -95,7 +95,10 @@ user.get("/files", accessCheck.tokenCheck, function (req, res) {
             if (data.length === 0) {
                 res.status(404).send({message: 'У вас нет файлов.'});
             } else {
-                res.json(data);
+                for (const file of data) {
+                    delete file.code;
+                }
+                res.send(data);
             }
         })
         .catch(() => res.status(500).send({message: 'Неизвестная ошибка сервера.'}))
