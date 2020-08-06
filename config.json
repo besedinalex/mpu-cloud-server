@@ -3,5 +3,5 @@
     "EMAIL_FROM": "sevkaplay@gmail.com",
     "BASE_URL": "http://localhost:3000",
     "SECRET": "Hello World!",
-    "PORT": 4000
+    "PORT": 4002
 }
