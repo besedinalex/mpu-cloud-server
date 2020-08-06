@@ -63,7 +63,7 @@ user.get("/token", function (req, res) {
         .catch(() => res.status(404).send({message: 'Пользователь с таким email не найден.'}));
 });
 
-user.get("/data", function (req, res) {
+user.get("/data", accessCheck.tokenCheck, function (req, res) {
     userData.getUser(req.query.userId)
         .then((data) => res.json(data))
         .catch(() => res.status(404).send({message: 'Такой пользователь не найден.'}));
@@ -144,7 +144,7 @@ user.post("/password", function (req, res) {
                 userData.signIn(request.email)
                     .then(data => {
                         if (decrypt(data.password) === password) {
-                            res.send(403).send({message: 'Нельзя использовать предыдущий пароль.'});
+                            res.status(403).send({message: 'Нельзя использовать предыдущий пароль.'});
                         } else {
                             userData.updatePassword(password, data.user_id)
                                 .then(() => res.sendStatus(200))

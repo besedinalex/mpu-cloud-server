@@ -81,7 +81,7 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
                     body.title, body.desc, file.originalname, modelCode, file.size,
                     path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
                 )
-                    .then(data => res.json(data))
+                    .then(data => res.send({modelId: data, message: 'Модель загружена успешно.'}))
                     .catch(() => res.status(500).send({message: 'Не удалось добавить модель.'}));
             }
         });
@@ -106,6 +106,9 @@ files.delete('/original/:id', accessCheck.tokenCheck, (req, res) => {
 files.get('/view/:id', accessCheck.tokenCheck, function (req, res) {
     accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
         const format = req.query.format;
+        if (format === undefined) {
+            res.status(400).send({message: 'Необходимо указать формат запрашиваемого файла.'});
+        }
         const filePath = path.join(filesPath, file.code, file.code + '.' + format);
         if (format === 'gltf') {
             const gltf = JSON.parse(fs.readFileSync(filePath));
