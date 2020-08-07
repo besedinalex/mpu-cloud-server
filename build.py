@@ -31,7 +31,7 @@ if npm_install == 'true':
 call('npm run build', shell=True, cwd='../mpu-cloud-client')
 
 # Removes previous built client
-for item in listdir('./../mpu-cloud-server/public'):
+for item in listdir('./public'):
     if item != 'draco':
         dir = './public/{}'.format(item)
         if path.isfile(dir) or path.islink(dir):
@@ -75,13 +75,13 @@ call(command, shell=True)
 
 # Copies sqlite3, exec and config to /build folder
 if path.isdir('./build'):
-    rmtree('./../mpu-cloud-server/build')
+    rmtree('./build')
 call('mkdir build', shell=True)
 copyfile(sqlite3_path, './build/node_sqlite3.node')
 copyfile('./config.json', './build/config.json')
 if os == 'win':
     copyfile('./mpu-cloud-server.exe', './build/MPUCloud.exe')
-    remove('./../mpu-cloud-server/mpu-cloud-server.exe')
+    remove('./mpu-cloud-server.exe')
 else:
     print('\nWARNING: Copy mpu-cloud-server file to /build folder.')
 
