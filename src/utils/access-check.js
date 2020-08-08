@@ -14,19 +14,17 @@ exports.tokenCheck = function (req, res, next) {
                 res.status(401).send({message: 'Неверный токен.'});
             } else if (Date.now() >= decoded.exp * 1000) {
                 res.status(401).send({message: 'Токен истек. Необходимо перезайти в систему.'});
-            } else if (decoded.email === undefined) {
-                res.status(401).send({message: 'Старый формат токена. Необходимо перезайти в систему.'})
             } else {
                 userData.getEmailById(decoded.id)
                     .then(data => {
                         if (data.email !== decoded.email) {
-                            res.status(401).send({message: 'Этот токен не принадлежит вам.'});
+                            res.status(401).send({message: 'Этот токен не принадлежит вам. Необходимо перезайти в систему.'});
                         } else {
                             req.user_id = decoded.id;
                             next();
                         }
                     })
-                    .catch(() => res.status(401).send({message: 'Ваш токен недействителен.'}));
+                    .catch(() => res.status(401).send({message: 'Ваш токен недействителен. Необходимо перезайти в систему.'}));
             }
         });
     }
