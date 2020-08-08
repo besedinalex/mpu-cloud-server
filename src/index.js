@@ -25,4 +25,4 @@ app.use('/file', file);
 app.use('/model-annotation', modelAnnotation);
 app.get('/*', (req, res) => res.sendFile(path.join(publicFolderPath, 'index.html'))); // React app
 
-app.listen(PORT, () => console.log(`Сервер запущен. Используемые порт: ${PORT}.`));
+app.listen(PORT, () => console.log(`Сервер запущен. Используемый порт: ${PORT}.`));
