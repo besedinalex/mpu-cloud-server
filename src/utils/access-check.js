@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const userData = require('../db/user');
 const groupData = require('../db/group');
-const secret = require('../../config.json').SECRET;
+const {SECRET} = require(process.cwd() + '/config.json');
 
 // Checks if token is valid
 exports.tokenCheck = function (req, res, next) {
@@ -9,7 +9,7 @@ exports.tokenCheck = function (req, res, next) {
     if (!token) {
         res.status(401).send({message: 'Запрос не содержит токен.'});
     } else {
-        jwt.verify(token, secret, function (err, decoded) {
+        jwt.verify(token, SECRET, function (err, decoded) {
             if (err) {
                 res.status(401).send({message: 'Неверный токен.'});
             } else if (Date.now() >= decoded.exp * 1000) {
