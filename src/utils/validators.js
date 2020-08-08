@@ -6,9 +6,9 @@ exports.registerValidators = [
         .isEmail()
         .withMessage("Email не соответствует правилам сервера.")
         .trim(),
-    query("lastName")
+    query("firstName")
         .custom((value, {}) => {
-            if (!value.match(/(?=.*[а-я])(?=.*[А-Я])[а-яА-Я]{3,}/g)) {
+            if (!value.match(/(?=.*[а-я])(?=.*[А-Я])[а-яА-Я]{2,}/g)) {
                 throw new Error("Имя не соответствует правилам сервера.");
             }
             return true;
@@ -16,7 +16,7 @@ exports.registerValidators = [
         .trim(),
     query("lastName")
         .custom((value, {}) => {
-            if (!value.match(/(?=.*[а-я])(?=.*[А-Я])[а-яА-Я]{3,}/g)) {
+            if (!value.match(/(?=.*[а-я])(?=.*[А-Я])[а-яА-Я]{2,}/g)) {
                 throw new Error("Фамилия не соответствует правилам сервера.");
             }
             return true;
