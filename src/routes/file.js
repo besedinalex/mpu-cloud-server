@@ -7,7 +7,7 @@ const multer = require('multer');
 const accessCheck = require('../utils/access-check');
 const fileData = require('../db/file');
 const modelAnnotationData = require('../db/model-annotation');
-const UPLOAD_LIMIT = require(process.cwd() + '/config.json').UPLOAD_LIMIT;
+const {UPLOAD_LIMIT} = require(process.cwd() + '/config.json');
 
 const files = express.Router();
 const upload = multer({storage: multer.memoryStorage()});
@@ -75,7 +75,7 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
         fileData.addFile(
             body.title, body.desc, file.originalname, modelCode, file.size,
             path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
-        ).then(data => res.json(data));
+        ).then(data => res.send({modelId: data, message: 'Модель загружена успешно.'}));
     } else {
         convertModel(req.query.token, fullPathOrig, 'glb', (err, response) => {
             if (response === undefined || response.statusCode === 500 || err) {

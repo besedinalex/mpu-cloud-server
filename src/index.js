@@ -6,7 +6,7 @@ const user = require('./routes/user');
 const group = require('./routes/group');
 const file = require('./routes/file');
 const modelAnnotation = require('./routes/model-annotation');
-const PORT = require(process.cwd() + '/config.json').PORT;
+const {PORT} = require(process.cwd() + '/config.json');
 
 const app = express();
 const publicFolderPath = path.join(__dirname, '..', 'public');
@@ -25,4 +25,4 @@ app.use('/file', file);
 app.use('/model-annotation', modelAnnotation);
 app.get('/*', (req, res) => res.sendFile(path.join(publicFolderPath, 'index.html'))); // React app
 
-app.listen(PORT, () => console.log(`Сервер запущен. Используемые порт: ${PORT}.`));
+app.listen(PORT, () => console.log(`Сервер запущен. Используемый порт: ${PORT}.`));
