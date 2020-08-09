@@ -69,31 +69,33 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
     const fullPathOrig = path.join(folderPath, modelCode + path.extname(file.originalname));
     fs.outputFileSync(fullPathOrig, file.buffer, {flag: 'wx'});
 
-    // Checks if PDF. PDF is added as is. 3D models are converted.
+    const modelsToConvert = [
+        '.acis', '.sat', '.iges', '.igs', '.jt', '.x_t',
+        '.x_b', '.xmt_txt', '.xmt_bin', '.xmp_txt', '.xpm_bin',
+        '.stp', '.step', '.c3d'
+    ];
     const extension = path.extname(file.originalname).toLowerCase();
-    if (extension === '.pdf' || extension === '.gltf' || extension === '.glb') {
-        fileData.addFile(
-            body.title, body.desc, file.originalname, modelCode, file.size,
-            path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
-        ).then(data => res.send({modelId: data, message: 'Модель загружена успешно.'}));
-    } else {
+    let successfulConvert = true;
+    if (modelsToConvert.includes(extension)) {
         convertModel(req.query.token, fullPathOrig, 'glb', (err, response) => {
             if (response === undefined || response.statusCode === 500 || err) {
                 fs.removeSync(folderPath);
                 res.status(500).send({message: 'Не удалось конвертировать модель.'});
+                successfulConvert = false;
             } else {
                 const model = JSON.parse(response.body);
                 fs.outputFileSync(path.join(folderPath, modelCode + '.glb'), Buffer.from(model.data), {flag: 'wx'});
                 fs.outputFileSync(path.join(folderPath, modelCode + '.png'), Buffer.from(model.thumbnail));
-
-                fileData.addFile(
-                    body.title, body.desc, file.originalname, modelCode, file.size,
-                    path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
-                )
-                    .then(data => res.send({modelId: data, message: 'Модель загружена успешно.'}))
-                    .catch(() => res.status(500).send({message: 'Не удалось добавить модель.'}));
             }
         });
+    }
+    if (successfulConvert) {
+        fileData.addFile(
+            body.title, body.desc, file.originalname, modelCode, file.size,
+            path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
+        )
+            .then(data => res.send({modelId: data, message: 'Файл успешно сохранен.'}))
+            .catch(() => res.status(500).send({message: 'Не удалось сохранить файл.'}));
     }
 });
 
