@@ -7,7 +7,7 @@ const multer = require('multer');
 const accessCheck = require('../utils/access-check');
 const fileData = require('../db/file');
 const modelAnnotationData = require('../db/model-annotation');
-const {UPLOAD_LIMIT} = require(process.cwd() + '/config.json');
+const {UPLOAD_LIMIT, CONVERTER_URL} = require(process.cwd() + '/config.json');
 
 const files = express.Router();
 const upload = multer({storage: multer.memoryStorage()});
@@ -15,12 +15,12 @@ const upload = multer({storage: multer.memoryStorage()});
 const filesPath = path.join(process.cwd(), 'data/storage');
 
 // Sends model to converter and await for converted one
-function convertModel(token, modelPath, exportFormat, result) {
+function convertModel(modelPath, from, to, result) {
     request({
         method: 'POST',
-        url: `http://195.133.144.86:4001/model?token=${token}&exportFormat=${exportFormat}`,
+        url: `${CONVERTER_URL}/model`,
         headers: {'Content-Type': 'multipart/form-data'},
-        formData: {'model': fs.createReadStream(modelPath)}
+        formData: {'file': fs.createReadStream(modelPath), 'from': from, 'to': to}
     }, function (err, response) {
         result(err, response);
     });
@@ -35,12 +35,12 @@ files.get('/original/:id', accessCheck.tokenCheck, function (req, res) {
             res.download(filePath, `${file.title}.${format}`);
         } else {
             const origPath = path.join(filesPath, file.code, file.code + '.' + file.type);
-            convertModel(req.query.token, origPath, req.query.format, (err, response) => {
+            convertModel(origPath, file.type, req.query.format, (err, response) => {
                 if (response === undefined || response.statusCode === 500 || err) {
-                    res.status(500).send({message: 'Не удалось конвертировать модель'});
+                    res.status(500).send({message: 'Не удалось конвертировать файл.'});
                 } else {
-                    const model = JSON.parse(response.body);
-                    fs.writeFile(filePath, model.data, () => res.download(filePath, `${file.title}.${format}`));
+                    const model = JSON.parse(response.body).output;
+                    fs.writeFile(filePath, Buffer.from(model, 'base64'), () => res.download(filePath, `${file.title}.${format}`));
                 }
             });
         }
@@ -59,7 +59,7 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
 
     // Checks file limit in Megabytes
     if (file.size / 1024 / 1024 > UPLOAD_LIMIT) {
-        res.status(400).send({message: `Невозможно загрузить файл. Ограничеение по размеру файла: ${UPLOAD_LIMIT}Мб.`});
+        res.status(400).send({message: `Невозможно загрузить файл. Ограничение по размеру файла: ${UPLOAD_LIMIT}Мб.`});
         return;
     }
 
@@ -69,34 +69,40 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
     const fullPathOrig = path.join(folderPath, modelCode + path.extname(file.originalname));
     fs.outputFileSync(fullPathOrig, file.buffer, {flag: 'wx'});
 
-    const modelsToConvert = [
-        '.acis', '.sat', '.iges', '.igs', '.jt', '.x_t',
-        '.x_b', '.xmt_txt', '.xmt_bin', '.xmp_txt', '.xpm_bin',
-        '.stp', '.step', '.c3d'
-    ];
-    const extension = path.extname(file.originalname).toLowerCase();
-    let successfulConvert = true;
-    if (modelsToConvert.includes(extension)) {
-        convertModel(req.query.token, fullPathOrig, 'glb', (err, response) => {
-            if (response === undefined || response.statusCode === 500 || err) {
-                fs.removeSync(folderPath);
-                res.status(500).send({message: 'Не удалось конвертировать модель.'});
-                successfulConvert = false;
-            } else {
-                const model = JSON.parse(response.body);
-                fs.outputFileSync(path.join(folderPath, modelCode + '.glb'), Buffer.from(model.data), {flag: 'wx'});
-                fs.outputFileSync(path.join(folderPath, modelCode + '.png'), Buffer.from(model.thumbnail));
+    // Adds info to database
+    fileData.addFile(
+        body.title, body.desc, file.originalname, modelCode, file.size,
+        path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
+    )
+        .then(async fileId => {
+            const extension = path.extname(file.originalname).slice(1).toLowerCase();
+            const modelsToConvert = [
+                'acis', 'sat', 'iges', 'igs', 'jt', 'x_t',
+                'x_b', 'xmt_txt', 'xmt_bin', 'xmp_txt', 'xpm_bin',
+                'stp', 'step', 'c3d'
+            ];
+            const convertable = modelsToConvert.includes(extension);
+
+            if (convertable) {
+                await fileData.updateStatus(fileId, 'pending');
             }
-        });
-    }
-    if (successfulConvert) {
-        fileData.addFile(
-            body.title, body.desc, file.originalname, modelCode, file.size,
-            path.extname(file.originalname).split('.')[1], req.user_id, body.groupId
-        )
-            .then(data => res.send({modelId: data, message: 'Файл успешно сохранен.'}))
-            .catch(() => res.status(500).send({message: 'Не удалось сохранить файл.'}));
-    }
+
+            res.send({message: 'Файл успешно сохранен.'});
+
+            if (convertable) {
+                convertModel(fullPathOrig, extension, 'glb', (err, response) => {
+                    if (response === undefined || response.statusCode === 500 || err) {
+                        fileData.updateStatus(fileId, 'error');
+                    } else {
+                        const data = JSON.parse(response.body);
+                        fs.outputFileSync(path.join(folderPath, modelCode + '.glb'), Buffer.from(data.output, 'base64'), {flag: 'wx'});
+                        fs.outputFileSync(path.join(folderPath, modelCode + '.png'), Buffer.from(data.thumbnail, 'base64'));
+                        fileData.updateStatus(fileId, 'success');
+                    }
+                });
+            }
+        })
+        .catch(() => res.status(500).send({message: 'Не удалось сохранить файл.'}));
 });
 
 // Removing file from server
@@ -119,13 +125,18 @@ files.get('/view/:id', accessCheck.tokenCheck, function (req, res) {
         const format = req.query.format;
         if (format.isUndefined) {
             res.status(400).send({message: 'Необходимо указать формат запрашиваемого файла.'});
-        }
-        const filePath = path.join(filesPath, file.code, file.code + '.' + format);
-        if (format === 'gltf') {
-            const gltf = JSON.parse(fs.readFileSync(filePath));
-            res.json(gltf);
         } else {
-            res.sendFile(filePath);
+            const filePath = path.join(filesPath, file.code, file.code + '.' + format);
+            if (fs.existsSync(filePath)) {
+                if (format === 'gltf') {
+                    const gltf = JSON.parse(fs.readFileSync(filePath));
+                    res.send(gltf);
+                } else {
+                    res.sendFile(filePath);
+                }
+            } else {
+                res.status(404).send({message: 'Запрашиваемый файл не найден.'});
+            }
         }
     });
 });
