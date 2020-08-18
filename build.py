@@ -20,6 +20,11 @@ if arch != 'x86' and arch != 'x64':
     print('Supported architectures are: x86, x64')
     quit()
 
+# Checks for mpu-cloud-client folder
+if not path.isdir('./../mpu-cloud-client'):
+    print('В папке с mpu-cloud-server должна лежать папка mpu-cloud-client')
+    exit()
+
 # Install dependencies
 if not path.isdir('./node_modules'):
     call('npm i', shell=True)
