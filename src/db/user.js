@@ -41,7 +41,7 @@ exports.getEmailById = function (id) {
 
 exports.getUserFiles = function (userId) {
     const query =
-        `SELECT F.file_id, F.title, F.createdTime, F.ownerUser, F.ownerGroup, F.type, F.sizeKB, F.code
+        `SELECT F.file_id, F.title, F.createdTime, F.ownerUser, F.ownerGroup, F.type, F.sizeKB, F.code, F.status
         FROM Files AS F WHERE ownerUser = '${userId}'`;
     return selectData(query);
 };

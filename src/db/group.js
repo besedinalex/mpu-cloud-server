@@ -44,7 +44,9 @@ exports.getGroup = function (userId, groupId) {
 };
 
 exports.getGroupFiles = function (groupId) {
-    const sql = `SELECT * FROM Files WHERE ownerGroup = '${groupId}'`;
+    const sql =
+        `SELECT F.file_id, F.title, F.createdTime, F.ownerUser, F.ownerGroup, F.type, F.sizeKB, F.code, F.status
+        FROM Files as F WHERE ownerGroup = '${groupId}'`;
     return selectData(sql);
 };
 
