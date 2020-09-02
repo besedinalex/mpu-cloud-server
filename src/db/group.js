@@ -1,4 +1,8 @@
-const {selectData, changeData} = require('sqlite3-simple-api');
+const path = require('path');
+const {setDatabaseFilePath, selectData, changeData} = require('sqlite3-simple-api');
+const {DATA_PATH} = require(process.cwd() + '/config.json');
+
+setDatabaseFilePath(path.join(DATA_PATH, 'database.sqlite3'));
 
 const createGroupTable =
     `CREATE TABLE IF NOT EXISTS 'Groups' (

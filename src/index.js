@@ -1,3 +1,10 @@
+const {PORT, DATA_PATH} = require(process.cwd() + '/config.json');
+
+if (DATA_PATH === undefined || DATA_PATH === '') {
+    console.log('В config.json необходимо указать поле DATA_PATH с путем для хранения базы данных и файлов пользователей.');
+    process.exit(0);
+}
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -6,7 +13,6 @@ const user = require('./routes/user');
 const group = require('./routes/group');
 const file = require('./routes/file');
 const modelAnnotation = require('./routes/model-annotation');
-const {PORT} = require(process.cwd() + '/config.json');
 
 const app = express();
 const publicFolderPath = path.join(__dirname, '..', 'public');

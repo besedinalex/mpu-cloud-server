@@ -7,12 +7,12 @@ const multer = require('multer');
 const accessCheck = require('../utils/access-check');
 const fileData = require('../db/file');
 const modelAnnotationData = require('../db/model-annotation');
-const {UPLOAD_LIMIT, CONVERTER_URL} = require(process.cwd() + '/config.json');
+const {UPLOAD_LIMIT, CONVERTER_URL, DATA_PATH} = require(process.cwd() + '/config.json');
 
 const files = express.Router();
 const upload = multer({storage: multer.memoryStorage()});
 
-const filesPath = path.join(process.cwd(), 'data/storage');
+const filesPath = path.join(DATA_PATH, 'storage');
 
 // Sends model to converter and await for converted one
 function convertModel(modelPath, from, to, result) {
