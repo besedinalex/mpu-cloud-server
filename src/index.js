@@ -1,3 +1,5 @@
+process.env.NODE_ENV = process.pkg ? 'production' : process.env.NODE_ENV;
+
 const {PORT, DATA_PATH} = require(process.cwd() + '/config.json');
 
 if (DATA_PATH === undefined || DATA_PATH === '') {
