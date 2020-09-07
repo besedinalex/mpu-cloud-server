@@ -44,7 +44,7 @@ group.post('/user', accessCheck.tokenCheck, async function (req, res) {
                             .then(() => res.status(409).send({message: 'Пользователь уже состоит в группе.'}))
                             .catch(() => {
                                 const access = req.query.access === 'ADMIN' ? 'MODERATOR' : req.query.access;
-                                groupData.addGroupUser(idRes, groupId, access)
+                                groupData.addGroupUser(idRes.user_id, groupId, access)
                                     .then(() => res.sendStatus(200))
                                     .catch(() => res.status(500).send({message: 'Не удалось добавить пользователя.'}));
                             });
