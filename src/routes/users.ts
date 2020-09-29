@@ -1,13 +1,6 @@
 import express from "express";
-import {
-    createUser,
-    getUserData,
-    updatePassword,
-    getUserToken,
-    getUserFiles,
-    createUserFolder,
-    rename, remove, replace, copy
-} from "../services/users";
+import {createUser, getUserData, updatePassword, getUserToken} from "../services/users";
+import {getFiles, createFolder, renameFile, removeFile, replaceFile, copyFile} from "../services/files";
 import jwtAuth from "../utils/jwt-auth";
 import {validationResult} from "express-validator";
 
@@ -48,33 +41,33 @@ users.post('/password', passwordValidator, async (req, res) => {
 
 users.get('/files', jwtAuth, async (req, res) => {
     const {path} = req.query;
-    await getUserFiles(req['user_id'], path as string, (code, data) => res.status(code).send(data));
+    await getFiles(req['user_id'], path as string, 'u', (code, data) => res.status(code).send(data));
 });
 
 users.post('/folder', jwtAuth, async (req, res) => {
     const {currentFolder, newFolder} = req.body;
-    await createUserFolder(req['user_id'], currentFolder, newFolder,
+    await createFolder(req['user_id'], currentFolder, newFolder, 'u',
         (code, data) => res.status(code).send(data));
 });
 
 users.put('/file/rename', jwtAuth, async (req, res) => {
     const {currentFolder, oldName, newName} = req.body;
-    await rename(req['user_id'], currentFolder, oldName, newName, (code, data) => res.status(code).send(data));
+    await renameFile(req['user_id'], currentFolder, oldName, newName, 'u', (code, data) => res.status(code).send(data));
 });
 
 users.put('/file/copy', jwtAuth, async (req, res) => {
     const {currentPath, newPath} = req.body;
-    await copy(req['user_id'], currentPath, newPath, (code, data) => res.status(code).send(data));
+    await copyFile(req['user_id'], currentPath, newPath, 'u', (code, data) => res.status(code).send(data));
 });
 
 users.put('/file/cut', jwtAuth, async (req, res) => {
     const {oldPath, newPath} = req.body;
-    await replace(req['user_id'], oldPath, newPath, (code, data) => res.status(code).send(data));
+    await replaceFile(req['user_id'], oldPath, newPath, 'u', (code, data) => res.status(code).send(data));
 });
 
 users.delete('/file', jwtAuth, async (req, res) => {
     const {path} = req.query;
-    await remove(req['user_id'], path as string, (code, data) => res.status(code).send(data));
+    await removeFile(req['user_id'], path as string, 'u', (code, data) => res.status(code).send(data));
 });
 
 export default users;
