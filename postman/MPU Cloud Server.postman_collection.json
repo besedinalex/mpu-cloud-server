@@ -9,6 +9,232 @@
 			"name": "Users",
 			"item": [
 				{
+					"name": "Files",
+					"item": [
+						{
+							"name": "Get user files",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/users/files?path=",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"files"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create user folder",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentFolder\": \"\",\n    \"newFolder\": \"test\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/users/folder",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"folder"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rename user file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentFolder\": \"\",\n    \"oldName\": \"test\",\n    \"newName\": \"lol\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/users/file/rename",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"file",
+										"rename"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Copy user file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentPath\": \"test2\",\n    \"newPath\": \"test1/test2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/users/file/copy",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"file",
+										"copy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cut user file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"oldPath\": \"test3\",\n    \"newPath\": \"test2/test3\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/users/file/cut",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"file",
+										"cut"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete user file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/users/file?path=",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"file"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
 					"name": "Get user token",
 					"event": [
 						{
@@ -140,40 +366,6 @@
 							"path": [
 								"users",
 								"password"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get user files",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/users/files?path=test",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"users",
-								"files"
-							],
-							"query": [
-								{
-									"key": "path",
-									"value": "test"
-								}
 							]
 						}
 					},
