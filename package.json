@@ -2,7 +2,7 @@
   "name": "mpu-cloud-server",
   "version": "0.1.0",
   "private": true,
-  "bin": "src/index.js",
+  "bin": "dist/index.js",
   "scripts": {
     "start": "ts-node-dev ./src/index.ts --watch --respawn",
     "build": "tsc"

@@ -68,6 +68,7 @@ sqlite3_path += '/node_sqlite3.node'
 call(command, shell=True)
 
 # Compiles server
+call('npm run build', shell=True)
 command = 'pkg . --targets=node12-{}-{}'.format(os, arch)
 call(command, shell=True)
 
