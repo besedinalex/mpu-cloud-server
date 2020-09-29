@@ -1,10 +1,11 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const accessCheck = require("../utils/access-check");
-const userData = require("../db/user");
+const userData = require("../db/users");
 const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
+import crypto from "crypto";
 const readline = require('readline');
+const {getUserToken} = require("../services/users");
 const {validationResult} = require('express-validator')
 const {registerValidators, passwordValidator} = require('../utils/validators')
 const {SECRET, RESET_PASSWORD_CODE_LENGTH, PASSWORD_ENCRYPT_SECURITY, RESET_PASSWORD_EXPIRE} = require(process.cwd() + '/config.json');
@@ -16,7 +17,9 @@ const resetRequests = [];
 function addResetRequest(request) {
     // Makes previous token invalid
     for (const obj of resetRequests) {
+        // @ts-ignore
         if (obj.email === request.email && obj.valid) {
+            // @ts-ignore
             obj.valid = false;
             break;
         }
@@ -24,12 +27,15 @@ function addResetRequest(request) {
     // Adds new token
     request.id = lastPasswordResetId;
     request.valid = true;
+    // @ts-ignore
     resetRequests.push(request);
     // Adds timer for added token
     const sequenceId = lastPasswordResetId;
     setTimeout(() => {
         for (const obj of resetRequests) {
+            // @ts-ignore
             if (obj.id === sequenceId) {
+                // @ts-ignore
                 obj.valid = false;
                 break;
             }
@@ -78,39 +84,21 @@ rl.on('line', input => {
     }
 });
 
-const user = express.Router();
+const users = express.Router();
 
-user.get("/token", function (req, res) {
-    const email = req.query.email.toLowerCase();
-    const {password} = req.query;
-    userData.signIn(email, password)
-        .then(data => {
-            bcrypt.compare(password, data.password)
-                .then(areSame => {
-                    if (!areSame) {
-                        res.status(401).send({message: "Неверный email или пароль."});
-                    } else {
-                        const payload = {id: data.user_id, email: email};
-                        res.send({
-                            token: jwt.sign(payload, SECRET, {expiresIn: "7d"}),
-                            expiresAt: Date.now() + +7 * 24 * 60 * 60 * 1000,
-                            userId: data.user_id
-                        });
-                    }
-                })
-                .catch(() => res.status(500).send({message: "Произошла ошибка при обработке паролей."}));
-        })
-        .catch(() => res.status(404).send({message: "Пользователь с таким email не найден."}));
+users.get("/token", async (req, res) => {
+    const {email, password} = req.query;
+    await getUserToken(email.toLowerCase(), password, (code, data) => res.status(code).send(data));
 });
 
-user.get("/data", accessCheck.tokenCheck, function (req, res) {
-    userData.getUser(req.query.userId)
+users.get("/data", accessCheck.jwtAuth, function (req, res) {
+    userData.getUserData(req.query.userId)
         .then((data) => res.send(data))
         .catch(() => res.status(404).send({message: "Такой пользователь не найден."}));
 });
 
-user.post("/data", [registerValidators, passwordValidator], function (req, res) {
-    const {firstName, lastName, email, password} = req.query;
+users.post("/user", [registerValidators, passwordValidator], async (req, res) => {
+    const {firstName, lastName, email, password} = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         let message = '';
@@ -119,23 +107,22 @@ user.post("/data", [registerValidators, passwordValidator], function (req, res) 
         }
         res.status(422).send({message: message.slice(0, -1)});
     } else {
-        // Шифратор паролей, второй параметр - точность шифратора - чем больше, тем лучше шифрование, но дольше времени занимает
-        bcrypt.hash(password, PASSWORD_ENCRYPT_SECURITY)
-            .then(hashPassword => {
-                userData.signUp(firstName, lastName, email, hashPassword)
-                    .then((userId) => {
-                        const payload = {id: userId, email: email,};
-                        const token = jwt.sign(payload, SECRET, {expiresIn: "7d"});
-                        let expiresAt = Date.now() + +7 * 24 * 60 * 60 * 1000;
-                        res.send({token, expiresAt, userId});
-                    })
-                    .catch(() => res.status(409).send({message: "Пользователь с таким email уже существует."}));
-            })
-            .catch(() => res.status(500).send({message: "Произошла ошибка при обработке паролей."}))
+        try {
+            const hashedPassword = await bcrypt.hash(password, PASSWORD_ENCRYPT_SECURITY);
+            try {
+                const userId = await userData.addUser(firstName, lastName, email, hashedPassword);
+                const payload = {id: userId, email: email};
+                res.send({token: jwt.sign(payload, SECRET, {expiresIn: "7d"})});
+            } catch {
+                res.status(409).send({message: "Пользователь с таким email уже существует."})
+            }
+        } catch {
+            res.status(500).send({message: "Произошла ошибка при обработке паролей."});
+        }
     }
 });
 
-user.get("/files", accessCheck.tokenCheck, function (req, res) {
+users.get("/files", accessCheck.jwtAuth, function (req, res) {
     userData
         .getUserFiles(req.user_id)
         .then((data) => {
@@ -153,14 +140,17 @@ user.get("/files", accessCheck.tokenCheck, function (req, res) {
         );
 });
 
-user.post("/password", passwordValidator, function (req, res) {
+users.post("/password", passwordValidator, function (req, res) {
     const {password, token} = req.query;
     for (const request of resetRequests) {
+        // @ts-ignore
         if (request.token === token) {
+            // @ts-ignore
             if (!request.valid) {
                 res.status(403).send({message: "Данный запрос на восстановление пароля не действителен."});
             } else {
-                userData.signIn(request.email)
+                // @ts-ignore
+                userData.getUserLoginData(request.email)
                     .then(data => {
                         bcrypt.compare(password, data.password)
                             .then(areSame => {
@@ -175,6 +165,7 @@ user.post("/password", passwordValidator, function (req, res) {
                                             .then(hashPassword => {
                                                 userData.updatePassword(hashPassword, data.user_id)
                                                     .then(() => {
+                                                        // @ts-ignore
                                                         request.valid = false;
                                                         res.send({message: "Новый пароль установлен."});
                                                     })
@@ -194,4 +185,4 @@ user.post("/password", passwordValidator, function (req, res) {
     res.status(404).send({message: "Такого запроса на восстановление пароля не существует."});
 });
 
-module.exports = user;
+export default users;

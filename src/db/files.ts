@@ -1,7 +1,7 @@
-const path = require('path');
-const {setDatabaseFilePath, changeData} = require('sqlite3-simple-api');
-const {DATA_PATH} = require(process.cwd() + '/config.json');
+import path from 'path';
+import {setDatabaseFilePath, changeData} from "sqlite3-simple-api";
 
+const {DATA_PATH} = require(process.cwd() + '/config.json');
 setDatabaseFilePath(path.join(DATA_PATH, 'database.sqlite3'));
 
 const createFilesTable =
@@ -21,19 +21,20 @@ const createFilesTable =
     );`;
 changeData(createFilesTable);
 
-exports.addFile = function(title, desc, filename, code, sizeKB, type, ownerUser, ownerGroup) {
+export function addFile(title: string, desc: string, filename: string, code: string, sizeKB: string, type: string,
+                        ownerUser: string, ownerGroup: string): Promise<number> {
     const sql =
         `INSERT INTO Files (title, desc, filename, code, sizeKB, type, ownerUser, ownerGroup, status) 
-        VALUES ('${title}','${desc}', '${filename}', '${code}', '${sizeKB}', '${type}', '${ownerUser}', '${ownerGroup}', 'success')`;
+        VALUES ('${title}','${desc}','${filename}','${code}','${sizeKB}','${type}','${ownerUser}','${ownerGroup}','success')`;
     return changeData(sql);
-};
+}
 
-exports.updateStatus = function(id, status) {
+export function updateStatus(id: number, status: string): Promise<number> {
     const sql = `UPDATE Files SET status='${status}' WHERE file_id=${id}`;
     return changeData(sql);
 }
 
-exports.removeFile = function(fileId, ownerId) {
+export function removeFile(fileId: number, ownerId: number): Promise<number> {
     const sql = `DELETE FROM Files WHERE file_id = ${fileId} AND ownerUser = ${ownerId}`;
     return changeData(sql);
-};
+}

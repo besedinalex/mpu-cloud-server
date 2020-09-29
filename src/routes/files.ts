@@ -5,8 +5,8 @@ const path = require('path');
 const request = require('request');
 const multer = require('multer');
 const accessCheck = require('../utils/access-check');
-const fileData = require('../db/file');
-const modelAnnotationData = require('../db/model-annotation');
+const fileData = require('../db/files');
+const modelAnnotationData = require('../db/model-annotations');
 const {UPLOAD_LIMIT, CONVERTER_URL, DATA_PATH} = require(process.cwd() + '/config.json');
 
 const files = express.Router();
@@ -27,7 +27,7 @@ function convertModel(modelPath, from, to, result) {
 }
 
 // Download file from server
-files.get('/original/:id', accessCheck.tokenCheck, function (req, res) {
+files.get('/original/:id', accessCheck.jwtAuth, function (req, res) {
     accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
         const format = req.query.format.toLowerCase();
         const filePath = path.join(filesPath, file.code, file.code + '.' + format);
@@ -48,7 +48,7 @@ files.get('/original/:id', accessCheck.tokenCheck, function (req, res) {
 });
 
 // Uploading file to server
-files.post('/original', [accessCheck.tokenCheck, upload.single('model')], function (req, res) {
+files.post('/original', [accessCheck.jwtAuth, upload.single('model')], function (req, res) {
     const {body, file} = req;
 
     // Checks if there's no file at all
@@ -106,7 +106,7 @@ files.post('/original', [accessCheck.tokenCheck, upload.single('model')], functi
 });
 
 // Removing file from server
-files.delete('/original/:id', accessCheck.tokenCheck, (req, res) => {
+files.delete('/original/:id', accessCheck.jwtAuth, (req, res) => {
     accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
         fs.removeSync(path.join(filesPath, file.code));
         modelAnnotationData.deleteAnnotations(file.file_id)
@@ -120,7 +120,7 @@ files.delete('/original/:id', accessCheck.tokenCheck, (req, res) => {
 });
 
 // Accessing server file
-files.get('/view/:id', accessCheck.tokenCheck, function (req, res) {
+files.get('/view/:id', accessCheck.jwtAuth, function (req, res) {
     accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
         const format = req.query.format;
         if (format.isUndefined) {
@@ -141,4 +141,4 @@ files.get('/view/:id', accessCheck.tokenCheck, function (req, res) {
     });
 });
 
-module.exports = files;
+export default files;

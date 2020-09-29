@@ -1,6 +1,6 @@
 {
-    "DATA_PATH":  "",
-    "CONVERTER_URL": "http://10.211.55.3:3000",
+    "DATA_PATH":  "/users/penguin/MPU Cloud Storage",
+    "CONVERTER_URL": "http://195.133.144.86:3000",
     "RESET_PASSWORD_CODE_LENGTH": 4,
     "RESET_PASSWORD_EXPIRE": 30,
     "PASSWORD_ENCRYPT_SECURITY": 10,

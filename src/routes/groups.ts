@@ -1,17 +1,21 @@
+// @ts-ignore
 const express = require('express');
+// @ts-ignore
 const accessCheck = require('../utils/access-check');
-const userData = require('../db/user');
-const groupData = require('../db/group');
+// @ts-ignore
+const userData = require('../db/users');
+// @ts-ignore
+const groupData = require('../db/groups');
 
-const group = express.Router();
+const groups = express.Router();
 
-group.get('/group', accessCheck.tokenCheck, function (req, res) {
+groups.get('/groups', accessCheck.jwtAuth, function (req, res) {
     groupData.getGroup(req.user_id, req.query.groupId)
         .then(data => res.json(data))
         .catch(() => res.status(404).send({message: 'Данная группа не найдена.'}))
 });
 
-group.get('/groups', accessCheck.tokenCheck, function (req, res) {
+groups.get('/groups', accessCheck.jwtAuth, function (req, res) {
     groupData.getGroups(req.user_id)
         .then(data => {
             if (data.length === 0) {
@@ -23,7 +27,7 @@ group.get('/groups', accessCheck.tokenCheck, function (req, res) {
         .catch(() => res.status(500).send({message: 'Не удалось найти ваши группы.'}))
 });
 
-group.post('/create', accessCheck.tokenCheck, function (req, res) {
+groups.post('/create', accessCheck.jwtAuth, function (req, res) {
     groupData.addGroup(req.query.title, req.query.description, req.query.image, req.user_id)
         .then(groupId => {
             groupData.addGroupUser(req.user_id, groupId, 'ADMIN')
@@ -33,7 +37,7 @@ group.post('/create', accessCheck.tokenCheck, function (req, res) {
         .catch(() => res.status(500).send({message: 'Не удалось создать группу.'}));
 });
 
-group.post('/user', accessCheck.tokenCheck, async function (req, res) {
+groups.post('/user', accessCheck.jwtAuth, async function (req, res) {
     const {groupId} = req.query;
     groupData.getUserAccess(groupId, req.user_id)
         .then(accessRes => {
@@ -57,7 +61,7 @@ group.post('/user', accessCheck.tokenCheck, async function (req, res) {
         .catch(() => res.status(404).send({message: 'Вы не состоите в данной группе.'}));
 });
 
-group.delete('/user', accessCheck.tokenCheck, (req, res) => {
+groups.delete('/user', accessCheck.jwtAuth, (req, res) => {
     const {groupId, userId} = req.query;
     groupData.getUserAccess(groupId, req.user_id)
         .then(accessRes => {
@@ -91,7 +95,7 @@ group.delete('/user', accessCheck.tokenCheck, (req, res) => {
         .catch(() => res.status(404).send({message: 'Вы не состоите в данной группе.'}));
 });
 
-group.get('/users', accessCheck.tokenCheck, function (req, res) {
+groups.get('/users', accessCheck.jwtAuth, function (req, res) {
     const {groupId} = req.query;
     groupData.getGroup(req.user_id, groupId)
         .then(() => {
@@ -102,7 +106,7 @@ group.get('/users', accessCheck.tokenCheck, function (req, res) {
         .catch(() => res.status(404).send({message: 'Данная группа не найдена.'}));
 });
 
-group.get('/files', accessCheck.tokenCheck, function (req, res) {
+groups.get('/files', accessCheck.jwtAuth, function (req, res) {
     const {groupId} = req.query;
     groupData.getGroup(req.user_id, groupId)
         .then(() => {
@@ -113,4 +117,4 @@ group.get('/files', accessCheck.tokenCheck, function (req, res) {
         .catch(() => res.status(404).send({message: 'Данная группа не найдена.'}));
 });
 
-module.exports = group;
+export default groups;

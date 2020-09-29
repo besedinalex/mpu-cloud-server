@@ -1,7 +1,7 @@
-const path = require('path');
-const {setDatabaseFilePath, selectData, changeData} = require('sqlite3-simple-api');
-const {DATA_PATH} = require(process.cwd() + '/config.json');
+import path from 'path';
+import {setDatabaseFilePath, selectData, changeData} from "sqlite3-simple-api";
 
+const {DATA_PATH} = require(process.cwd() + '/config.json');
 setDatabaseFilePath(path.join(DATA_PATH, 'database.sqlite3'));
 
 const createGroupTable =
@@ -27,17 +27,17 @@ const createGroupUserTable =
 changeData(createGroupTable);
 changeData(createGroupUserTable);
 
-exports.getGroups = function (userId) {
+export function getGroups(userId: number) {
     const sql =
         `SELECT G.title, G.image, G.owner, G.group_id, G.createdTime
          FROM Groups AS G
          JOIN GroupUsers AS GU, Users AS U
          ON U.user_id = GU.user_id AND G.group_id = GU.group_id
-         WHERE U.user_id = ${userId}`;
+         WHERE U.id = ${userId}`;
     return selectData(sql);
-};
+}
 
-exports.getGroup = function (userId, groupId) {
+export function getGroup(userId: number, groupId: number) {
     const sql =
         `SELECT G.title, G.description, G.image, G.owner, G.group_id, G.createdTime,
         GU.user_id, GU.access, GU.userJoinedDate
@@ -45,14 +45,14 @@ exports.getGroup = function (userId, groupId) {
         ON U.user_id = GU.user_id AND G.group_id = GU.group_id
         WHERE U.user_id = ${userId} AND G.group_id = ${groupId}`;
     return selectData(sql, true);
-};
+}
 
-exports.getGroupFiles = function (groupId) {
+export function getGroupFiles (groupId: number) {
     const sql =
         `SELECT F.file_id, F.title, F.createdTime, F.ownerUser, F.ownerGroup, F.type, F.sizeKB, F.code, F.status
         FROM Files as F WHERE ownerGroup = '${groupId}'`;
     return selectData(sql);
-};
+}
 
 exports.getGroupUsers = function (group_id) {
     const sql =
@@ -81,7 +81,7 @@ exports.addGroupUser = function (user_id, groupId, access) {
     return changeData(sql);
 };
 
-exports.removeGroupUser = function(groupId, userId) {
+exports.removeGroupUser = function (groupId, userId) {
     const sql = `DELETE FROM GroupUsers WHERE group_id = ${groupId} AND user_id = ${userId}`;
     return changeData(sql);
 };

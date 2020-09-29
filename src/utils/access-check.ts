@@ -1,30 +1,41 @@
 const jwt = require('jsonwebtoken');
-const userData = require('../db/user');
-const groupData = require('../db/group');
+const userData = require('../db/users');
+const groupData = require('../db/groups');
 const {SECRET} = require(process.cwd() + '/config.json');
 
 // Checks if token is valid
-exports.tokenCheck = function (req, res, next) {
-    const {token} = req.query;
+exports.jwtAuth = (req, res, next) => {
+    const {authorization} = req.headers;
+    if (!authorization) {
+        res.status(400).send({message: 'Данный запрос должен содержать Bearer токен.'});
+        return;
+    }
+    const authData = authorization.split(' ');
+    if (authData[0] !== 'Bearer') {
+        res.status(400).send({message: 'Данный запрос должен содержать Bearer токен.'});
+        return;
+    }
+    const token = authData[1];
     if (!token) {
-        res.status(401).send({message: 'Запрос не содержит токен.'});
+        res.status(400).send({message: 'Данный запрос должен содержать Bearer токен.'});
     } else {
-        jwt.verify(token, SECRET, function (err, decoded) {
+        jwt.verify(token, SECRET, async (err, decoded) => {
             if (err) {
-                res.status(401).send({message: 'Неверный токен.'});
+                res.status(401).send({message: 'Токен недействителен.'});
             } else if (Date.now() >= decoded.exp * 1000) {
                 res.status(401).send({message: 'Токен истек. Необходимо перезайти в систему.'});
             } else {
-                userData.getEmailById(decoded.id)
-                    .then(data => {
-                        if (data.email !== decoded.email) {
-                            res.status(401).send({message: 'Этот токен не принадлежит вам. Необходимо перезайти в систему.'});
-                        } else {
-                            req.user_id = decoded.id;
-                            next();
-                        }
-                    })
-                    .catch(() => res.status(401).send({message: 'Ваш токен недействителен. Необходимо перезайти в систему.'}));
+                try {
+                    const userEmail = await userData.getEmailById(decoded.id);
+                    if (userEmail !== decoded.email) {
+                        res.status(401).send({message: 'Этот токен не принадлежит вам. Необходимо перезайти в систему.'});
+                    } else {
+                        req.user_id = decoded.id;
+                        next();
+                    }
+                } catch {
+                    res.status(401).send({message: 'Ваш токен недействителен. Необходимо перезайти в систему.'});
+                }
             }
         });
     }

@@ -1,7 +1,7 @@
-const path = require('path');
-const {setDatabaseFilePath, selectData, changeData} = require('sqlite3-simple-api');
-const {DATA_PATH} = require(process.cwd() + '/config.json');
+import path from "path";
+import {setDatabaseFilePath, selectData, changeData} from "sqlite3-simple-api";
 
+const {DATA_PATH} = require(process.cwd() + '/config.json');
 setDatabaseFilePath(path.join(DATA_PATH, 'database.sqlite3'));
 
 const createModelAnnotationsTable =
@@ -17,10 +17,10 @@ const createModelAnnotationsTable =
     );`;
 changeData(createModelAnnotationsTable);
 
-exports.getAnnotations = function (modelId) {
+export function getAnnotations(modelId: number) {
     const sql = `SELECT * FROM ModelAnnotations WHERE modelId = ${modelId}`;
     return selectData(sql);
-};
+}
 
 exports.addAnnotation = function (modelId, x, y, z, name, text) {
     const sql =
