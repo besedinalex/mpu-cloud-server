@@ -1,7 +1,9 @@
 import {ServiceResponse} from "../types";
 import FileManager from "../utils/file-manager";
 
-export async function getFiles(id: number, path: string, flag: 'u' | 'g', response: ServiceResponse) {
+type Flag = 'u' | 'g';
+
+export async function getFiles(id: number, path: string, flag: Flag, response: ServiceResponse) {
     try {
         const files = await FileManager.getFolderContent(`/${flag}${id}/${path}`);
         for (let i = 0; i < files.length; i++) {
@@ -36,7 +38,7 @@ export async function createFolder(id: number, currentPath: string, folderName: 
     }
 }
 
-export async function copyFile(id: number, currentPath: string, newPath: string, flag: 'u' | 'g',
+export async function copyFile(id: number, currentPath: string, newPath: string, flag: Flag,
                                response: ServiceResponse) {
     currentPath = `${flag}${id}/${currentPath}`;
     newPath = `${flag}${id}/${newPath}`;
@@ -60,7 +62,7 @@ export async function copyFile(id: number, currentPath: string, newPath: string,
     }
 }
 
-export async function replaceFile(id: number, currentPath: string, newPath: string, flag: 'u' | 'g',
+export async function replaceFile(id: number, currentPath: string, newPath: string, flag: Flag,
                                   response: ServiceResponse) {
     currentPath = `${flag}${id}/${currentPath}`;
     newPath = `${flag}${id}/${newPath}`;
@@ -84,7 +86,7 @@ export async function replaceFile(id: number, currentPath: string, newPath: stri
     }
 }
 
-export async function renameFile(id: number, currentPath: string, currentName: string, newName: string, flag: 'u' | 'g',
+export async function renameFile(id: number, currentPath: string, currentName: string, newName: string, flag: Flag,
                                  response: ServiceResponse) {
     currentPath = `/${flag}${id}/${currentPath}/`;
     const oldPath = `${currentPath}/${currentName}`;
@@ -105,7 +107,7 @@ export async function renameFile(id: number, currentPath: string, currentName: s
     }
 }
 
-export async function removeFile(id: number, path: string, flag: 'u' | 'g', response: ServiceResponse) {
+export async function removeFile(id: number, path: string, flag: Flag, response: ServiceResponse) {
     path = `/${flag}${id}/${path}/`;
     if (FileManager.getFullPath(`/${flag}${id}/`) === FileManager.getFullPath(path)) {
         response(400, {message: 'Нельзя удалить корневую папку.'});

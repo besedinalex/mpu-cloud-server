@@ -3,6 +3,13 @@ import path from "path";
 
 const {DATA_PATH} = require(process.cwd() + '/config.json');
 
+type FileInfo = {
+    name: string;
+    extension: string;
+    size: number;
+    createdTime: Date;
+}
+
 namespace FileManager {
 
     const basePath = path.join(DATA_PATH, 'storage');
@@ -27,8 +34,20 @@ namespace FileManager {
         return fs.outputFile(path.join(basePath, filepath), data);
     }
 
-    export function getFile(filepath: string): Promise<Buffer> {
-        return fs.readFile(filepath);
+    export function getFileBuffer(filepath: string): Promise<Buffer> {
+        return fs.readFile(path.join(basePath, filepath));
+    }
+
+    export function getFileInfo(filepath: string): FileInfo {
+        filepath = path.join(basePath, filepath);
+        const parsedPath = path.parse(filepath);
+        const stat = fs.statSync(filepath);
+        return {
+            name: parsedPath.name,
+            extension: parsedPath.ext.slice(1, -1),
+            size: stat.size,
+            createdTime: stat.ctime
+        };
     }
 
     export function copy(currentPath: string, newPath: string): Promise<void> {
