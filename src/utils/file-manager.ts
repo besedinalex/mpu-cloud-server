@@ -1,25 +1,30 @@
 import fs from "fs-extra";
+import path from "path";
+
+const {DATA_PATH} = require(process.cwd() + '/config.json');
 
 namespace FileManager {
 
-    function pathExists(path: string): boolean {
-        return fs.pathExistsSync(path);
+    const basePath = path.join(DATA_PATH, 'storage');
+
+    export function pathExists(filepath: string): boolean {
+        return fs.pathExistsSync(path.join(basePath, filepath));
     }
 
-    export function getFolderContent(path: string): string[] {
-        return fs.readdirSync(path);
+    export function getFolderContent(folder: string): string[] {
+        return fs.readdirSync(path.join(basePath, folder));
     }
 
-    function createFolder(path: string): Promise<void> {
-        return fs.mkdir(path);
+    export function createFolder(folder: string): Promise<void> {
+        return fs.mkdir(path.join(basePath, folder));
     }
 
-    function createFile(path: string, file: Buffer): Promise<void> {
-        return fs.outputFile(path, file);
+    export function createFile(filepath: string, data: Buffer): Promise<void> {
+        return fs.outputFile(path.join(basePath, filepath), data);
     }
 
-    function getFile(path: string): Promise<Buffer> {
-        return fs.readFile(path);
+    export function getFile(filepath: string): Promise<Buffer> {
+        return fs.readFile(filepath);
     }
 }
 

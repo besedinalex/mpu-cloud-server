@@ -1,5 +1,5 @@
 import express from "express";
-import {createUser, getUserData, updatePassword, getUserToken} from "../services/users";
+import {createUser, getUserData, updatePassword, getUserToken, getUserFiles} from "../services/users";
 import jwtAuth from "../utils/jwt-auth";
 import {validationResult} from "express-validator";
 const {registerValidators, passwordValidator} = require("../utils/validators");
@@ -32,27 +32,14 @@ users.post("/user", [registerValidators, passwordValidator], async (req, res) =>
     }
 });
 
-users.get("/files", jwtAuth, function (req, res) {
-    // userData
-    //     .getUserFiles(req.user_id)
-    //     .then((data) => {
-    //         if (data.length === 0) {
-    //             res.status(404).send({message: "У вас нет файлов."});
-    //         } else {
-    //             for (const file of data) {
-    //                 delete file.code;
-    //             }
-    //             res.send(data);
-    //         }
-    //     })
-    //     .catch(() =>
-    //         res.status(500).send({message: "Неизвестная ошибка сервера."})
-    //     );
-});
-
 users.post("/password", passwordValidator, async (req, res) => {
     const {password, token} = req.body;
     await updatePassword(token as string, password as string, (code, data) => res.status(code).send(data));
+});
+
+users.get("/files", jwtAuth, async (req, res) => {
+    const {path} = req.query;
+    await getUserFiles(req['user_id'], path as string, (code, data) => res.status(code).send(data));
 });
 
 export default users;

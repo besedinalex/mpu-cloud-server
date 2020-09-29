@@ -15,6 +15,11 @@ import path from "path";
 import users from "./routes/users";
 import groups from "./routes/groups";
 import modelAnnotations from "./routes/model-annotations";
+import FileManager from "./utils/file-manager";
+
+if (!FileManager.pathExists('')) {
+    FileManager.createFolder('');
+}
 
 const app = express();
 const publicFolderPath = path.join(__dirname, '..', 'public');

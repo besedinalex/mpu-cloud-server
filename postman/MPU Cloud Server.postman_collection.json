@@ -144,6 +144,40 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get user files",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/files?path=test",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"files"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "test"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}

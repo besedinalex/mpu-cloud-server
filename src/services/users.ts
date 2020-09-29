@@ -4,6 +4,7 @@ import crypto from "crypto";
 import readline from "readline";
 import {validationResult} from "express-validator";
 import UsersData from "../db/users";
+import FileManager from "../utils/file-manager";
 import {ServiceResponse} from "../types";
 
 const {
@@ -118,6 +119,7 @@ export async function createUser(email: string, password: string, firstName: str
         const hashedPassword = await bcrypt.hash(password, PASSWORD_ENCRYPT_SECURITY);
         try {
             const userId = await UsersData.addUser(firstName, lastName, email, hashedPassword);
+            await FileManager.createFolder(`u${userId.toString()}`);
             const payload = {id: userId, email: email};
             response(201, {token: jwt.sign(payload, SECRET, {expiresIn: '7d'})});
         } catch {
@@ -180,4 +182,13 @@ export async function updatePassword(token: string, password: string, response: 
         }
     }
     response(404, {message: 'Такой запрос на восстановление пароля не найден.'});
+}
+
+export async function getUserFiles(id: number, path: string, response: ServiceResponse) {
+    try {
+        const files = await FileManager.getFolderContent(`/u${id}/${path}`);
+        response(200, {files});
+    } catch {
+        response(404, {message: 'Указанный путь не был найден.'});
+    }
 }
