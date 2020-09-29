@@ -10,11 +10,10 @@ if (DATA_PATH === undefined || DATA_PATH === '') {
 
 import express from "express";
 import cors from "cors";
-import path from "path";
 import cookieParser from "cookie-parser";
+import path from "path";
 import users from "./routes/users";
 import groups from "./routes/groups";
-import files from "./routes/files";
 import modelAnnotations from "./routes/model-annotations";
 
 const app = express();
@@ -29,7 +28,6 @@ app.use('/', express.static(publicFolderPath));
 
 app.use('/users', users);
 app.use('/groups', groups);
-app.use('/files', files);
 app.use('/model-annotations', modelAnnotations);
 
 app.get('/*', (req, res) => res.sendFile(path.join(publicFolderPath, 'index.html')));

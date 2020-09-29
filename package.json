@@ -27,6 +27,7 @@
     "sqlite3-simple-api": "^1.0.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/cors": "^2.8.7",
     "@types/express": "^4.17.8",
     "@types/fs-extra": "^9.0.1",

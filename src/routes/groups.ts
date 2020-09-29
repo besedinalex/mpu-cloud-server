@@ -1,21 +1,19 @@
-// @ts-ignore
-const express = require('express');
-// @ts-ignore
-const accessCheck = require('../utils/access-check');
-// @ts-ignore
+import express from "express";
+import jwtAuth from "../utils/jwt-auth";
 const userData = require('../db/users');
-// @ts-ignore
 const groupData = require('../db/groups');
 
 const groups = express.Router();
 
-groups.get('/groups', accessCheck.jwtAuth, function (req, res) {
+groups.get('/groups', jwtAuth, function (req, res) {
+    // @ts-ignore
     groupData.getGroup(req.user_id, req.query.groupId)
         .then(data => res.json(data))
         .catch(() => res.status(404).send({message: 'Данная группа не найдена.'}))
 });
 
-groups.get('/groups', accessCheck.jwtAuth, function (req, res) {
+groups.get('/groups', jwtAuth, function (req, res) {
+    // @ts-ignore
     groupData.getGroups(req.user_id)
         .then(data => {
             if (data.length === 0) {
@@ -27,9 +25,11 @@ groups.get('/groups', accessCheck.jwtAuth, function (req, res) {
         .catch(() => res.status(500).send({message: 'Не удалось найти ваши группы.'}))
 });
 
-groups.post('/create', accessCheck.jwtAuth, function (req, res) {
+groups.post('/create', jwtAuth, function (req, res) {
+    // @ts-ignore
     groupData.addGroup(req.query.title, req.query.description, req.query.image, req.user_id)
         .then(groupId => {
+            // @ts-ignore
             groupData.addGroupUser(req.user_id, groupId, 'ADMIN')
                 .then(() => res.sendStatus(200))
                 .catch(() => res.status(500).send({message: 'Не удалось добавить пользователя в группу.'}));
@@ -37,11 +37,13 @@ groups.post('/create', accessCheck.jwtAuth, function (req, res) {
         .catch(() => res.status(500).send({message: 'Не удалось создать группу.'}));
 });
 
-groups.post('/user', accessCheck.jwtAuth, async function (req, res) {
+groups.post('/user', jwtAuth, async function (req, res) {
     const {groupId} = req.query;
+    // @ts-ignore
     groupData.getUserAccess(groupId, req.user_id)
         .then(accessRes => {
             if (accessRes.access === 'ADMIN' || accessRes.access === 'MODERATOR') {
+                // @ts-ignore
                 userData.getIdByEmail(req.query.email.toLowerCase())
                     .then(idRes => {
                         groupData.getUserAccess(groupId, idRes)
@@ -61,8 +63,9 @@ groups.post('/user', accessCheck.jwtAuth, async function (req, res) {
         .catch(() => res.status(404).send({message: 'Вы не состоите в данной группе.'}));
 });
 
-groups.delete('/user', accessCheck.jwtAuth, (req, res) => {
+groups.delete('/user', jwtAuth, (req, res) => {
     const {groupId, userId} = req.query;
+    // @ts-ignore
     groupData.getUserAccess(groupId, req.user_id)
         .then(accessRes => {
             groupData.getUserAccess(groupId, userId)
@@ -74,7 +77,7 @@ groups.delete('/user', accessCheck.jwtAuth, (req, res) => {
                                     .then(() => res.sendStatus(200))
                                     .catch(() => res.status(500).send({message: 'Не удалось удалить пользователя.'}));
                             } else {
-                                res.status(403).status({message: 'Нельзя удалить администратора.'});
+                                res.status(403).send({message: 'Нельзя удалить администратора.'});
                             }
                             break;
                         case 'MODERATOR':
@@ -95,8 +98,9 @@ groups.delete('/user', accessCheck.jwtAuth, (req, res) => {
         .catch(() => res.status(404).send({message: 'Вы не состоите в данной группе.'}));
 });
 
-groups.get('/users', accessCheck.jwtAuth, function (req, res) {
+groups.get('/users', jwtAuth, function (req, res) {
     const {groupId} = req.query;
+    // @ts-ignore
     groupData.getGroup(req.user_id, groupId)
         .then(() => {
             groupData.getGroupUsers(groupId)
@@ -106,15 +110,16 @@ groups.get('/users', accessCheck.jwtAuth, function (req, res) {
         .catch(() => res.status(404).send({message: 'Данная группа не найдена.'}));
 });
 
-groups.get('/files', accessCheck.jwtAuth, function (req, res) {
-    const {groupId} = req.query;
-    groupData.getGroup(req.user_id, groupId)
-        .then(() => {
-            groupData.getGroupFiles(groupId)
-                .then(data => res.json(data))
-                .catch(() => res.status(500).send({message: 'Не удалось найти файлы группы.'}));
-        })
-        .catch(() => res.status(404).send({message: 'Данная группа не найдена.'}));
+groups.get('/files', jwtAuth, function (req, res) {
+    // const {groupId} = req.query;
+    // // @ts-ignore
+    // groupData.getGroup(req.user_id, groupId)
+    //     .then(() => {
+    //         groupData.getGroupFiles(groupId)
+    //             .then(data => res.json(data))
+    //             .catch(() => res.status(500).send({message: 'Не удалось найти файлы группы.'}));
+    //     })
+    //     .catch(() => res.status(404).send({message: 'Данная группа не найдена.'}));
 });
 
 export default groups;
