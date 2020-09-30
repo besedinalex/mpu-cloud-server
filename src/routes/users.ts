@@ -1,12 +1,23 @@
 import express from "express";
+import multer from "multer";
 import {createUser, getUserData, updatePassword, getUserToken} from "../services/users";
-import {getFiles, createFolder, renameFile, removeFile, replaceFile, copyFile} from "../services/files";
+import {
+    getFiles,
+    createFolder,
+    renameFile,
+    removeFile,
+    replaceFile,
+    copyFile,
+    uploadFile,
+    getFile, getFileInfo
+} from "../services/files";
 import jwtAuth from "../utils/jwt-auth";
 import {validationResult} from "express-validator";
 
 const {registerValidators, passwordValidator} = require("../utils/validators");
 
 const users = express.Router();
+const upload = multer({storage: multer.memoryStorage()});
 
 users.get('/token', async (req, res) => {
     const {email, password} = req.query;
@@ -39,9 +50,26 @@ users.post('/password', passwordValidator, async (req, res) => {
     await updatePassword(token as string, password as string, (code, data) => res.status(code).send(data));
 });
 
+users.get('/file', jwtAuth, async (req, res) => {
+    const {path} = req.query;
+    await getFile(req['user_id'], path as string, 'u', (code, data) => res.status(code).send(data));
+});
+
+users.get('/file/info', jwtAuth, async (req, res) => {
+    const {path} = req.query;
+    await getFileInfo(req['user_id'], path as string, 'u', (code, data) => res.status(code).send(data));
+})
+
 users.get('/files', jwtAuth, async (req, res) => {
     const {path} = req.query;
     await getFiles(req['user_id'], path as string, 'u', (code, data) => res.status(code).send(data));
+});
+
+users.post('/file', [jwtAuth, upload.single('file')], async (req, res) => {
+    const {file} = req;
+    const {currentPath, filename} = req.body;
+    await uploadFile(req['user_id'], currentPath, filename, file, 'u',
+        (code, data) => res.status(code).send(data));
 });
 
 users.post('/folder', jwtAuth, async (req, res) => {
@@ -52,12 +80,14 @@ users.post('/folder', jwtAuth, async (req, res) => {
 
 users.put('/file/rename', jwtAuth, async (req, res) => {
     const {currentFolder, oldName, newName} = req.body;
-    await renameFile(req['user_id'], currentFolder, oldName, newName, 'u', (code, data) => res.status(code).send(data));
+    await renameFile(req['user_id'], currentFolder, oldName, newName, 'u',
+        (code, data) => res.status(code).send(data));
 });
 
 users.put('/file/copy', jwtAuth, async (req, res) => {
     const {currentPath, newPath} = req.body;
-    await copyFile(req['user_id'], currentPath, newPath, 'u', (code, data) => res.status(code).send(data));
+    await copyFile(req['user_id'], currentPath, newPath, 'u',
+        (code, data) => res.status(code).send(data));
 });
 
 users.put('/file/cut', jwtAuth, async (req, res) => {

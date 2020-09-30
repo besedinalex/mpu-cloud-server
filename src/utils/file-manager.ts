@@ -14,16 +14,16 @@ namespace FileManager {
 
     const basePath = path.join(DATA_PATH, 'storage');
 
-    export function pathExists(filepath: string): boolean {
-        return fs.pathExistsSync(path.join(basePath, filepath));
-    }
-
     export function getFullPath(requestPath: string): string {
         return path.join(basePath, requestPath);
     }
 
-    export function getFolderContent(folder: string): string[] {
-        return fs.readdirSync(path.join(basePath, folder));
+    export function pathExists(filepath: string): Promise<boolean> {
+        return fs.pathExists(path.join(basePath, filepath));
+    }
+
+    export function getFolderContent(folder: string): Promise<string[]> {
+        return fs.readdir(path.join(basePath, folder));
     }
 
     export function createFolder(folder: string): Promise<void> {
@@ -38,13 +38,13 @@ namespace FileManager {
         return fs.readFile(path.join(basePath, filepath));
     }
 
-    export function getFileInfo(filepath: string): FileInfo {
+    export async function getFileInfo(filepath: string): Promise<FileInfo> {
         filepath = path.join(basePath, filepath);
         const parsedPath = path.parse(filepath);
-        const stat = fs.statSync(filepath);
+        const stat = await fs.stat(filepath);
         return {
             name: parsedPath.name,
-            extension: parsedPath.ext.slice(1, -1),
+            extension: parsedPath.ext.slice(1),
             size: stat.size,
             createdTime: stat.ctime
         };
