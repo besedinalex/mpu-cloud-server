@@ -169,34 +169,6 @@ export async function copyFile(id: number, currentPath: string, newPath: string,
     }
 }
 
-export async function replaceFile(id: number, currentPath: string, newPath: string, flag: Flag,
-                                  response: ServiceResponse) {
-    if (reserved.test(currentPath) || reserved.test(newPath)) {
-        response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
-        return;
-    }
-    currentPath = `${flag}${id}/${currentPath}`;
-    newPath = `${flag}${id}/${newPath}`;
-    if (FileManager.getFullPath(`/${flag}${id}/`) === FileManager.getFullPath(currentPath)) {
-        response(400, {message: 'Нельзя переместить корневую папку.'});
-        return;
-    }
-    if (!await FileManager.pathExists(currentPath)) {
-        response(404, {message: 'Объект, который вы пытаетесь переместить, не найден.'});
-        return;
-    }
-    if (await FileManager.pathExists(newPath)) {
-        response(400, {message: 'В данной папке уже есть файл или папка с таким именем.'});
-        return;
-    }
-    try {
-        await FileManager.replace(currentPath, newPath);
-        response(200, {message: 'Файл или папка успешно перемещен(а).'});
-    } catch {
-        response(500, {message: 'Не удалось переместить файл или папку.'});
-    }
-}
-
 export async function renameFile(id: number, currentPath: string, currentName: string, newName: string, flag: Flag,
                                  response: ServiceResponse) {
     if (reserved.test(currentPath) || reserved.test(currentName) || reserved.test(newName)) {

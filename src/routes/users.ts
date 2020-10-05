@@ -6,7 +6,6 @@ import {
     createFolder,
     renameFile,
     removeFile,
-    replaceFile,
     copyFile,
     uploadFile,
     getFile, getFileInfo
@@ -88,11 +87,6 @@ users.put('/file/copy', jwtAuth, async (req, res) => {
     const {currentPath, newPath} = req.body;
     await copyFile(req['user_id'], currentPath, newPath, 'u',
         (code, data) => res.status(code).send(data));
-});
-
-users.put('/file/cut', jwtAuth, async (req, res) => {
-    const {oldPath, newPath} = req.body;
-    await replaceFile(req['user_id'], oldPath, newPath, 'u', (code, data) => res.status(code).send(data));
 });
 
 users.delete('/file', jwtAuth, async (req, res) => {
