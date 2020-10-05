@@ -4,6 +4,7 @@ import {ServiceResponse} from "../types";
 import FileManager from "../utils/file-manager";
 import getFileBuffer = FileManager.getFileBuffer;
 
+// TODO: Implement UPLOAD_LIMIT usage
 const {UPLOAD_LIMIT, CONVERTER_URL} = require(process.cwd() + '/config.json');
 
 // Defines whether it's user or group file
@@ -82,12 +83,15 @@ export async function getFiles(id: number, folder: string, flag: Flag, response:
     }
 }
 
-export async function uploadFile(id: number, currentPath: string, filename: string, file: Express.Multer.File,
-                                 flag: Flag, response: ServiceResponse) {
+export async function uploadFile(userId: number, groupId: number | undefined, currentPath: string, filename: string,
+                                 file: Express.Multer.File, response: ServiceResponse) {
     if (reserved.test(currentPath) || reserved.test(file.originalname)) {
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
     }
+    const groupRequest = groupId === undefined;
+    const id = !groupRequest ? userId : groupId;
+    const flag: Flag = !groupRequest ? 'u' : 'g';
     currentPath = `/${flag}${id}/${currentPath}/`;
     if (!await FileManager.pathExists(currentPath)) {
         response(404, {message: 'Папка, в которую вы пытаетесь загрузить файл, не найдена.'});
@@ -95,7 +99,6 @@ export async function uploadFile(id: number, currentPath: string, filename: stri
     }
     filename = filename === undefined ? file.originalname : filename + path.parse(file.originalname).ext;
     const filepath = `${currentPath}/${filename}`;
-    const reservedFolder = `${currentPath}/$${filename}`;
     if (await FileManager.pathExists(filepath)) {
         response(400, {message: 'Файл с таким именем уже существует.'});
         return;
@@ -104,6 +107,7 @@ export async function uploadFile(id: number, currentPath: string, filename: stri
         await FileManager.createFile(filepath, file.buffer);
         response(201, {message: 'Файл был успешно загружен.'});
         try {
+            const reservedFolder = `${currentPath}/$${filename}`;
             await FileManager.createFolder(reservedFolder);
             if (fileIsConvertibleModel(filepath)) {
                 const data = await convertModel(filepath, 'glb');
@@ -111,7 +115,7 @@ export async function uploadFile(id: number, currentPath: string, filename: stri
                 await FileManager.createFile(path.join(reservedFolder, 'png'), Buffer.from(data.thumbnail, 'base64'));
             }
         } catch {
-            console.log(`Не удалось создать доп. файлы для файла ${filepath}`);
+            console.log(`Не удалось создать дополнительные файлы для файла ${filepath}.`);
         }
     } catch {
         response(500, {message: 'Не удалось загрузить файл.'});

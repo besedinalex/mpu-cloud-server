@@ -67,7 +67,7 @@ users.get('/files', jwtAuth, async (req, res) => {
 users.post('/file', [jwtAuth, upload.single('file')], async (req, res) => {
     const {file} = req;
     const {currentPath, filename} = req.body;
-    await uploadFile(req['user_id'], currentPath, filename, file, 'u',
+    await uploadFile(req['user_id'], undefined, currentPath, filename, file,
         (code, data) => res.status(code).send(data));
 });
 
