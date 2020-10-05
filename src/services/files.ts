@@ -70,13 +70,8 @@ export async function getFileInfo(id: number, filepath: string, flag: Flag, resp
 
 export async function getFiles(id: number, folder: string, flag: Flag, response: ServiceResponse) {
     try {
-        const files = await FileManager.getFolderContent(`/${flag}${id}/${folder}`);
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            if (reserved.test(file)) {
-                files.splice(i, 1);
-            }
-        }
+        let files = await FileManager.getFolderContent(`/${flag}${id}/${folder}`);
+        files = files.filter(value => value[0] !== '.' && value[0] !== '$');
         response(200, {ls: files});
     } catch {
         response(404, {message: 'Указанный путь не найден.'});
@@ -167,6 +162,13 @@ export async function copyFile(id: number, currentPath: string, newPath: string,
     }
     try {
         await FileManager.copy(currentPath, newPath);
+        const parsedCurrentPath = path.parse(currentPath);
+        const parsedNewPath = path.parse(newPath);
+        const oldReservedPath = path.join(parsedCurrentPath.dir, `$${parsedCurrentPath.base}`);
+        const newReservedPath = path.join(parsedNewPath.dir, `$${parsedNewPath.base}`);
+        if (await FileManager.pathExists(oldReservedPath)) {
+            await FileManager.copy(oldReservedPath, newReservedPath);
+        }
         response(200, {message: 'Файл или папка успешно скопирован(а).'});
     } catch {
         response(500, {message: 'Не удалось скопировать файл или папку.'});
@@ -181,7 +183,7 @@ export async function renameFile(id: number, currentPath: string, currentName: s
     }
     currentPath = `/${flag}${id}/${currentPath}/`;
     const oldPath = `${currentPath}/${currentName}`;
-    const newPath = `${currentPath}/${newName}`
+    const newPath = `${currentPath}/${newName}`;
     if (!await FileManager.pathExists(oldPath)) {
         response(404, {message: 'Объект, который вы пытаетесь переименовать, не найден.'});
         return;
@@ -192,28 +194,38 @@ export async function renameFile(id: number, currentPath: string, currentName: s
     }
     try {
         await FileManager.rename(oldPath, newPath);
+        const oldReservedFolder = `${currentPath}/$${currentName}`;
+        const newReservedFolder = `${currentPath}/$${newName}`;
+        if (await FileManager.pathExists(oldReservedFolder)) {
+            await FileManager.rename(oldReservedFolder, newReservedFolder);
+        }
         response(200, {message: 'Имя файла или папки изменено.'});
     } catch {
         response(500, {message: 'Не удалось изменить имя.'});
     }
 }
 
-export async function removeFile(id: number, path: string, flag: Flag, response: ServiceResponse) {
-    if (reserved.test(path)) {
+export async function removeFile(id: number, currentPath: string, flag: Flag, response: ServiceResponse) {
+    if (reserved.test(currentPath)) {
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
     }
-    path = `/${flag}${id}/${path}/`;
-    if (FileManager.getFullPath(`/${flag}${id}/`) === FileManager.getFullPath(path)) {
+    currentPath = `/${flag}${id}/${currentPath}`;
+    if (FileManager.getFullPath(`/${flag}${id}/`) === FileManager.getFullPath(currentPath)) {
         response(400, {message: 'Нельзя удалить корневую папку.'});
         return;
     }
-    if (!await FileManager.pathExists(path)) {
+    if (!await FileManager.pathExists(currentPath)) {
         response(404, {message: 'Объект, который вы пытаетесь удалить, не найден.'});
         return;
     }
     try {
-        await FileManager.remove(path);
+        await FileManager.remove(currentPath);
+        const parsedCurrentPath = path.parse(currentPath);
+        const currentReservedPath = path.join(parsedCurrentPath.dir, `$${parsedCurrentPath.base}`);
+        if (await FileManager.pathExists(currentReservedPath)) {
+            await FileManager.remove(currentReservedPath);
+        }
         response(200, {message: 'Удаление файла или папки прошло успешно.'});
     } catch {
         response(500, {message: 'Не удалось удалить файл или папку.'});
