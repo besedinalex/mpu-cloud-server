@@ -1,13 +1,11 @@
 import request from "request";
 import path from "path";
-import {ServiceResponse} from "../types";
 import FileManager from "../utils/file-manager";
-import getFileBuffer = FileManager.getFileBuffer;
+import GroupsData from "../db/groups";
+import ServiceResponse from "../models/service-response";
+import FileAction from "../models/file-action";
 
 const {UPLOAD_LIMIT, CONVERTER_URL} = require(process.cwd() + '/config.json');
-
-// Defines whether it's user or group file
-type Flag = 'u' | 'g';
 
 type ConverterResponse = {
     output: string;
@@ -37,7 +35,7 @@ function convertModel(filepath: string, to: string): Promise<ConverterResponse> 
             formData: {
                 'from': path.parse(filepath).ext.slice(1),
                 'to': to,
-                'file': await getFileBuffer(filepath)
+                'file': await FileManager.getFileBuffer(filepath)
             }
         }, (err, res) => {
             if (err) {
@@ -49,27 +47,44 @@ function convertModel(filepath: string, to: string): Promise<ConverterResponse> 
     });
 }
 
-export async function getFile(id: number, filepath: string, flag: Flag, response: ServiceResponse) {
+export async function getFile(userId: number, groupId: number | undefined, filepath: string,
+                              response: ServiceResponse) {
+    const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Read);
+    if (!hasAccess) {
+        response(404, {message: 'Указанный файл не найден.'});
+        return;
+    }
     try {
-        const file = await FileManager.getFileBuffer(`/${flag}${id}/${filepath}`);
+        const file = await FileManager.getFileBuffer(`${basePath}/${filepath}`);
         response(200, file);
     } catch {
         response(404, {message: 'Указанный файл не найден.'});
     }
 }
 
-export async function getFileInfo(id: number, filepath: string, flag: Flag, response: ServiceResponse) {
+export async function getFileInfo(userId: number, groupId: number | undefined, filepath: string,
+                                  response: ServiceResponse) {
+    const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Read);
+    if (!hasAccess) {
+        response(404, {message: 'Указанный файл не найден.'});
+        return;
+    }
     try {
-        const fileInfo = await FileManager.getFileInfo(`${flag}${id}/${filepath}`);
-        response(200, {fileInfo});
+        const fileInfo = await FileManager.getFileInfo(`${basePath}/${filepath}`);
+        response(200, fileInfo);
     } catch {
         response(404, {message: 'Указанный файл не найден.'});
     }
 }
 
-export async function getFiles(id: number, folder: string, flag: Flag, response: ServiceResponse) {
+export async function getFiles(userId: number, groupId: number | undefined, folder: string, response: ServiceResponse) {
+    const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Read);
+    if (!hasAccess) {
+        response(404, {message: 'Указанный файл не найден.'});
+        return;
+    }
     try {
-        let files = await FileManager.getFolderContent(`/${flag}${id}/${folder}`);
+        let files = await FileManager.getFolderContent(`${basePath}/${folder}`);
         files = files.filter(value => value[0] !== '.' && value[0] !== '$');
         response(200, files);
     } catch {
@@ -79,6 +94,17 @@ export async function getFiles(id: number, folder: string, flag: Flag, response:
 
 export async function uploadFile(userId: number, groupId: number | undefined, currentPath: string, filename: string,
                                  file: Express.Multer.File, response: ServiceResponse) {
+    const {basePath, hasAccess, groupRequest} = await fileAccess(userId, groupId, FileAction.Create);
+    if (!hasAccess) {
+        response(403, {message: 'Вы не можете загрузить файл.'});
+        return;
+    }
+
+    if (!file) {
+        response(400, {message: 'Необходимо выбрать файл.'});
+        return;
+    }
+
     if (reserved.test(currentPath) || reserved.test(file.originalname)) {
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
@@ -90,10 +116,7 @@ export async function uploadFile(userId: number, groupId: number | undefined, cu
         return;
     }
 
-    const groupRequest = groupId === undefined;
-    const id = !groupRequest ? userId : groupId;
-    const flag: Flag = !groupRequest ? 'u' : 'g';
-    currentPath = `/${flag}${id}/${currentPath}/`;
+    currentPath = `${basePath}/${currentPath}/`;
     if (!await FileManager.pathExists(currentPath)) {
         response(404, {message: 'Папка, в которую вы пытаетесь загрузить файл, не найдена.'});
         return;
@@ -110,6 +133,9 @@ export async function uploadFile(userId: number, groupId: number | undefined, cu
         try {
             const reservedFolder = `${currentPath}/$${filename}`;
             await FileManager.createFolder(reservedFolder);
+            if (groupRequest) {
+                await FileManager.createFile(path.join(reservedFolder, `u${userId}`), Buffer.from([]));
+            }
             if (fileIsConvertibleModel(filepath)) {
                 const data = await convertModel(filepath, 'glb');
                 await FileManager.createFile(path.join(reservedFolder, 'glb'), Buffer.from(data.output, 'base64'));
@@ -123,13 +149,19 @@ export async function uploadFile(userId: number, groupId: number | undefined, cu
     }
 }
 
-export async function createFolder(id: number, currentPath: string, folderName: string, flag: Flag,
+export async function createFolder(userId: number, groupId: number | undefined, currentPath: string, folderName: string,
                                    response: ServiceResponse) {
+    const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Create);
+    if (!hasAccess) {
+        response(403, {message: 'Вы не можете создавать папки.'});
+        return;
+    }
+
     if (reserved.test(currentPath) || reserved.test(folderName)) {
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
     }
-    currentPath = `/${flag}${id}/${currentPath}/`;
+    currentPath = `${basePath}/${currentPath}/`;
     if (!await FileManager.pathExists(currentPath)) {
         response(404, {message: 'Папка, в которой вы пытаетесь создать папку, не найдена.'});
         return;
@@ -146,15 +178,21 @@ export async function createFolder(id: number, currentPath: string, folderName: 
     }
 }
 
-export async function copyFile(id: number, currentPath: string, newPath: string, flag: Flag,
+export async function copyFile(userId: number, groupId: number | undefined, currentPath: string, newPath: string,
                                response: ServiceResponse) {
+    const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Copy);
+    if (!hasAccess) {
+        response(403, {message: 'Вы не можете копировать файлы.'});
+        return;
+    }
+
     if (reserved.test(currentPath) || reserved.test(newPath)) {
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
     }
-    currentPath = `${flag}${id}/${currentPath}`;
-    newPath = `${flag}${id}/${newPath}`;
-    if (FileManager.getFullPath(`/${flag}${id}/`) === FileManager.getFullPath(currentPath)) {
+    currentPath = `${basePath}/${currentPath}`;
+    newPath = `${basePath}/${newPath}`;
+    if (FileManager.getFullPath(`${basePath}/`) === FileManager.getFullPath(currentPath)) {
         response(400, {message: 'Нельзя скопировать корневую папку.'});
         return;
     }
@@ -181,13 +219,19 @@ export async function copyFile(id: number, currentPath: string, newPath: string,
     }
 }
 
-export async function renameFile(id: number, currentPath: string, currentName: string, newName: string, flag: Flag,
-                                 response: ServiceResponse) {
+export async function renameFile(userId: number, groupId: number | undefined, currentPath: string, currentName: string,
+                                 newName: string, response: ServiceResponse) {
+    const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Rename);
+    if (!hasAccess) {
+        response(403, {message: 'Вы не можете переименовывать файлы.'});
+        return;
+    }
+
     if (reserved.test(currentPath) || reserved.test(currentName) || reserved.test(newName)) {
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
     }
-    currentPath = `/${flag}${id}/${currentPath}/`;
+    currentPath = `${basePath}/${currentPath}/`;
     const oldPath = `${currentPath}/${currentName}`;
     const newPath = `${currentPath}/${newName}`;
     if (!await FileManager.pathExists(oldPath)) {
@@ -211,13 +255,20 @@ export async function renameFile(id: number, currentPath: string, currentName: s
     }
 }
 
-export async function removeFile(id: number, currentPath: string, flag: Flag, response: ServiceResponse) {
+export async function removeFile(userId: number, groupId: number | undefined, currentPath: string,
+                                 response: ServiceResponse) {
+    const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Remove);
+    if (!hasAccess) {
+        response(403, {message: 'Вы не можете копировать файлы.'});
+        return;
+    }
+
     if (reserved.test(currentPath)) {
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
     }
-    currentPath = `/${flag}${id}/${currentPath}`;
-    if (FileManager.getFullPath(`/${flag}${id}/`) === FileManager.getFullPath(currentPath)) {
+    currentPath = `${basePath}/${currentPath}`;
+    if (FileManager.getFullPath(`${basePath}/`) === FileManager.getFullPath(currentPath)) {
         response(400, {message: 'Нельзя удалить корневую папку.'});
         return;
     }
@@ -236,4 +287,26 @@ export async function removeFile(id: number, currentPath: string, flag: Flag, re
     } catch {
         response(500, {message: 'Не удалось удалить файл или папку.'});
     }
+}
+
+type FileAccessReturnObj = Promise<{ basePath: string, hasAccess: boolean, groupRequest: boolean }>;
+
+async function fileAccess(userId: number, groupId: number | undefined, accessType: FileAction): FileAccessReturnObj {
+    const groupRequest = groupId !== undefined;
+    const id = !groupRequest ? userId : groupId;
+    const flag = !groupRequest ? 'u' : 'g';
+    const basePath = `/${flag}${id}`;
+    let hasAccess = true;
+    if (groupRequest) {
+        try {
+            const userAccess = await GroupsData.getUserAccess(groupId!, userId);
+            if (userAccess === 'USER' && accessType !== FileAction.Read && accessType !== FileAction.Create) {
+                hasAccess = false;
+            }
+        } catch {
+            hasAccess = false;
+        }
+        return {basePath, hasAccess, groupRequest};
+    }
+    return {basePath, hasAccess, groupRequest};
 }

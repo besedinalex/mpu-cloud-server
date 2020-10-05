@@ -12,7 +12,7 @@
 					"name": "Files",
 					"item": [
 						{
-							"name": "Get files",
+							"name": "Get user files",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -46,7 +46,7 @@
 							"response": []
 						},
 						{
-							"name": "Get file",
+							"name": "Get user file",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -80,7 +80,7 @@
 							"response": []
 						},
 						{
-							"name": "Get file info",
+							"name": "Get user file info",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -115,7 +115,7 @@
 							"response": []
 						},
 						{
-							"name": "Upload file",
+							"name": "Upload user file",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -163,7 +163,7 @@
 							"response": []
 						},
 						{
-							"name": "Create folder",
+							"name": "Create user folder",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -200,7 +200,7 @@
 							"response": []
 						},
 						{
-							"name": "Rename file",
+							"name": "Rename user file",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -238,7 +238,7 @@
 							"response": []
 						},
 						{
-							"name": "Copy file",
+							"name": "Copy user file",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -276,7 +276,7 @@
 							"response": []
 						},
 						{
-							"name": "Delete file",
+							"name": "Delete user file",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -460,7 +460,7 @@
 					"name": "Users",
 					"item": [
 						{
-							"name": "Get users",
+							"name": "Get group users",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -490,7 +490,7 @@
 							"response": []
 						},
 						{
-							"name": "Add user",
+							"name": "Add user to group",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -506,7 +506,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"groupId\": 1,\n    \"email\": \"besedinalex@gmail.com\",\n    \"access\": \"USER\"\n}",
+									"raw": "{\n    \"email\": \"besedinalex@gmail.com\",\n    \"access\": \"USER\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -529,7 +529,7 @@
 							"response": []
 						},
 						{
-							"name": "Remove user",
+							"name": "Remove user from group",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -554,6 +554,327 @@
 										"1",
 										"user",
 										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Files",
+					"item": [
+						{
+							"name": "Get group files",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/files?path=",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"files"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get group file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file?path=Рама.pdf",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": "Рама.pdf"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get group file info",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file/info?path=Рама.pdf",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file",
+										"info"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": "Рама.pdf"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upload group file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "currentPath",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "filename",
+											"value": "Редуктор",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": "/Users/penguin/OneDrive/Temp/Example/Редуктор.stp"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create group folder",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentFolder\": \"\",\n    \"newFolder\": \"test\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/folder",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"folder"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rename group folder",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentFolder\": \"\",\n    \"oldName\": \"test\",\n    \"newName\": \"test1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file/rename",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file",
+										"rename"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Copy group folder",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentPath\": \"Редуктор.stp\",\n    \"newPath\": \"test1/Редуктор.stp\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file/copy",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file",
+										"copy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete group file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file?path=Редуктор.stp",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": "Редуктор.stp"
+										}
 									]
 								}
 							},

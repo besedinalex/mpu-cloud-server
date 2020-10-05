@@ -1,6 +1,5 @@
 import path from "path";
 import {setDatabaseFilePath, selectData, changeData} from "sqlite3-simple-api";
-import {GroupData} from "../types";
 
 const {DATA_PATH} = require(process.cwd() + '/config.json');
 
@@ -27,6 +26,16 @@ const createGroupUserTable =
     );`;
 changeData(createGroupTable);
 changeData(createGroupUserTable);
+
+type GroupData = {
+    id: number;
+    title: string;
+    owner: number;
+    createdTime: Date;
+    description?: string;
+    access?: string;
+    userJoinedDate?: Date;
+}
 
 type GroupUser = {
     userId: number;

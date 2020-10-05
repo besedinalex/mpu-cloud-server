@@ -1,6 +1,5 @@
 import path from "path";
 import {setDatabaseFilePath, selectData, changeData} from "sqlite3-simple-api";
-import {UserData} from "../types";
 
 const {DATA_PATH} = require(process.cwd() + '/config.json');
 
@@ -20,6 +19,14 @@ changeData(createUserTable);
 type UserLoginData = {
     id: number;
     password: string;
+};
+
+export type UserData = {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    createdTime: Date;
 };
 
 namespace UsersData {

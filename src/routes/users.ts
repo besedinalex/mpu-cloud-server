@@ -27,7 +27,8 @@ users.get('/token', async (req, res) => {
 
 users.get('/user/:id', jwtAuth, async (req, res) => {
     const {id} = req.params;
-    await getUserData(+id, (code, data) => res.status(code).send(data));
+    await getUserData(+id,
+        (code, data) => res.status(code).send(data));
 });
 
 users.post('/user', [registerValidators, passwordValidator], async (req, res) => {
@@ -41,29 +42,33 @@ users.post('/user', [registerValidators, passwordValidator], async (req, res) =>
         res.status(422).send({message: message.slice(0, -1)});
     } else {
         await createUser(email.toLowerCase(), password, firstName, lastName,
-            ((code, data) => res.status(code).send(data)));
+            (code, data) => res.status(code).send(data));
     }
 });
 
 users.post('/password', passwordValidator, async (req, res) => {
     const {password, token} = req.body;
-    await updatePassword(token as string, password as string, (code, data) => res.status(code).send(data));
+    await updatePassword(token as string, password as string,
+        (code, data) => res.status(code).send(data));
+});
+
+users.get('/files', jwtAuth, async (req, res) => {
+    const {path} = req.query;
+    await getFiles(req['user_id'], undefined, path as string,
+        (code, data) => res.status(code).send(data));
 });
 
 users.get('/file', jwtAuth, async (req, res) => {
     const {path} = req.query;
-    await getFile(req['user_id'], path as string, 'u', (code, data) => res.status(code).send(data));
+    await getFile(req['user_id'], undefined, path as string,
+        (code, data) => res.status(code).send(data));
 });
 
 users.get('/file/info', jwtAuth, async (req, res) => {
     const {path} = req.query;
-    await getFileInfo(req['user_id'], path as string, 'u', (code, data) => res.status(code).send(data));
+    await getFileInfo(req['user_id'], undefined, path as string,
+        (code, data) => res.status(code).send(data));
 })
-
-users.get('/files', jwtAuth, async (req, res) => {
-    const {path} = req.query;
-    await getFiles(req['user_id'], path as string, 'u', (code, data) => res.status(code).send(data));
-});
 
 users.post('/file', [jwtAuth, upload.single('file')], async (req, res) => {
     const {file} = req;
@@ -74,25 +79,26 @@ users.post('/file', [jwtAuth, upload.single('file')], async (req, res) => {
 
 users.post('/folder', jwtAuth, async (req, res) => {
     const {currentFolder, newFolder} = req.body;
-    await createFolder(req['user_id'], currentFolder, newFolder, 'u',
+    await createFolder(req['user_id'], undefined, currentFolder, newFolder,
         (code, data) => res.status(code).send(data));
 });
 
 users.put('/file/rename', jwtAuth, async (req, res) => {
     const {currentFolder, oldName, newName} = req.body;
-    await renameFile(req['user_id'], currentFolder, oldName, newName, 'u',
+    await renameFile(req['user_id'], undefined, currentFolder, oldName, newName,
         (code, data) => res.status(code).send(data));
 });
 
 users.put('/file/copy', jwtAuth, async (req, res) => {
     const {currentPath, newPath} = req.body;
-    await copyFile(req['user_id'], currentPath, newPath, 'u',
+    await copyFile(req['user_id'], undefined, currentPath, newPath,
         (code, data) => res.status(code).send(data));
 });
 
 users.delete('/file', jwtAuth, async (req, res) => {
     const {path} = req.query;
-    await removeFile(req['user_id'], path as string, 'u', (code, data) => res.status(code).send(data));
+    await removeFile(req['user_id'], undefined, path as string,
+        (code, data) => res.status(code).send(data));
 });
 
 export default users;

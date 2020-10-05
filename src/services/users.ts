@@ -5,7 +5,7 @@ import readline from "readline";
 import {validationResult} from "express-validator";
 import UsersData from "../db/users";
 import FileManager from "../utils/file-manager";
-import {ServiceResponse} from "../types";
+import ServiceResponse from "../models/service-response";
 
 const {
     SECRET,

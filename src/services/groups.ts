@@ -1,7 +1,7 @@
 import GroupsData from "../db/groups";
 import UsersData from "../db/users";
 import FileManager from "../utils/file-manager";
-import {ServiceResponse} from "../types";
+import ServiceResponse from "../models/service-response";
 
 export async function getAllGroups(userId: number, response: ServiceResponse) {
     try {
