@@ -4,7 +4,6 @@ import {ServiceResponse} from "../types";
 import FileManager from "../utils/file-manager";
 import getFileBuffer = FileManager.getFileBuffer;
 
-// TODO: Implement UPLOAD_LIMIT usage
 const {UPLOAD_LIMIT, CONVERTER_URL} = require(process.cwd() + '/config.json');
 
 // Defines whether it's user or group file
@@ -84,6 +83,13 @@ export async function uploadFile(userId: number, groupId: number | undefined, cu
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
     }
+
+    // Checks file limit in Megabytes
+    if (file.size / 1024 / 1024 > UPLOAD_LIMIT) {
+        response(400, {message: `Невозможно загрузить файл. Ограничение по размеру файла: ${UPLOAD_LIMIT}Мб.`});
+        return;
+    }
+
     const groupRequest = groupId === undefined;
     const id = !groupRequest ? userId : groupId;
     const flag: Flag = !groupRequest ? 'u' : 'g';
