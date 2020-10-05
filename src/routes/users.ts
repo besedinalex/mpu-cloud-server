@@ -8,7 +8,8 @@ import {
     removeFile,
     copyFile,
     uploadFile,
-    getFile, getFileInfo
+    getFile,
+    getFileInfo
 } from "../services/files";
 import jwtAuth from "../utils/jwt-auth";
 import {validationResult} from "express-validator";

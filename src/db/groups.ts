@@ -1,87 +1,85 @@
-import path from 'path';
+import path from "path";
 import {setDatabaseFilePath, selectData, changeData} from "sqlite3-simple-api";
+import {GroupData} from "../types";
 
 const {DATA_PATH} = require(process.cwd() + '/config.json');
+
 setDatabaseFilePath(path.join(DATA_PATH, 'database.sqlite3'));
 
 const createGroupTable =
     `CREATE TABLE IF NOT EXISTS 'Groups' (
-    'group_id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    'id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     'title' TEXT NOT NULL,
     'description' TEXT,
-    'image' TEXT NOT NULL,
-    'owner' TEXT NOT NULL,
+    'owner' INTEGER NOT NULL,
     'createdTime' TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY('owner') REFERENCES 'Users'('user_id')
+    FOREIGN KEY('owner') REFERENCES 'Users'('id')
     );`;
 const createGroupUserTable =
     `CREATE TABLE IF NOT EXISTS 'GroupUsers' (
     'id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    'group_id' INTEGER NOT NULL,
-    'user_id' INTEGER NOT NULL,
+    'groupId' INTEGER NOT NULL,
+    'userId' INTEGER NOT NULL,
     'access' TEXT NOT NULL,
     'userJoinedDate' TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY('user_id') REFERENCES 'Users'('user_id'),
-    FOREIGN KEY('group_id') REFERENCES 'Groups'('group_id')
+    FOREIGN KEY('userId') REFERENCES 'Users'('id'),
+    FOREIGN KEY('groupId') REFERENCES 'Groups'('id')
     );`;
 changeData(createGroupTable);
 changeData(createGroupUserTable);
 
-export function getGroups(userId: number) {
-    const sql =
-        `SELECT G.title, G.image, G.owner, G.group_id, G.createdTime
-         FROM Groups AS G
-         JOIN GroupUsers AS GU, Users AS U
-         ON U.user_id = GU.user_id AND G.group_id = GU.group_id
-         WHERE U.id = ${userId}`;
-    return selectData(sql);
+type GroupUser = {
+    userId: number;
+    access: string;
+    firstName: string;
+    lastName: string;
+    email: string;
 }
 
-export function getGroup(userId: number, groupId: number) {
-    const sql =
-        `SELECT G.title, G.description, G.image, G.owner, G.group_id, G.createdTime,
-        GU.user_id, GU.access, GU.userJoinedDate
-        FROM Groups as G JOIN GroupUsers AS GU, Users AS U
-        ON U.user_id = GU.user_id AND G.group_id = GU.group_id
-        WHERE U.user_id = ${userId} AND G.group_id = ${groupId}`;
-    return selectData(sql, true);
+namespace GroupsData {
+
+    export function getGroups(userId: number): Promise<GroupData[]> {
+        const sql =
+            `SELECT G.id, G.title, G.owner, G.createdTime
+            FROM Groups AS G JOIN GroupUsers AS GU ON G.id=GU.groupId WHERE GU.userId=${userId}`;
+        return selectData(sql) as Promise<GroupData[]>;
+    }
+
+    export function getGroup(groupId: number, userId: number): Promise<GroupData> {
+        const sql =
+            `SELECT G.id, G.title, G.description, G.createdTime, GU.access, GU.userJoinedDate
+            FROM Groups AS G JOIN GroupUsers AS GU ON G.id=GU.groupId
+            WHERE GU.userId=${userId} AND G.id=${groupId}`;
+        return selectData(sql, true) as Promise<GroupData>;
+    }
+
+    export function addGroup(title: string, description: string, userId: number): Promise<number> {
+        const sql = `INSERT INTO Groups (title, description, owner) VALUES ('${title}', '${description}', '${userId}')`;
+        return changeData(sql);
+    }
+
+    export function getGroupUsers(groupId: number): Promise<GroupUser[]> {
+        const sql =
+            `SELECT GU.userId, GU.access, U.firstName, U.lastName, U.email
+            FROM GroupUsers AS GU JOIN Users AS U ON U.id=GU.userId
+            WHERE GU.groupId =${groupId}`;
+        return selectData(sql) as Promise<GroupUser[]>;
+    }
+
+    export async function getUserAccess(groupId: number, userId: number): Promise<string> {
+        const sql = `SELECT GU.access FROM GroupUsers AS GU WHERE groupId=${groupId} AND userId=${userId}`;
+        return (await selectData(sql, true) as { access: string }).access;
+    }
+
+    export function addGroupUser(groupId: number, userId: number, access: string): Promise<number> {
+        const sql = `INSERT INTO GroupUsers (groupId, userId, access) VALUES (${groupId}, ${userId}, '${access}')`;
+        return changeData(sql);
+    }
+
+    export function removeGroupUser(groupId: number, userId: number): Promise<number> {
+        const sql = `DELETE FROM GroupUsers WHERE groupId = ${groupId} AND userId = ${userId}`;
+        return changeData(sql);
+    }
 }
 
-export function getGroupFiles (groupId: number) {
-    const sql =
-        `SELECT F.file_id, F.title, F.createdTime, F.ownerUser, F.ownerGroup, F.type, F.sizeKB, F.code, F.status
-        FROM Files as F WHERE ownerGroup = '${groupId}'`;
-    return selectData(sql);
-}
-
-exports.getGroupUsers = function (group_id) {
-    const sql =
-        `SELECT GU.user_id,  GU.access, U.firstName, U.lastName, U.email 
-        FROM GroupUsers AS GU
-        JOIN Users AS U
-        ON U.user_id = GU.user_id 
-        WHERE GU.group_id ='${group_id}'`;
-    return selectData(sql);
-};
-
-exports.getUserAccess = function (group_id, user_id) {
-    const sql = `SELECT GU.access FROM GroupUsers AS GU WHERE group_id = ${group_id} AND user_id = ${user_id}`;
-    return selectData(sql, true);
-};
-
-exports.addGroup = function (title, description, image, owner) {
-    const sql =
-        `INSERT INTO Groups (title, description, image, owner) 
-        VALUES ('${title}', '${description}', '${image}', '${owner}')`;
-    return changeData(sql);
-};
-
-exports.addGroupUser = function (user_id, groupId, access) {
-    const sql = `INSERT INTO GroupUsers (group_id, user_id, access) VALUES (${groupId}, ${user_id}, '${access}')`;
-    return changeData(sql);
-};
-
-exports.removeGroupUser = function (groupId, userId) {
-    const sql = `DELETE FROM GroupUsers WHERE group_id = ${groupId} AND user_id = ${userId}`;
-    return changeData(sql);
-};
+export default GroupsData;

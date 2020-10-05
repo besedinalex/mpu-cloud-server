@@ -71,7 +71,7 @@ export async function getFiles(id: number, folder: string, flag: Flag, response:
     try {
         let files = await FileManager.getFolderContent(`/${flag}${id}/${folder}`);
         files = files.filter(value => value[0] !== '.' && value[0] !== '$');
-        response(200, {ls: files});
+        response(200, files);
     } catch {
         response(404, {message: 'Указанный путь не найден.'});
     }

@@ -17,9 +17,7 @@ import groups from "./routes/groups";
 import modelAnnotations from "./routes/model-annotations";
 import FileManager from "./utils/file-manager";
 
-if (!FileManager.pathExists('')) {
-    FileManager.createFolder('');
-}
+FileManager.createFolder('').catch(() => null);
 
 const app = express();
 const publicFolderPath = path.join(__dirname, '..', 'public');
