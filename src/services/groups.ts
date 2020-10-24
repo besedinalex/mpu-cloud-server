@@ -8,8 +8,9 @@ export async function getAllGroups(userId: number, response: ServiceResponse) {
         const groups = await GroupsData.getGroups(userId);
         if (groups.length === 0) {
             response(404, {message: 'Вы не состоите в группах.'})
+        } else {
+            response(200, groups);
         }
-        response(200, groups);
     } catch {
         response(404, {message: 'Не удалось найти группы.'});
     }
