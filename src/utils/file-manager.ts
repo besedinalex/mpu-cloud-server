@@ -8,6 +8,7 @@ type FileInfo = {
     extension: string;
     size: number;
     createdTime: Date;
+    ownerName?: string;
 }
 
 namespace FileManager {

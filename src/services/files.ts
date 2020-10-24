@@ -4,6 +4,8 @@ import FileManager from "../utils/file-manager";
 import GroupsData from "../db/groups";
 import ServiceResponse from "../models/service-response";
 import FileAction from "../models/file-action";
+import UsersData from "../db/users";
+import FileData from "../models/file-data";
 
 const {UPLOAD_LIMIT, CONVERTER_URL} = require(process.cwd() + '/config.json');
 
@@ -47,7 +49,7 @@ function convertModel(filepath: string, to: string): Promise<ConverterResponse> 
     });
 }
 
-export async function getFile(userId: number, groupId: number | undefined, filepath: string,
+export async function getFile(userId: number, groupId: number|undefined, filepath: string,
                               response: ServiceResponse) {
     const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Read);
     if (!hasAccess) {
@@ -62,22 +64,28 @@ export async function getFile(userId: number, groupId: number | undefined, filep
     }
 }
 
-export async function getFileInfo(userId: number, groupId: number | undefined, filepath: string,
+export async function getFileInfo(userId: number, groupId: number|undefined, filepath: string,
                                   response: ServiceResponse) {
-    const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Read);
+    const {basePath, hasAccess, groupRequest} = await fileAccess(userId, groupId, FileAction.Read);
     if (!hasAccess) {
         response(404, {message: 'Указанный файл не найден.'});
         return;
     }
     try {
-        const fileInfo = await FileManager.getFileInfo(`${basePath}/${filepath}`);
+        filepath = path.join(basePath, filepath);
+        const fileInfo = await FileManager.getFileInfo(filepath);
+        if (groupRequest) {
+            const fileData = await getFileData(filepath);
+            const userData = await UsersData.getUserDataById(fileData.userId!);
+            fileInfo.ownerName = userData.firstName + ' ' + userData.lastName;
+        }
         response(200, fileInfo);
     } catch {
         response(404, {message: 'Указанный файл не найден.'});
     }
 }
 
-export async function getFiles(userId: number, groupId: number | undefined, folder: string, response: ServiceResponse) {
+export async function getFiles(userId: number, groupId: number|undefined, folder: string, response: ServiceResponse) {
     const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Read);
     if (!hasAccess) {
         response(404, {message: 'Указанный файл не найден.'});
@@ -92,7 +100,7 @@ export async function getFiles(userId: number, groupId: number | undefined, fold
     }
 }
 
-export async function uploadFile(userId: number, groupId: number | undefined, currentPath: string, filename: string,
+export async function uploadFile(userId: number, groupId: number|undefined, currentPath: string, filename: string,
                                  file: Express.Multer.File, response: ServiceResponse) {
     const {basePath, hasAccess, groupRequest} = await fileAccess(userId, groupId, FileAction.Create);
     if (!hasAccess) {
@@ -133,9 +141,9 @@ export async function uploadFile(userId: number, groupId: number | undefined, cu
         try {
             const reservedFolder = `${currentPath}/$${filename}`;
             await FileManager.createFolder(reservedFolder);
-            if (groupRequest) {
-                await FileManager.createFile(path.join(reservedFolder, `u${userId}`), Buffer.from([]));
-            }
+            const obj = groupRequest ? {userId} : {};
+            const buffer = Buffer.from(JSON.stringify(obj));
+            await FileManager.createFile(path.join(reservedFolder, 'data'), buffer);
             if (fileIsConvertibleModel(filepath)) {
                 const data = await convertModel(filepath, 'glb');
                 await FileManager.createFile(path.join(reservedFolder, 'glb'), Buffer.from(data.output, 'base64'));
@@ -149,7 +157,7 @@ export async function uploadFile(userId: number, groupId: number | undefined, cu
     }
 }
 
-export async function createFolder(userId: number, groupId: number | undefined, currentPath: string, folderName: string,
+export async function createFolder(userId: number, groupId: number|undefined, currentPath: string, folderName: string,
                                    response: ServiceResponse) {
     const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Create);
     if (!hasAccess) {
@@ -178,7 +186,7 @@ export async function createFolder(userId: number, groupId: number | undefined, 
     }
 }
 
-export async function copyFile(userId: number, groupId: number | undefined, currentPath: string, newPath: string,
+export async function copyFile(userId: number, groupId: number|undefined, currentPath: string, newPath: string,
                                response: ServiceResponse) {
     const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Copy);
     if (!hasAccess) {
@@ -219,7 +227,7 @@ export async function copyFile(userId: number, groupId: number | undefined, curr
     }
 }
 
-export async function renameFile(userId: number, groupId: number | undefined, currentPath: string, currentName: string,
+export async function renameFile(userId: number, groupId: number|undefined, currentPath: string, currentName: string,
                                  newName: string, response: ServiceResponse) {
     const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Rename);
     if (!hasAccess) {
@@ -255,7 +263,7 @@ export async function renameFile(userId: number, groupId: number | undefined, cu
     }
 }
 
-export async function removeFile(userId: number, groupId: number | undefined, currentPath: string,
+export async function removeFile(userId: number, groupId: number|undefined, currentPath: string,
                                  response: ServiceResponse) {
     const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Remove);
     if (!hasAccess) {
@@ -289,9 +297,104 @@ export async function removeFile(userId: number, groupId: number | undefined, cu
     }
 }
 
+export async function getModelAnnotations(userId: number, groupId: number|undefined, filepath: string,
+                                          response: ServiceResponse) {
+    const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Read);
+    if (!hasAccess) {
+        response(404, {message: 'Указанный файл не найден.'});
+        return;
+    }
+    try {
+        filepath = path.join(basePath, filepath);
+        const fileData = await getFileData(filepath);
+        const annotations = fileData.modelAnnotations!
+        response(200, annotations);
+    } catch {
+        response(404, {message: 'Указанный файл не найден.'});
+    }
+}
+
+export async function addModelAnnotation(userId: number, groupId: number|undefined, filepath: string, x: number,
+                                         y: number, z: number, name: string, text: string, response: ServiceResponse) {
+    const {basePath, hasAccess, groupRequest} = await fileAccess(userId, groupId, FileAction.Create);
+    if (!hasAccess) {
+        response(403, {message: 'Вы не можете загрузить файл.'});
+        return;
+    }
+
+    if (x === undefined || y === undefined || z === undefined) {
+        response(400, {message: 'Необходимо указать x, y, z.'});
+        return;
+    }
+
+    filepath = `${basePath}/${filepath}`;
+    try {
+        const fileData = await getFileData(filepath);
+        const annotations = fileData.modelAnnotations!;
+        if (annotations === undefined) {
+            fileData.modelAnnotations = [];
+        }
+        fileData.modelAnnotations?.push({x, y, z, name, text});
+        try {
+            await updateFileData(filepath, fileData);
+            response(201, {message: 'Аннотация успешно добавлена.'});
+        } catch {
+            response(500, {message: 'Не удалось добавить аннотацию.'});
+        }
+    } catch {
+        response(404, {message: 'Указанный файл не найден.'});
+    }
+}
+
+export async function deleteModelAnnotation(userId: number, groupId: number|undefined, filepath: string,
+                                            x: number|undefined, y: number|undefined, z: number|undefined,
+                                            response: ServiceResponse) {
+    const {basePath, hasAccess, groupRequest} = await fileAccess(userId, groupId, FileAction.Remove);
+    if (!hasAccess) {
+        response(403, {message: 'Вы не можете загрузить файл.'});
+        return;
+    }
+
+    if (x === undefined || y === undefined || z === undefined) {
+        response(400, {message: 'Необходимо указать x, y, z.'});
+        return;
+    }
+
+    filepath = `${basePath}/${filepath}`;
+    try {
+        const fileData = await getFileData(filepath);
+        const annotations = fileData.modelAnnotations!;
+        if (annotations === undefined) {
+            response(404, {message: 'Аннотации не найдены.'});
+        } else {
+            let annotationFound = false;
+            for (let i = 0; i < annotations.length; i++) {
+                const annotation = annotations[i];
+                if (annotation.x === x && annotation.y === y && annotation.z === z) {
+                    fileData.modelAnnotations?.splice(i, 1);
+                    annotationFound = true;
+                    try {
+                        await updateFileData(filepath, fileData);
+                        response(200, {message: 'Аннотация удалена.'});
+                        break;
+                    } catch {
+                        response(500, {message: 'Не удалось удалить аннотацию.'});
+                        return;
+                    }
+                }
+            }
+            if (!annotationFound) {
+                response(404, {message: 'Аннотация не найдена.'});
+            }
+        }
+    } catch {
+        response(404, {message: 'Указанный файл не найден.'});
+    }
+}
+
 type FileAccessReturnObj = Promise<{ basePath: string, hasAccess: boolean, groupRequest: boolean }>;
 
-async function fileAccess(userId: number, groupId: number | undefined, accessType: FileAction): FileAccessReturnObj {
+async function fileAccess(userId: number, groupId: number|undefined, accessType: FileAction): FileAccessReturnObj {
     const groupRequest = groupId !== undefined;
     const id = !groupRequest ? userId : groupId;
     const flag = !groupRequest ? 'u' : 'g';
@@ -309,4 +412,18 @@ async function fileAccess(userId: number, groupId: number | undefined, accessTyp
         return {basePath, hasAccess, groupRequest};
     }
     return {basePath, hasAccess, groupRequest};
+}
+
+async function getFileData(filepath: string): Promise<FileData> {
+    const parsedPath = path.parse(filepath);
+    const dataPath = path.join(parsedPath.dir, `$${parsedPath.base}`, 'data');
+    const dataInfoBuffer = await FileManager.getFileBuffer(dataPath);
+    return JSON.parse(Buffer.from(dataInfoBuffer).toString());
+}
+
+async function updateFileData(filepath: string, data: FileData): Promise<void> {
+    const parsedPath = path.parse(filepath);
+    const dataPath = path.join(parsedPath.dir, `$${parsedPath.base}`, 'data');
+    const buffer = Buffer.from(JSON.stringify(data));
+    await FileManager.createFile(dataPath, buffer);
 }

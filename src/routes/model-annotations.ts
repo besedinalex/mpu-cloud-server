@@ -1,37 +1,30 @@
 import express from "express";
 import jwtAuth from "../utils/jwt-auth";
-const accessCheck = require('../utils/jwt-auth');
-const modelAnnotationData = require('../db/model-annotations');
+import { addModelAnnotation, deleteModelAnnotation, getModelAnnotations } from "../services/files";
 
 const modelAnnotations = express.Router();
 
-// Get all model annotations
-modelAnnotations.get('/all/:id', jwtAuth, (req, res) => {
-    const {id} = req.params;
-    // @ts-ignore
-    const userId = req.user_id;
-    const {groupId} = req.query;
-    // @ts-ignore
-    accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
-        modelAnnotationData.getAnnotations(file.file_id).then(data => res.json(data));
-    });
+modelAnnotations.get('/all', jwtAuth, async (req, res) => {
+    const {path, groupId} = req.query;
+    const id = groupId === undefined ? undefined : +groupId!;
+    await getModelAnnotations(req['user_id'], id, path as string,
+        (code, data) => res.status(code).send(data));
 });
 
-// Post new annotation
-modelAnnotations.post('/new/:id', jwtAuth, (req, res) => {
-    // @ts-ignore
-    accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, file => {
-        modelAnnotationData.addAnnotation(file.file_id, req.query.x, req.query.y, req.query.z, req.query.name, req.query.text)
-            .then(() => res.sendStatus(200));
-    });
+modelAnnotations.post('/new', jwtAuth, async (req, res) => {
+    const {path, x, y, z, name, text, groupId} = req.body;
+    await addModelAnnotation(req['user_id'], groupId, path, x, y, z, name, text,
+        (code, data) => res.status(code).send(data));
 });
 
-// Delete annotation by id
-modelAnnotations.delete('/one/:id', jwtAuth, (req, res) => {
-    // @ts-ignore
-    accessCheck.checkAccess(req.user_id, req.query.groupId, req.params.id, res, () => {
-        modelAnnotationData.deleteAnnotation(req.query.annotationId).then(() => res.sendStatus(200));
-    });
+modelAnnotations.delete('/one', jwtAuth, async (req, res) => {
+    const {path, x, y, z, groupId} = req.query;
+    const id = groupId === undefined ? undefined : +groupId!;
+    const xA = x === undefined ? undefined : +x;
+    const yA = y === undefined ? undefined : +y;
+    const zA = z === undefined ? undefined : +z;
+    await deleteModelAnnotation(req['user_id'], id, path as string, xA, yA, zA,
+        (code, data) => res.status(code).send(data));
 });
 
 export default modelAnnotations;

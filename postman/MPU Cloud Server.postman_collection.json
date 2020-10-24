@@ -291,7 +291,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{baseURL}}/users/file?path=",
+									"raw": "{{baseURL}}/users/file?path=Редуктор.stp",
 									"host": [
 										"{{baseURL}}"
 									],
@@ -302,7 +302,7 @@
 									"query": [
 										{
 											"key": "path",
-											"value": ""
+											"value": "Редуктор.stp"
 										}
 									]
 								}
@@ -618,7 +618,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseURL}}/groups/group/1/file?path=Рама.pdf",
+									"raw": "{{baseURL}}/groups/group/1/file?path=$Редуктор.stp/png",
 									"host": [
 										"{{baseURL}}"
 									],
@@ -631,7 +631,7 @@
 									"query": [
 										{
 											"key": "path",
-											"value": "Рама.pdf"
+											"value": "$Редуктор.stp/png"
 										}
 									]
 								}
@@ -654,7 +654,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseURL}}/groups/group/1/file/info?path=Рама.pdf",
+									"raw": "{{baseURL}}/groups/group/1/file/info?path=Редуктор.stp",
 									"host": [
 										"{{baseURL}}"
 									],
@@ -668,7 +668,7 @@
 									"query": [
 										{
 											"key": "path",
-											"value": "Рама.pdf"
+											"value": "Редуктор.stp"
 										}
 									]
 								}
@@ -973,6 +973,139 @@
 							"path": [
 								"groups",
 								"new"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Model Annotations",
+			"item": [
+				{
+					"name": "Get model annotations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/model-annotations/all?path=Редуктор.stp",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"model-annotations",
+								"all"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "Редуктор.stp"
+								},
+								{
+									"key": "groupId",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add model annotation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"path\": \"Редуктор.stp\",\n    \"x\": 100,\n    \"y\": -100,\n    \"z\": 0,\n    \"name\": \"Имя\",\n    \"text\": \"Текст\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/model-annotations/new",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"model-annotations",
+								"new"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete model annotation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/model-annotations/one?path=Редуктор.stp&x=100&y=-100&z=0",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"model-annotations",
+								"one"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "Редуктор.stp"
+								},
+								{
+									"key": "groupId",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "x",
+									"value": "100"
+								},
+								{
+									"key": "y",
+									"value": "-100"
+								},
+								{
+									"key": "z",
+									"value": "0"
+								}
 							]
 						}
 					},
