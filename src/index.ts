@@ -1,3 +1,4 @@
+// @ts-ignore
 process.env.NODE_ENV = process.pkg ? 'production' : process.env.NODE_ENV;
 
 const {PORT, DATA_PATH} = require(process.cwd() + '/config.json');
@@ -7,30 +8,31 @@ if (DATA_PATH === undefined || DATA_PATH === '') {
     process.exit(0);
 }
 
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const user = require('./routes/user');
-const group = require('./routes/group');
-const file = require('./routes/file');
-const modelAnnotation = require('./routes/model-annotation');
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import path from "path";
+import users from "./routes/users";
+import groups from "./routes/groups";
+import modelAnnotations from "./routes/model-annotations";
+import FileManager from "./utils/file-manager";
+
+FileManager.createFolder('').catch(() => null);
 
 const app = express();
 const publicFolderPath = path.join(__dirname, '..', 'public');
 
-// Some security stuff
 app.use(cors());
 app.use(cookieParser());
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
 
-// Public access files
 app.use('/', express.static(publicFolderPath));
 
-// Requests
-app.use('/user', user);
-app.use('/group', group);
-app.use('/file', file);
-app.use('/model-annotation', modelAnnotation);
-app.get('/*', (req, res) => res.sendFile(path.join(publicFolderPath, 'index.html'))); // React app
+app.use('/users', users);
+app.use('/groups', groups);
+app.use('/model-annotations', modelAnnotations);
+
+app.get('/*', (req, res) => res.sendFile(path.join(publicFolderPath, 'index.html')));
 
 app.listen(PORT, () => console.log(`Сервер запущен. Используемый порт: ${PORT}.`));

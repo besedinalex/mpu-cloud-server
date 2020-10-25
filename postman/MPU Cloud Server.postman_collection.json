@@ -1,0 +1,1127 @@
+{
+	"info": {
+		"_postman_id": "51944bb8-effd-490d-a43f-0f7e4ceb2134",
+		"name": "MPU Cloud Server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Files",
+					"item": [
+						{
+							"name": "Get user files",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/users/files?path=",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"files"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get user file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/users/file?path=Редуктор.stp&extension=glb",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"file"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": "Редуктор.stp"
+										},
+										{
+											"key": "extension",
+											"value": "glb"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get user file info",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/users/file/info?path=редуктор.stp",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"file",
+										"info"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": "редуктор.stp"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upload user file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "currentPath",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "filename",
+											"value": "Редуктор",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": "/Users/penguin/OneDrive/Temp/Example/Редуктор.stp"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseURL}}/users/file",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"file"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create user folder",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentFolder\": \"\",\n    \"newFolder\": \"test\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/users/folder",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"folder"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rename user file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentFolder\": \"\",\n    \"oldName\": \"test\",\n    \"newName\": \"lol\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/users/file/rename",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"file",
+										"rename"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Copy user file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentPath\": \"test2\",\n    \"newPath\": \"test1/test2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/users/file/copy",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"file",
+										"copy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete user file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/users/file?path=Редуктор.stp",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"users",
+										"file"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": "Редуктор.stp"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Get user token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9cfe8e7b-4da4-4da1-a7ba-c8c290ff7c3f",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/token?email=besedinalexey@gmail.com&password=123qwerty",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"token"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "besedinalexey@gmail.com"
+								},
+								{
+									"key": "password",
+									"value": "123qwerty"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9cfe8e7b-4da4-4da1-a7ba-c8c290ff7c3f",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Алексей\",\n    \"lastName\": \"Беседин\",\n    \"email\": \"besedinalexey@gmail.com\",\n    \"password\": \"123qwerty\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/user",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user data",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/user/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restore password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"9f7e\",\n    \"password\": \"123qwerty\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/password",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"password"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Groups",
+			"item": [
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "Get group users",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/users",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add user to group",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"besedinalex@gmail.com\",\n    \"access\": \"USER\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/user",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove user from group",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/user/2",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"user",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Files",
+					"item": [
+						{
+							"name": "Get group files",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/files?path=",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"files"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get group file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file?path=Редуктор.stp&extension=glb",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": "Редуктор.stp"
+										},
+										{
+											"key": "extension",
+											"value": "glb"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get group file info",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file/info?path=Редуктор.stp",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file",
+										"info"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": "Редуктор.stp"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upload group file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "currentPath",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "filename",
+											"value": "Редуктор",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": "/Users/penguin/OneDrive/Temp/Example/Редуктор.stp"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create group folder",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentFolder\": \"\",\n    \"newFolder\": \"test\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/folder",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"folder"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rename group folder",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentFolder\": \"\",\n    \"oldName\": \"test\",\n    \"newName\": \"test1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file/rename",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file",
+										"rename"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Copy group folder",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"currentPath\": \"Редуктор.stp\",\n    \"newPath\": \"test1/Редуктор.stp\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file/copy",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file",
+										"copy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete group file",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/groups/group/1/file?path=Редуктор.stp",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"groups",
+										"group",
+										"1",
+										"file"
+									],
+									"query": [
+										{
+											"key": "path",
+											"value": "Редуктор.stp"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Get groups",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/groups/all",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"groups",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get group",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/groups/group/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"groups",
+								"group",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create group",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Тест\",\n    \"description\": \"Тестовая группа.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/groups/new",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"groups",
+								"new"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Model Annotations",
+			"item": [
+				{
+					"name": "Get model annotations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/model-annotations/all?path=Редуктор.stp",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"model-annotations",
+								"all"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "Редуктор.stp"
+								},
+								{
+									"key": "groupId",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add model annotation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"path\": \"Редуктор.stp\",\n    \"x\": 100,\n    \"y\": -100,\n    \"z\": 0,\n    \"name\": \"Имя\",\n    \"text\": \"Текст\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/model-annotations/new",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"model-annotations",
+								"new"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete model annotation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/model-annotations/one?path=Редуктор.stp&x=100&y=-100&z=0",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"model-annotations",
+								"one"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "Редуктор.stp"
+								},
+								{
+									"key": "groupId",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "x",
+									"value": "100"
+								},
+								{
+									"key": "y",
+									"value": "-100"
+								},
+								{
+									"key": "z",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
