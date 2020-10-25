@@ -1,15 +1,8 @@
 import fs from "fs-extra";
 import path from "path";
+import FileInfo from "../models/file-info";
 
 const {DATA_PATH} = require(process.cwd() + '/config.json');
-
-type FileInfo = {
-    name: string;
-    extension: string;
-    size: number;
-    createdTime: Date;
-    ownerName?: string;
-}
 
 namespace FileManager {
 

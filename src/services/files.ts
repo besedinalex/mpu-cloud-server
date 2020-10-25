@@ -6,6 +6,7 @@ import ServiceResponse from "../models/service-response";
 import FileAction from "../models/file-action";
 import UsersData from "../db/users";
 import FileData from "../models/file-data";
+import ConvertStatus from "../models/convert-status";
 
 const {UPLOAD_LIMIT, CONVERTER_URL} = require(process.cwd() + '/config.json');
 
@@ -104,10 +105,15 @@ export async function getFileInfo(userId: number, groupId: number|undefined, fil
     try {
         filepath = path.join(basePath, filepath);
         const fileInfo = await FileManager.getFileInfo(filepath);
-        if (groupRequest) {
+        if (groupRequest || fileIsConvertibleModel(filepath)) {
             const fileData = await getFileData(filepath);
-            const userData = await UsersData.getUserDataById(fileData.userId!);
-            fileInfo.ownerName = userData.firstName + ' ' + userData.lastName;
+            if (groupRequest) {
+                const userData = await UsersData.getUserDataById(fileData.userId!);
+                fileInfo.ownerName = userData.firstName + ' ' + userData.lastName;
+            }
+            if (fileIsConvertibleModel(filepath)) {
+                fileInfo.convertStatus = fileData.convertStatus;
+            }
         }
         response(200, fileInfo);
     } catch {
@@ -175,9 +181,19 @@ export async function uploadFile(userId: number, groupId: number|undefined, curr
             const buffer = Buffer.from(JSON.stringify(obj));
             await FileManager.createFile(path.join(reservedFolder, 'data'), buffer);
             if (fileIsConvertibleModel(filepath)) {
-                const data = await convertModel(filepath, 'glb');
-                await FileManager.createFile(path.join(reservedFolder, 'glb'), Buffer.from(data.output, 'base64'));
-                await FileManager.createFile(path.join(reservedFolder, 'png'), Buffer.from(data.thumbnail, 'base64'));
+                const fileData = await getFileData(filepath);
+                fileData.convertStatus = ConvertStatus.pending;
+                await updateFileData(filepath, fileData);
+                try {
+                    const data = await convertModel(filepath, 'glb');
+                    await FileManager.createFile(path.join(reservedFolder, 'glb'), Buffer.from(data.output, 'base64'));
+                    await FileManager.createFile(path.join(reservedFolder, 'png'), Buffer.from(data.thumbnail, 'base64'));
+                    fileData.convertStatus = ConvertStatus.success;
+                    await updateFileData(filepath, fileData);
+                } catch (err) {
+                    fileData.convertStatus = ConvertStatus.error;
+                    await updateFileData(filepath, fileData);
+                }
             }
         } catch {
             console.log(`Не удалось создать дополнительные файлы для файла ${filepath}.`);
