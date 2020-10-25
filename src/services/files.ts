@@ -49,18 +49,48 @@ function convertModel(filepath: string, to: string): Promise<ConverterResponse> 
     });
 }
 
-export async function getFile(userId: number, groupId: number|undefined, filepath: string,
+export async function getFile(userId: number, groupId: number|undefined, filepath: string, extension: string,
                               response: ServiceResponse) {
     const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Read);
     if (!hasAccess) {
         response(404, {message: 'Указанный файл не найден.'});
         return;
     }
-    try {
-        const file = await FileManager.getFileBuffer(`${basePath}/${filepath}`);
-        response(200, file);
-    } catch {
+
+    filepath = `${basePath}/${filepath}`;
+    if (!await FileManager.pathExists(filepath)) {
         response(404, {message: 'Указанный файл не найден.'});
+        return;
+    }
+
+    extension = extension.toLowerCase();
+    const parsedPath = path.parse(filepath);
+    if (parsedPath.ext.slice(1).toLowerCase() === extension) {
+        const file = await FileManager.getFileBuffer(filepath);
+        response(200, file);
+    } else {
+        if (parsedPath.base[0] === '$') {
+            response(400, {message: 'Нельзя конвертировать файлы из скрытой папки.'});
+            return;
+        }
+        if (fileIsConvertibleModel(filepath)) {
+            const requestedFile = path.join(parsedPath.dir, `$${parsedPath.base}`, extension);
+            if (!await FileManager.pathExists(requestedFile)) {
+                try {
+                    const data = await convertModel(filepath, extension);
+                    await FileManager.createFile(requestedFile, Buffer.from(data.output, 'base64'));
+                    const file = await FileManager.getFileBuffer(requestedFile);
+                    response(200, file);
+                } catch (err) {
+                    response(500, {message: 'Не удалось конвертировать модель.'});
+                }
+            } else {
+                const file = await FileManager.getFileBuffer(requestedFile);
+                response(200, file);
+            }
+        } else {
+            response(400, {message: 'Указанный файл не может быть конвертирован.'});
+        }
     }
 }
 

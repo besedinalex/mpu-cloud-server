@@ -61,7 +61,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseURL}}/users/file?path=$редуктор.stp/png",
+									"raw": "{{baseURL}}/users/file?path=Редуктор.stp&extension=glb",
 									"host": [
 										"{{baseURL}}"
 									],
@@ -72,7 +72,11 @@
 									"query": [
 										{
 											"key": "path",
-											"value": "$редуктор.stp/png"
+											"value": "Редуктор.stp"
+										},
+										{
+											"key": "extension",
+											"value": "glb"
 										}
 									]
 								}
@@ -618,7 +622,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseURL}}/groups/group/1/file?path=$Редуктор.stp/png",
+									"raw": "{{baseURL}}/groups/group/1/file?path=Редуктор.stp&extension=glb",
 									"host": [
 										"{{baseURL}}"
 									],
@@ -631,7 +635,11 @@
 									"query": [
 										{
 											"key": "path",
-											"value": "$Редуктор.stp/png"
+											"value": "Редуктор.stp"
+										},
+										{
+											"key": "extension",
+											"value": "glb"
 										}
 									]
 								}

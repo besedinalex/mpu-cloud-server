@@ -79,8 +79,8 @@ groups.get('/group/:id/files', jwtAuth, async (req, res) => {
 
 groups.get('/group/:id/file', jwtAuth, async (req, res) => {
     const {id} = req.params;
-    const {path} = req.query;
-    await getFile(req['user_id'], +id, path as string,
+    const {path, extension} = req.query;
+    await getFile(req['user_id'], +id, path as string, extension as string,
         (code, data) => res.status(code).send(data));
 });
 
