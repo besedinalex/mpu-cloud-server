@@ -149,6 +149,14 @@ export async function uploadFile(userId: number, groupId: number|undefined, curr
         return;
     }
 
+    while (filename[0] === ' ') {
+        filename = filename.slice(1);
+    }
+    if (filename.length < 1) {
+        response(400, {message: 'Имя файла не может быть пустым.'});
+        return;
+    }
+
     if (reserved.test(currentPath) || reserved.test(file.originalname)) {
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
@@ -278,6 +286,14 @@ export async function renameFile(userId: number, groupId: number|undefined, curr
     const {basePath, hasAccess} = await fileAccess(userId, groupId, FileAction.Rename);
     if (!hasAccess) {
         response(403, {message: 'Вы не можете переименовывать файлы.'});
+        return;
+    }
+
+    while (newName[0] === ' ') {
+        newName = newName.slice(1);
+    }
+    if (newName.length < 1) {
+        response(400, {message: 'Имя файла не может быть пустым.'});
         return;
     }
 
