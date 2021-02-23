@@ -27,9 +27,9 @@ if not path.isdir('./../mpu-cloud-client'):
 
 # Install dependencies
 if not path.isdir('./node_modules'):
-    call('npm i', shell=True)
+    call('npm ci', shell=True)
 if not path.isdir('./../mpu-cloud-client/node_modules'):
-    call('npm i', shell=True, cwd='../mpu-cloud-client')
+    call('npm ci', shell=True, cwd='../mpu-cloud-client')
 
 # Builds client
 call('npm run build', shell=True, cwd='../mpu-cloud-client')
@@ -48,7 +48,7 @@ copy_tree('./../mpu-cloud-client/build', './public')
 
 # Compiles proper sqlite3 for chosen OS and copies it to /build
 command = './node_modules/.bin/node-pre-gyp install --directory=./node_modules/sqlite3'
-sqlite3_path = './node_modules/sqlite3/lib/binding/node-v72'
+sqlite3_path = './node_modules/sqlite3/lib/binding/napi-v3'
 if os == 'win':
     command += ' --target_platform=win32'
     sqlite3_path += '-win32'
@@ -69,7 +69,7 @@ call(command, shell=True)
 
 # Compiles server
 call('npm run build', shell=True)
-command = 'pkg . --targets=node12-{}-{}'.format(os, arch)
+command = 'pkg . --targets=node14-{}-{}'.format(os, arch)
 call(command, shell=True)
 
 # Copies sqlite3, exec and config to /build folder
