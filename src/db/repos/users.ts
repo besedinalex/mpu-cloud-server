@@ -1,5 +1,5 @@
 import path from "path";
-import {setDatabaseFilePath, selectData, changeData} from "sqlite3-simple-api";
+import {setDatabaseFilePath, selectData, changeData} from '../connection';
 
 const {DATA_PATH} = require(process.cwd() + '/config.json');
 

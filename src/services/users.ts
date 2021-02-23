@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import crypto from "crypto";
 import readline from "readline";
 import {validationResult} from "express-validator";
-import UsersData from "../db/users";
+import UsersData from "../db/repos/users";
 import FileManager from "../utils/file-manager";
 import ServiceResponse from "../models/service-response";
 

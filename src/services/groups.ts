@@ -1,5 +1,5 @@
-import GroupsData from "../db/groups";
-import UsersData from "../db/users";
+import GroupsData from "../db/repos/groups";
+import UsersData from "../db/repos/users";
 import FileManager from "../utils/file-manager";
 import ServiceResponse from "../models/service-response";
 

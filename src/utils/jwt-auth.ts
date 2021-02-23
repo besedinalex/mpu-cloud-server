@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import UsersData from "../db/users";
+import UsersData from "../db/repos/users";
 
 const {SECRET} = require(process.cwd() + '/config.json');
 

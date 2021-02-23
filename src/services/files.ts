@@ -1,10 +1,10 @@
 import request from "request";
 import path from "path";
 import FileManager from "../utils/file-manager";
-import GroupsData from "../db/groups";
+import GroupsData from "../db/repos/groups";
 import ServiceResponse from "../models/service-response";
 import FileAction from "../models/file-action";
-import UsersData from "../db/users";
+import UsersData from "../db/repos/users";
 import FileData from "../models/file-data";
 import ConvertStatus from "../models/convert-status";
 
