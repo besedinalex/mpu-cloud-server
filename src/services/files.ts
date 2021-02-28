@@ -3,17 +3,13 @@ import path from "path";
 import FileManager from "../utils/file-manager";
 import GroupsData from "../db/repos/groups";
 import ServiceResponse from "../models/service-response";
-import FileAction from "../models/file-action";
+import FileAction from "../models/files/file-action";
 import UsersData from "../db/repos/users";
-import FileData from "../models/file-data";
-import ConvertStatus from "../models/convert-status";
+import FileData from "../models/files/file-data";
+import ConvertStatus from "../models/files/convert-status";
+import ConverterResponse from "../models/converter-response";
 
 const {UPLOAD_LIMIT, CONVERTER_URL} = require(process.cwd() + '/config.json');
-
-type ConverterResponse = {
-    output: string;
-    thumbnail: string;
-}
 
 // RegExp to check for reserved files and folders
 const reserved = /\$/;

@@ -1,5 +1,7 @@
 import path from "path";
 import {setDatabaseFilePath, selectData, changeData} from '../connection';
+import GroupData from "../../models/tables/group-data";
+import GroupUser from "../../models/tables/group-user";
 
 const {DATA_PATH} = require(process.cwd() + '/config.json');
 
@@ -26,24 +28,6 @@ const createGroupUserTable =
     );`;
 changeData(createGroupTable);
 changeData(createGroupUserTable);
-
-type GroupData = {
-    id: number;
-    title: string;
-    owner: number;
-    createdTime: Date;
-    description?: string;
-    access?: string;
-    userJoinedDate?: Date;
-}
-
-type GroupUser = {
-    userId: number;
-    access: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-}
 
 namespace GroupsData {
 

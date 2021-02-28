@@ -6,6 +6,7 @@ import {validationResult} from "express-validator";
 import UsersData from "../db/repos/users";
 import FileManager from "../utils/file-manager";
 import ServiceResponse from "../models/service-response";
+import ResetRequest from "../models/reset-request";
 
 const {
     SECRET,
@@ -14,12 +15,7 @@ const {
     RESET_PASSWORD_EXPIRE
 } = require(process.cwd() + '/config.json');
 
-type ResetRequest = {
-    id?: number;
-    valid?: boolean;
-    email: string;
-    token: string;
-}
+
 
 let passwordResetMode = false;
 let lastPasswordResetId = 0;

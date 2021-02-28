@@ -1,5 +1,7 @@
 import path from "path";
 import {setDatabaseFilePath, selectData, changeData} from '../connection';
+import UserData from "../../models/tables/user-data";
+import UserLoginData from "../../models/user-login-data";
 
 const {DATA_PATH} = require(process.cwd() + '/config.json');
 
@@ -15,19 +17,6 @@ const createUserTable =
     'createdTime' TEXT DEFAULT CURRENT_TIMESTAMP
     );`;
 changeData(createUserTable);
-
-type UserLoginData = {
-    id: number;
-    password: string;
-};
-
-export type UserData = {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    createdTime: Date;
-};
 
 namespace UsersData {
 

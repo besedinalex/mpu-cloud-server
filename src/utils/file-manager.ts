@@ -1,6 +1,6 @@
 import fs from "fs-extra";
 import path from "path";
-import FileInfo from "../models/file-info";
+import FileInfo from "../models/files/file-info";
 
 const {DATA_PATH} = require(process.cwd() + '/config.json');
 
