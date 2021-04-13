@@ -461,7 +461,7 @@ async function fileAccess(userId: number, groupId: number|undefined, accessType:
     if (groupRequest) {
         try {
             const userAccess = await GroupsData.getUserAccess(groupId!, userId);
-            if (userAccess === 'USER' && accessType !== FileAction.Read && accessType !== FileAction.Create) {
+            if (accessType !== FileAction.Read && accessType !== FileAction.Create && !(userAccess === 'MODERATOR' || userAccess === 'ADMIN')) {
                 hasAccess = false;
             }
         } catch {
