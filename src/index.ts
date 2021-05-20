@@ -53,7 +53,7 @@ initErrorMessage += SECRET === undefined || typeof SECRET !== 'string' || SECRET
     '\nSECRET: Необходимо указать код шифрования JWT-токена в формате \"Any text you want\".' : '';
 
 initErrorMessage += UPLOAD_LIMIT === undefined || typeof UPLOAD_LIMIT !== 'number' || UPLOAD_LIMIT < 1 ?
-    '\nUPLOAD_LIMIT: Необходимо указать минимальный размер загружаемого файла в МБ. Значение не может быть меньше 1.' : '';
+    '\nUPLOAD_LIMIT: Необходимо указать максимальный размер загружаемого файла в МБ. Значение не может быть меньше 1.' : '';
 
 initErrorMessage += PORT === undefined || typeof PORT !== 'number' || PORT < 1024 || PORT > 65535 ?
     '\nPORT: Необходимо указать порт для доступа к сайту. Значение не может быть меньше 1024 или больше 65535.' : '';
