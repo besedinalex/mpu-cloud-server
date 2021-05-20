@@ -67,7 +67,7 @@ export async function getFile(userId: number, groupId: number|undefined, filepat
         return;
     }
 
-    filepath = `${basePath}/${filepath}`;
+    filepath = path.join(basePath, filepath);
     if (!await FileManager.pathExists(filepath)) {
         response(404, {message: 'Указанный файл не найден.'});
         return;
@@ -149,7 +149,7 @@ export async function getFiles(userId: number, groupId: number|undefined, folder
         return;
     }
     try {
-        let files = await FileManager.getFolderContent(`${basePath}/${folder}`);
+        let files = await FileManager.getFolderContent(path.join(basePath, folder));
         files = files.filter(value => value[0] !== '.' && value[0] !== '$');
         response(200, files);
     } catch {
@@ -189,13 +189,13 @@ export async function uploadFile(userId: number, groupId: number|undefined, curr
         return;
     }
 
-    currentPath = `${basePath}/${currentPath}/`;
+    currentPath = path.join(basePath, currentPath);
     if (!await FileManager.pathExists(currentPath)) {
         response(404, {message: 'Папка, в которую вы пытаетесь загрузить файл, не найдена.'});
         return;
     }
     filename = filename === undefined ? file.originalname : filename + path.parse(file.originalname).ext;
-    const filepath = `${currentPath}/${filename}`;
+    const filepath = path.join(currentPath, filename);
     if (await FileManager.pathExists(filepath)) {
         response(400, {message: 'Файл с таким именем уже существует.'});
         return;
@@ -204,7 +204,7 @@ export async function uploadFile(userId: number, groupId: number|undefined, curr
         await FileManager.createFile(filepath, file.buffer);
         response(201, {message: 'Файл был успешно загружен.'});
         try {
-            const reservedFolder = `${currentPath}/$${filename}`;
+            const reservedFolder = path.join(currentPath, `$${filename}`);
             await FileManager.createFolder(reservedFolder);
             const obj = groupRequest ? {userId} : {};
             const buffer = Buffer.from(JSON.stringify(obj));
@@ -243,17 +243,17 @@ export async function createFolder(userId: number, groupId: number|undefined, cu
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
     }
-    currentPath = `${basePath}/${currentPath}/`;
+    currentPath = path.join(basePath, currentPath);
     if (!await FileManager.pathExists(currentPath)) {
         response(404, {message: 'Папка, в которой вы пытаетесь создать папку, не найдена.'});
         return;
     }
-    if (await FileManager.pathExists(`${currentPath}/${folderName}`)) {
+    if (await FileManager.pathExists(path.join(currentPath, folderName))) {
         response(400, {message: 'Папка с таким именем уже существует.'});
         return;
     }
     try {
-        await FileManager.createFolder(`${currentPath}/${folderName}`);
+        await FileManager.createFolder(path.join(currentPath, folderName));
         response(201, {message: 'Папка создана.'});
     } catch {
         response(500, {message: 'Не удалось создать папку.'});
@@ -272,8 +272,8 @@ export async function copyFile(userId: number, groupId: number|undefined, curren
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
     }
-    currentPath = `${basePath}/${currentPath}`;
-    newPath = `${basePath}/${newPath}`;
+    currentPath = path.join(basePath, currentPath);
+    newPath = path.join(basePath, newPath);
     if (FileManager.getFullPath(`${basePath}/`) === FileManager.getFullPath(currentPath)) {
         response(400, {message: 'Нельзя скопировать корневую папку.'});
         return;
@@ -321,9 +321,10 @@ export async function renameFile(userId: number, groupId: number|undefined, curr
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
     }
-    currentPath = `${basePath}/${currentPath}/`;
-    const oldPath = `${currentPath}/${currentName}`;
-    const newPath = `${currentPath}/${newName}`;
+
+    currentPath = path.join(basePath, currentPath);
+    const oldPath = path.join(currentPath, currentName);
+    const newPath = path.join(currentPath, newName);
     if (!await FileManager.pathExists(oldPath)) {
         response(404, {message: 'Объект, который вы пытаетесь переименовать, не найден.'});
         return;
@@ -341,8 +342,8 @@ export async function renameFile(userId: number, groupId: number|undefined, curr
 
     try {
         await FileManager.rename(oldPath, newPath);
-        const oldReservedFolder = `${currentPath}/$${currentName}`;
-        const newReservedFolder = `${currentPath}/$${newName}`;
+        const oldReservedFolder = path.join(currentPath, `$${currentName}`);
+        const newReservedFolder = path.join(currentPath, `$${newName}`);
         if (await FileManager.pathExists(oldReservedFolder)) {
             await FileManager.rename(oldReservedFolder, newReservedFolder);
         }
@@ -364,7 +365,7 @@ export async function removeFile(userId: number, groupId: number|undefined, curr
         response(400, {message: `Символ '$' зарезервирован для системных файлов.`});
         return;
     }
-    currentPath = `${basePath}/${currentPath}`;
+    currentPath = path.join(basePath, currentPath);
     if (FileManager.getFullPath(`${basePath}/`) === FileManager.getFullPath(currentPath)) {
         response(400, {message: 'Нельзя удалить корневую папку.'});
         return;
@@ -422,7 +423,7 @@ export async function addModelAnnotation(userId: number, groupId: number|undefin
         return;
     }
 
-    filepath = `${basePath}/${filepath}`;
+    filepath = path.join(basePath, filepath);
     try {
         const fileData = await getFileData(filepath);
         const annotations = fileData.modelAnnotations!;
@@ -455,7 +456,7 @@ export async function deleteModelAnnotation(userId: number, groupId: number|unde
         return;
     }
 
-    filepath = `${basePath}/${filepath}`;
+    filepath = path.join(basePath, filepath);
     try {
         const fileData = await getFileData(filepath);
         const annotations = fileData.modelAnnotations!;
