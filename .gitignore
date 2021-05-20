@@ -368,4 +368,3 @@ mpu-cloud-server
 mpu-cloud-server.exe
 node_sqlite3.node
 public/*
-!public/draco

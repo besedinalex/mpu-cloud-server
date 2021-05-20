@@ -27,21 +27,16 @@ if not path.isdir('./../mpu-cloud-client'):
 
 # Install dependencies
 if not path.isdir('./node_modules'):
-    call('npm ci', shell=True)
+    call('npm i', shell=True)
 if not path.isdir('./../mpu-cloud-client/node_modules'):
-    call('npm ci', shell=True, cwd='../mpu-cloud-client')
+    call('npm i', shell=True, cwd='../mpu-cloud-client')
 
 # Builds client
 call('npm run build', shell=True, cwd='../mpu-cloud-client')
 
 # Removes previous built client
-for item in listdir('./public'):
-    if item != 'draco':
-        dir = './public/{}'.format(item)
-        if path.isfile(dir) or path.islink(dir):
-            remove(dir)
-        elif path.isdir(dir):
-            rmtree(dir)
+if path.isdir('./public'):
+    rmtree('./public')
 
 # Copies built client to server
 copy_tree('./../mpu-cloud-client/build', './public')
