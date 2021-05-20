@@ -1,4 +1,4 @@
-import request from "request";
+import request from "request-promise";
 import path from "path";
 import FileManager from "../utils/file-manager";
 import GroupsData from "../db/repos/groups";
@@ -25,24 +25,37 @@ function fileIsConvertibleModel(filepath: string): boolean {
     return modelsToConvert.includes(extension);
 }
 
-function convertModel(filepath: string, to: string): Promise<ConverterResponse> {
+const convertQueue: Array<{filepath: string, to: string}> = [];
+
+function fileIsInConvertQueue(filepath: string): boolean {
+    return convertQueue.find(x => x.filepath === filepath) !== undefined;
+}
+
+async function convertModel(filepath: string, to: string): Promise<ConverterResponse> {
+    // Adds convert request to the end of the queue
+    convertQueue.push({filepath, to});
+    // Waits until it's the last one in the queue to start converting
+    while (convertQueue[0].filepath !== filepath || convertQueue[0].to !== to) {
+        await new Promise(r => setTimeout(r, 100));
+    }
     return new Promise(async (resolve, reject) => {
-        request({
-            method: "POST",
-            url: `${CONVERTER_URL}/model`,
-            headers: {'Content-Type': 'multipart/form-data'},
-            formData: {
-                'from': path.parse(filepath).ext.slice(1),
-                'to': to,
-                'file': await FileManager.getFileBuffer(filepath)
-            }
-        }, (err, res) => {
-            if (err) {
-                reject();
-            } else {
-                resolve(JSON.parse(res.body) as ConverterResponse);
-            }
-        });
+        // Converts it
+        try {
+            const res = await request({
+                method: "POST",
+                url: `${CONVERTER_URL}/model`,
+                headers: {'Content-Type': 'multipart/form-data'},
+                formData: {
+                    'from': path.parse(filepath).ext.slice(1),
+                    'to': to,
+                    'file': await FileManager.getFileBuffer(filepath)
+                }
+            });
+            resolve(JSON.parse(res) as ConverterResponse);
+        } catch {
+            reject();
+        }
+        convertQueue.shift();
     });
 }
 
@@ -72,6 +85,16 @@ export async function getFile(userId: number, groupId: number|undefined, filepat
         }
         if (fileIsConvertibleModel(filepath)) {
             const requestedFile = path.join(parsedPath.dir, `$${parsedPath.base}`, extension);
+            let wasInQueue = false;
+            // Checks converter queue for requested extension
+            while (convertQueue.find(x => x.filepath === filepath && x.to === extension) !== undefined) {
+                wasInQueue = true;
+                await new Promise(r => setTimeout(r, 100));
+            }
+            // Wait for it to save on disk
+            if (wasInQueue) {
+                await new Promise(r => setTimeout(r, 1500));
+            }
             if (!await FileManager.pathExists(requestedFile)) {
                 try {
                     const data = await convertModel(filepath, extension);
@@ -108,7 +131,9 @@ export async function getFileInfo(userId: number, groupId: number|undefined, fil
                 fileInfo.ownerName = userData.firstName + ' ' + userData.lastName;
             }
             if (fileIsConvertibleModel(filepath)) {
-                fileInfo.convertStatus = fileData.convertStatus;
+                fileInfo.convertStatus =
+                    fileData.convertStatus === ConvertStatus.error && fileIsInConvertQueue(filepath)
+                ? ConvertStatus.pending : fileData.convertStatus;
             }
         }
         response(200, fileInfo);
@@ -186,7 +211,7 @@ export async function uploadFile(userId: number, groupId: number|undefined, curr
             await FileManager.createFile(path.join(reservedFolder, 'data'), buffer);
             if (fileIsConvertibleModel(filepath)) {
                 const fileData = await getFileData(filepath);
-                fileData.convertStatus = ConvertStatus.pending;
+                fileData.convertStatus = ConvertStatus.error;
                 await updateFileData(filepath, fileData);
                 try {
                     const data = await convertModel(filepath, 'glb');
@@ -195,7 +220,6 @@ export async function uploadFile(userId: number, groupId: number|undefined, curr
                     fileData.convertStatus = ConvertStatus.success;
                     await updateFileData(filepath, fileData);
                 } catch (err) {
-                    fileData.convertStatus = ConvertStatus.error;
                     await updateFileData(filepath, fileData);
                 }
             }
@@ -304,10 +328,17 @@ export async function renameFile(userId: number, groupId: number|undefined, curr
         response(404, {message: 'Объект, который вы пытаетесь переименовать, не найден.'});
         return;
     }
+
+    if (fileIsInConvertQueue(oldPath)) {
+        response(409, {message: 'Файл не может быть переименован во время его конвертации.'});
+        return;
+    }
+
     if (await FileManager.pathExists(newPath)) {
         response(400, {message: 'Файл или папка с таким именем уже существует.'});
         return;
     }
+
     try {
         await FileManager.rename(oldPath, newPath);
         const oldReservedFolder = `${currentPath}/$${currentName}`;
@@ -342,6 +373,12 @@ export async function removeFile(userId: number, groupId: number|undefined, curr
         response(404, {message: 'Объект, который вы пытаетесь удалить, не найден.'});
         return;
     }
+
+    if (fileIsInConvertQueue(currentPath)) {
+        response(409, {message: 'Файл не может быть удален во время его конвертации.'});
+        return;
+    }
+
     try {
         await FileManager.remove(currentPath);
         const parsedCurrentPath = path.parse(currentPath);
