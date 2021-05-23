@@ -124,7 +124,7 @@ export async function getFileInfo(userId: number, groupId: number|undefined, fil
     try {
         filepath = path.join(basePath, filepath);
         const fileInfo = await FileManager.getFileInfo(filepath);
-        if (groupRequest || fileIsConvertibleModel(filepath)) {
+        if (fileIsConvertibleModel(filepath)) {
             const fileData = await getFileData(filepath);
             if (groupRequest && fileInfo.isFile) {
                 const userData = await UsersData.getUserDataById(fileData.userId!);
