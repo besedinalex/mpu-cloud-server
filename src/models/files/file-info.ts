@@ -5,6 +5,7 @@ type FileInfo = {
     extension: string;
     size: number;
     createdTime: Date;
+    isFile: boolean;
     ownerName?: string;
     convertStatus?: ConvertStatus;
 }

@@ -40,7 +40,8 @@ namespace FileManager {
             name: parsedPath.name,
             extension: parsedPath.ext.slice(1),
             size: stat.size,
-            createdTime: stat.ctime
+            createdTime: stat.ctime,
+            isFile: stat.isFile()
         };
     }
 
