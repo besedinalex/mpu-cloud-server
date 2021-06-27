@@ -95,7 +95,7 @@ export async function removeGroupUser(requesterId: number, groupId: number, user
                     }
                     break;
                 case 'MODERATOR':
-                    if (toBeRemovedUserAccess !== 'USER') {
+                    if (toBeRemovedUserAccess === 'USER') {
                         await GroupsData.removeGroupUser(groupId, userId);
                         response(200, {message: 'Пользователь удален из группы.'});
                     } else {
